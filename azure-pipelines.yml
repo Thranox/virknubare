@@ -1,4 +1,5 @@
 # Run on master, develop and all feature-branches. More?
+
 trigger:
 - master
 - develop
@@ -6,12 +7,19 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+steps:
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+
 # Build the .Net Core projects
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-
+    
+    
 # Run any tests present    
 - task: DotNetCoreCLI@2
   inputs:
