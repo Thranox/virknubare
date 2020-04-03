@@ -1,3 +1,5 @@
+using System;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -5,7 +7,8 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 namespace Web
 {
     public class Startup
@@ -26,6 +29,19 @@ namespace Web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddDbContext<PolDbContext>(options => options
+                // replace with your connection string
+                .UseMySql("Server=localhost;Database=Pol;User=root;Password=Start123;", mySqlOptions => mySqlOptions
+                    // replace with your Server Version and Type
+                    .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
+                ));
+            //services.AddDbContextPool<PolDbContext>(options => options
+            //    // replace with your connection string
+            //    .UseMySql("Server=localhost;Database=Pol;User=root;Password=Start123;", mySqlOptions => mySqlOptions
+            //        // replace with your Server Version and Type
+            //        .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
+            //    ));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +57,11 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
+                context.Database.Migrate();
+            }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
