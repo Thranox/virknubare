@@ -25,4 +25,5 @@ steps:
   inputs:
     command: test
     projects: '**/Tests/*.csproj'
+    publishTestResults: true
     arguments: '--configuration $(buildConfiguration)'
