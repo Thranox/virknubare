@@ -4,7 +4,8 @@
 
 trigger:
 - master
-
+- develop
+- feature/*
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -20,3 +21,12 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
+    
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\Tests.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
