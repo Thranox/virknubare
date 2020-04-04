@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using CleanArchitecture.Core.Interfaces;
 
 namespace Domain.Specifications
 {

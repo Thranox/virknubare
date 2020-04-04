@@ -1,4 +1,6 @@
 using System;
+using AutoMapper;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +41,8 @@ namespace Web
                         .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
                     );
             });
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IRepository, EfRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

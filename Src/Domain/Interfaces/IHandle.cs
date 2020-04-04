@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Core.SharedKernel;
+﻿using Domain.SharedKernel;
 
 namespace Domain.Interfaces
 {

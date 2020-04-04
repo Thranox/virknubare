@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Core.SharedKernel;
+﻿using Domain.SharedKernel;
 
-namespace CleanArchitecture.Core.Interfaces
+namespace Domain.Interfaces
 {
     public interface IDomainEventDispatcher
     {
