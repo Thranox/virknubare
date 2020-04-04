@@ -4,14 +4,14 @@ using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Serilog;
+
 namespace Web
 {
     public class Startup
@@ -43,14 +43,19 @@ namespace Web
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRepository, EfRepository>();
+
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
+                .CreateLogger();
+            services.AddSingleton<ILogger>(logger);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, IConfiguration configuration)
         {
             if (env.IsDevelopment())
             {
-                logger.LogInformation("In Development environment");
+                logger.Information("In Development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -59,11 +64,14 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // Migrate database as needed.
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
                 context.Database.Migrate();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
@@ -92,6 +100,8 @@ namespace Web
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            logger.Information("TravelExpense Web started. Version="+configuration.GetValue<string>("Version"));
         }
     }
 }

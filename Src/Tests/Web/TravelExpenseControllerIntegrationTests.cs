@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Data;
-using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Web.ApiModels;
 using Web.Controllers;
@@ -17,9 +16,8 @@ namespace Tests.Web
             using (var testContext = new IntegrationTestContext())
             using (var context = new PolDbContext(testContext.DbContextOptions))
             {
-                var logger = new Logger<TravelExpenseController>(testContext.LoggerFactory);
                 var efRepository = new EfRepository(context);
-                var sut = new TravelExpenseController(logger, efRepository, testContext.Mapper);
+                var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
                 // Act
                 var actual = await sut.Get();
