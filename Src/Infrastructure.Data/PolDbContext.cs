@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.SharedKernel;
 using Domain;
+using Domain.Interfaces;
+using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -35,7 +35,7 @@ namespace Infrastructure.Data
             {
                 var events = entity.Events.ToArray();
                 entity.Events.Clear();
-                foreach (var domainEvent in events) _dispatcher.Dispatch(domainEvent);
+                foreach (var domainEvent in events) _dispatcher?.Dispatch(domainEvent);
             }
 
             return result;

@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Core.Interfaces
+﻿namespace Domain.Interfaces
 {
     public interface IMessageSender
     {

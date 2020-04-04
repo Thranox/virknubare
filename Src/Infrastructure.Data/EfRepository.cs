@@ -1,11 +1,10 @@
-﻿using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.SharedKernel;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Infrastructure.Data;
+using Domain.Interfaces;
+using Domain.SharedKernel;
+using Microsoft.EntityFrameworkCore;
 
-namespace CleanArchitecture.Infrastructure.Data
+namespace Infrastructure.Data
 {
     public class EfRepository : IRepository
     {
