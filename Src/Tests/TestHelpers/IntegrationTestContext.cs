@@ -3,7 +3,8 @@ using AutoMapper;
 using Domain;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
 using Web.Controllers;
 
 namespace Tests
@@ -12,14 +13,19 @@ namespace Tests
     {
         public IntegrationTestContext()
         {
+            Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+            Logger.Information("Starting test");
             DbContextOptions = new DbContextOptionsBuilder<PolDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
-            LoggerFactory = new LoggerFactory();
             Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
 
             SeedDb();
         }
+
+        public Logger Logger { get; set; }
 
         private void SeedDb()
         {
@@ -33,14 +39,12 @@ namespace Tests
             }
         }
 
-        public LoggerFactory LoggerFactory { get; }
-
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
 
         public void Dispose()
         {
-            
+            Logger.Information("Ending test");
         }
     }
 }

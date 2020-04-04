@@ -5,7 +5,6 @@ using AutoMapper;
 using Domain;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Web.ApiModels;
 
 namespace Web.Controllers
@@ -14,11 +13,11 @@ namespace Web.Controllers
     [Route("[controller]")]
     public class TravelExpenseController : ControllerBase
     {
-        private readonly ILogger<TravelExpenseController> _logger;
+        private readonly Serilog.ILogger _logger;
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
 
-        public TravelExpenseController(ILogger<TravelExpenseController> logger, IRepository repository, IMapper mapper)
+        public TravelExpenseController(Serilog.ILogger logger, IRepository repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
@@ -28,7 +27,8 @@ namespace Web.Controllers
         [HttpGet]
         public async Task< IEnumerable<TravelExpenseDto>> Get()
         {
-            _logger.LogInformation("TravelExpense.Get() called.");
+            _logger.Information("TravelExpense.Get() called.");
+
             await Task.CompletedTask;
             return _repository
                 .List<TravelExpenseEntity>()
