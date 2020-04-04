@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 namespace Web
 {
@@ -30,25 +31,22 @@ namespace Web
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddDbContext<PolDbContext>(options => options
-                // replace with your connection string
-                .UseMySql("Server=localhost;Database=Pol;User=root;Password=Start123;", mySqlOptions => mySqlOptions
-                    // replace with your Server Version and Type
-                    .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
-                ));
-            //services.AddDbContextPool<PolDbContext>(options => options
-            //    // replace with your connection string
-            //    .UseMySql("Server=localhost;Database=Pol;User=root;Password=Start123;", mySqlOptions => mySqlOptions
-            //        // replace with your Server Version and Type
-            //        .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
-            //    ));
+            services.AddDbContext<PolDbContext>(options =>
+            {
+                var connectionString = Configuration.GetConnectionString("PolDb");
+                options
+                    .UseMySql(connectionString, mySqlOptions => mySqlOptions
+                        .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
+                    );
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
+                logger.LogInformation("In Development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
