@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Interfaces;
 using Domain.SharedKernel;
@@ -15,7 +16,7 @@ namespace Infrastructure.Data
             _dbContext = dbContext;
         }
 
-        public T GetById<T>(int id) where T : BaseEntity
+        public T GetById<T>(Guid id) where T : BaseEntity
         {
             //if (typeof(T) == typeof(Guestbook))
             //{
@@ -40,6 +41,12 @@ namespace Infrastructure.Data
 
         public T Add<T>(T entity) where T : BaseEntity
         {
+            var baseEntity = (entity as BaseEntity);
+            if(baseEntity.Id!=Guid.Empty)
+                throw new ArgumentException("Id can't be set on entity before calling Add (is this already added?)");
+
+            baseEntity.Id = Guid.NewGuid();
+
             _dbContext.Set<T>().Add(entity);
             _dbContext.SaveChanges();
 

@@ -1,10 +1,37 @@
-﻿using System;
-using Domain.SharedKernel;
+﻿using Domain.SharedKernel;
 
-namespace Domain
+namespace Domain.Entities
 {
     public class TravelExpenseEntity: BaseEntity
     {
-        public string Description { get; set; }
+        private TravelExpenseEntity()
+        {
+            
+        }
+
+        public TravelExpenseEntity(string description):this()
+        {
+            Description = description;
+        }
+        public string Description { get; private set; }
+
+        public void Update(string description)
+        {
+            Description = description;
+        }
+
+        public bool IsApproved { get; private set; }
+
+        public bool IsReportedDone { get; private set; }
+
+        public void Approve()
+        {
+            IsApproved = true;
+        }
+
+        public void ReportDone()
+        {
+            IsReportedDone = true;
+        }
     }
 }

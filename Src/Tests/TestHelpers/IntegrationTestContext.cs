@@ -1,6 +1,8 @@
 using System;
+using AutoFixture;
 using AutoMapper;
 using Domain;
+using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -11,6 +13,10 @@ namespace Tests
 {
     public class IntegrationTestContext : IDisposable
     {
+        public TravelExpenseEntity TravelExpenseEntity1 = new TravelExpenseEntity("Expense1") {Id = Guid.NewGuid()};
+        public TravelExpenseEntity TravelExpenseEntity2 = new TravelExpenseEntity("Expense2") {Id = Guid.NewGuid()};
+        public TravelExpenseEntity TravelExpenseEntity3 = new TravelExpenseEntity("Expense3") {Id = Guid.NewGuid()};
+
         public IntegrationTestContext()
         {
             Logger = new LoggerConfiguration()
@@ -18,26 +24,15 @@ namespace Tests
                 .CreateLogger();
             Logger.Information("Starting test");
             DbContextOptions = new DbContextOptionsBuilder<PolDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
-
+            Fixture = new Fixture();
             SeedDb();
         }
 
+        public Fixture Fixture { get; }
         public Logger Logger { get; set; }
-
-        private void SeedDb()
-        {
-            using (var dbContext = new PolDbContext(DbContextOptions))
-            {
-                dbContext.TravelExpenses.Add(new TravelExpenseEntity() { Description = "Expense1" });
-                dbContext.TravelExpenses.Add(new TravelExpenseEntity() { Description = "Expense2" });
-                dbContext.TravelExpenses.Add(new TravelExpenseEntity() { Description = "Expense3" });
-
-                dbContext.SaveChanges();
-            }
-        }
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
@@ -45,6 +40,18 @@ namespace Tests
         public void Dispose()
         {
             Logger.Information("Ending test");
+        }
+
+        private void SeedDb()
+        {
+            using (var dbContext = new PolDbContext(DbContextOptions))
+            {
+                dbContext.TravelExpenses.Add(TravelExpenseEntity1);
+                dbContext.TravelExpenses.Add(TravelExpenseEntity2);
+                dbContext.TravelExpenses.Add(TravelExpenseEntity3);
+
+                dbContext.SaveChanges();
+            }
         }
     }
 }
