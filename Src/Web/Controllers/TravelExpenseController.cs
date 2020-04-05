@@ -28,6 +28,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Route("Get")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
         {
             _logger.Information("TravelExpense.Get() called.");
@@ -40,6 +41,7 @@ namespace Web.Controllers
         }
 
         [HttpPut]
+        [Route("Put")]
         public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var travelExpenseEntity = _repository
@@ -53,6 +55,8 @@ namespace Web.Controllers
             return await Task.FromResult(Ok(new TravelExpenseUpdateResponse { }));
         }
 
+        [HttpPost]
+        [Route("Post")]
         public async Task<ActionResult< TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             var travelExpenseEntity = new TravelExpenseEntity( travelExpenseCreateDto.Description);
@@ -64,6 +68,8 @@ namespace Web.Controllers
             }));
         }
 
+        [HttpPost]
+        [Route("Approve")]
         public async Task<ActionResult<TravelExpenseApproveResponse>> Approve(TravelExpenseApproveDto travelExpenseApproveDto)
         {
             var travelExpenseEntity = _repository
@@ -77,6 +83,8 @@ namespace Web.Controllers
             return await Task.FromResult(Ok(new TravelExpenseApproveResponse { }));
         }
 
+        [HttpPost]
+        [Route("ReportDone")]
         public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(TravelExpenseReportDoneDto travelExpenseReportDoneDto)
         {
             var travelExpenseEntity = _repository
