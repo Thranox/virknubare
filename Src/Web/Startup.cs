@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 
@@ -16,6 +17,9 @@ namespace Web
 {
     public class Startup
     {
+        private static string _politikerafregningApi = "Politikerafregning API";
+        private static string _version = "v1";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -48,6 +52,10 @@ namespace Web
                 .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
                 .CreateLogger();
             services.AddSingleton<ILogger>(logger);
+            services.AddSwaggerGen(x =>
+            {
+                x.SwaggerDoc(_version, new OpenApiInfo { Title = _politikerafregningApi, Version = _version });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +81,10 @@ namespace Web
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", _politikerafregningApi + " " + _version));
+
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
