@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Domain;
+using Domain.Entities;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -19,35 +21,42 @@ namespace Tests.Web
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
-            using (var context = new PolDbContext(testContext.DbContextOptions))
             {
-                var efRepository = new EfRepository(context);
-                var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+                using (var context = new PolDbContext(testContext.DbContextOptions))
+                {
+                    var efRepository = new EfRepository(context);
+                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
-                // Act
-                var actual = await sut.Get();
+                    // Act
+                    var actual = await sut.Get();
 
-                // Assert
-                var travelExpenseDtos = actual.ToArray();
-                Assert.That(travelExpenseDtos.Length, Is.EqualTo(3));
-                Assert.That(travelExpenseDtos,
-                    Has.One.EqualTo(new TravelExpenseDto
-                    {
-                        Description = testContext.TravelExpenseEntity1.Description,
-                        PublicId = testContext.TravelExpenseEntity1.PublicId
-                    }));
-                Assert.That(travelExpenseDtos,
-                    Has.One.EqualTo(new TravelExpenseDto
-                    {
-                        Description = testContext.TravelExpenseEntity2.Description,
-                        PublicId = testContext.TravelExpenseEntity2.PublicId
-                    }));
-                Assert.That(travelExpenseDtos,
-                    Has.One.EqualTo(new TravelExpenseDto
-                    {
-                        Description = testContext.TravelExpenseEntity3.Description,
-                        PublicId = testContext.TravelExpenseEntity3.PublicId
-                    }));
+                    // Assert
+                    Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                    var okObjectResult = actual.Result as OkObjectResult;
+                    Assert.That(okObjectResult, Is.Not.Null);
+                    var value = okObjectResult.Value as TravelExpenseGetResponse;
+                    Assert.That(value, Is.Not.Null);
+                    var v=(value.Result as IEnumerable<TravelExpenseDto>).ToArray();
+                    Assert.That(v.Length, Is.EqualTo(3));
+                    Assert.That(v,
+                        Has.One.EqualTo(new TravelExpenseDto
+                        {
+                            Description = testContext.TravelExpenseEntity1.Description,
+                            Id = testContext.TravelExpenseEntity1.Id
+                        }));
+                    Assert.That(v,
+                        Has.One.EqualTo(new TravelExpenseDto
+                        {
+                            Description = testContext.TravelExpenseEntity2.Description,
+                            Id = testContext.TravelExpenseEntity2.Id
+                        }));
+                    Assert.That(v,
+                        Has.One.EqualTo(new TravelExpenseDto
+                        {
+                            Description = testContext.TravelExpenseEntity3.Description,
+                            Id = testContext.TravelExpenseEntity3.Id
+                        }));
+                }
             }
         }
 
@@ -59,14 +68,14 @@ namespace Tests.Web
             {
                 ActionResult<TravelExpenseUpdateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
-                Guid existingPublicId;
+                Guid existingId;
                 using (var context = new PolDbContext(testContext.DbContextOptions))
                 {
                     var efRepository = new EfRepository(context);
                     var existing = efRepository.List<TravelExpenseEntity>().First();
-                    existingPublicId = existing.PublicId;
+                    existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {PublicId = existingPublicId, Description = newDescription};
+                        {Id = existingId, Description = newDescription};
                     var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
                     // Act
@@ -79,13 +88,12 @@ namespace Tests.Web
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as TravelExpenseUpdateResponse;
                 Assert.That(value, Is.Not.Null);
-                Assert.That(value.Result, Is.EqualTo(true));
                 using (var context = new PolDbContext(testContext.DbContextOptions))
                 {
                     var efRepository = new EfRepository(context);
                     var travelExpenseEntity = efRepository
-                        .List(new TravelExpenseByPublicId(existingPublicId))
-                        .SingleOrDefault();
+                        .List(new TravelExpenseById(existingId))
+                        .Single();
                     Assert.That(travelExpenseEntity.Description, Is.EqualTo(newDescription));
                 }
             }
@@ -99,13 +107,13 @@ namespace Tests.Web
             {
                 ActionResult<TravelExpenseApproveResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
-                Guid existingPublicId;
+                Guid existingId;
                 using (var context = new PolDbContext(testContext.DbContextOptions))
                 {
                     var efRepository = new EfRepository(context);
                     var existing = efRepository.List<TravelExpenseEntity>().First();
-                    existingPublicId = existing.PublicId;
-                    var travelExpenseApproveDto = new TravelExpenseApproveDto { PublicId = existingPublicId };
+                    existingId = existing.Id;
+                    var travelExpenseApproveDto = new TravelExpenseApproveDto {Id = existingId};
                     var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
                     // Act
@@ -122,12 +130,13 @@ namespace Tests.Web
                 {
                     var efRepository = new EfRepository(context);
                     var travelExpenseEntity = efRepository
-                        .List(new TravelExpenseByPublicId(existingPublicId))
-                        .SingleOrDefault();
+                        .List(new TravelExpenseById(existingId))
+                        .Single();
                     Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(true));
                 }
             }
         }
+
         [Test]
         public async Task ReportDone_ExistingTravelExpense_ReturnsOk()
         {
@@ -136,13 +145,13 @@ namespace Tests.Web
             {
                 ActionResult<TravelExpenseReportDoneResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
-                Guid existingPublicId;
+                Guid existingId;
                 using (var context = new PolDbContext(testContext.DbContextOptions))
                 {
                     var efRepository = new EfRepository(context);
                     var existing = efRepository.List<TravelExpenseEntity>().First();
-                    existingPublicId = existing.PublicId;
-                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto { PublicId = existingPublicId };
+                    existingId = existing.Id;
+                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto {Id = existingId};
                     var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
                     // Act
@@ -153,21 +162,21 @@ namespace Tests.Web
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
                 var okObjectResult = actual.Result as OkObjectResult;
                 Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as TravelExpenseApproveResponse;
+                var value = okObjectResult.Value as TravelExpenseReportDoneResponse;
                 Assert.That(value, Is.Not.Null);
                 using (var context = new PolDbContext(testContext.DbContextOptions))
                 {
                     var efRepository = new EfRepository(context);
                     var travelExpenseEntity = efRepository
-                        .List(new TravelExpenseByPublicId(existingPublicId))
-                        .SingleOrDefault();
+                        .List(new TravelExpenseById(existingId))
+                        .Single();
                     Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(true));
                 }
             }
         }
 
         [Test]
-        public async Task Post_ValidNewTravelExpense_ReturnsPublicId()
+        public async Task Post_ValidNewTravelExpense_ReturnsId()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
@@ -190,11 +199,11 @@ namespace Tests.Web
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as TravelExpenseCreateResponse;
                 Assert.That(value, Is.Not.Null);
-                Assert.That(value.PublicId, Is.Not.EqualTo(Guid.Empty));
+                Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
                 using (var context = new PolDbContext(testContext.DbContextOptions))
                 {
                     var efRepository = new EfRepository(context);
-                    var travelExpenseEntity = efRepository.List(new TravelExpenseByPublicId(value.PublicId))
+                    var travelExpenseEntity = efRepository.List(new TravelExpenseById(value.Id))
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
                     Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
@@ -203,5 +212,4 @@ namespace Tests.Web
             }
         }
     }
-
 }

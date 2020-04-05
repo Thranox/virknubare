@@ -5,6 +5,6 @@ namespace Web.ApiModels
 {
     public class TravelExpenseApproveDto:ValueObject
     {
-        public Guid PublicId { get; set; }
+        public Guid Id { get; set; }
     }
 }

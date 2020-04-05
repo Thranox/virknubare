@@ -4,6 +4,6 @@ namespace Web.ApiModels
 {
     public class TravelExpenseReportDoneDto
     {
-        public Guid PublicId { get; set; }
+        public Guid Id { get; set; }
     }
 }

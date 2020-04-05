@@ -2,6 +2,5 @@
 {
     public class TravelExpenseApproveResponse
     {
-        public bool Result { get; set; }
     }
 }

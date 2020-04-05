@@ -6,6 +6,6 @@ namespace Web.ApiModels
     public class TravelExpenseUpdateDto : ValueObject
     {
         public string Description { get; set; }
-        public Guid PublicId { get; set; }
+        public Guid Id { get; set; }
     }
 }

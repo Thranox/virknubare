@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class TravelExpenseByPublicId : ISpecification<TravelExpenseEntity>
+    public class TravelExpenseById : ISpecification<TravelExpenseEntity>
     {
-        public TravelExpenseByPublicId(Guid publicId)
+        public TravelExpenseById(Guid id)
         {
-            Criteria = e =>
-                e.PublicId ==publicId;
+            Criteria = e =>e.Id ==id;
         }
 
         public Expression<Func<TravelExpenseEntity, bool>> Criteria { get; }

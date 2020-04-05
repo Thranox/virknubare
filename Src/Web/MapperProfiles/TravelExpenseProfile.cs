@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain;
+using Domain.Entities;
 using Web.ApiModels;
 
 namespace Web.Controllers
@@ -8,14 +8,7 @@ namespace Web.Controllers
     {
         public TravelExpenseProfile()
         {
-            CreateMap<TravelExpenseEntity, TravelExpenseDto>()
-                //.ForMember(dest =>
-                //        dest.FName,
-                //    opt => opt.MapFrom(src => src.FirstName))
-                //.ForMember(dest =>
-                //        dest.LName,
-                //    opt => opt.MapFrom(src => src.LastName))
-                ;
+            CreateMap<TravelExpenseEntity, TravelExpenseDto>();
         }
     }
 }

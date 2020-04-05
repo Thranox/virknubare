@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Domain;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
