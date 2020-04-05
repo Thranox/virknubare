@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Domain;
 using Domain.Interfaces;
+using Domain.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using Web.ApiModels;
 
@@ -34,5 +36,31 @@ namespace Web.Controllers
                 .List<TravelExpenseEntity>()
                 .Select(x=>_mapper.Map<TravelExpenseDto>(x));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(TravelExpenseUpdateDto travelExpenseUpdateDto)
+        {
+            var travelExpenseEntity = _repository
+                .List(new TravelExpenseByPublicId(travelExpenseUpdateDto.PublicId))
+                .SingleOrDefault();
+            if (travelExpenseEntity == null)
+                throw new ArgumentException("Travel expense not found by PublicId: " + travelExpenseUpdateDto.PublicId);
+            travelExpenseEntity.Update(travelExpenseUpdateDto.Description);
+            _repository.Update(travelExpenseEntity);
+            
+            return await Task.FromResult(Ok(new TravelExpenseUpdateResponse { Result = true }));
+        }
+
+        public async Task<ActionResult< TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
+        {
+            var travelExpenseEntity = new TravelExpenseEntity( travelExpenseCreateDto.Description);
+            _repository.Add(travelExpenseEntity);
+
+            return await Task.FromResult(Ok(new TravelExpenseCreateResponse
+            {
+                PublicId=travelExpenseEntity.PublicId
+            }));
+        }
     }
+
 }
