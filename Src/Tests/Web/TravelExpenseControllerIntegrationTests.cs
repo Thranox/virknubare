@@ -66,7 +66,7 @@ namespace Tests.Web
                     var existing = efRepository.List<TravelExpenseEntity>().First();
                     existingPublicId = existing.PublicId;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        { PublicId = existingPublicId, Description = newDescription };
+                        {PublicId = existingPublicId, Description = newDescription};
                     var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
                     // Act
@@ -90,14 +90,14 @@ namespace Tests.Web
                 }
             }
         }
- 
+
         [Test]
-        public async Task Post_ValidNewTravelExpense_ReturnsPublicId()
+        public async Task Approve_ExistingTravelExpense_ReturnsOk()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult< TravelExpenseCreateResponse> actual;
+                ActionResult<TravelExpenseApproveResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
                 Guid existingPublicId;
                 using (var context = new PolDbContext(testContext.DbContextOptions))
@@ -105,7 +105,79 @@ namespace Tests.Web
                     var efRepository = new EfRepository(context);
                     var existing = efRepository.List<TravelExpenseEntity>().First();
                     existingPublicId = existing.PublicId;
-                    var travelExpenseCreateDto = new TravelExpenseCreateDto{ Description = newDescription };
+                    var travelExpenseApproveDto = new TravelExpenseApproveDto { PublicId = existingPublicId };
+                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+
+                    // Act
+                    actual = await sut.Approve(travelExpenseApproveDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var okObjectResult = actual.Result as OkObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as TravelExpenseApproveResponse;
+                Assert.That(value, Is.Not.Null);
+                using (var context = new PolDbContext(testContext.DbContextOptions))
+                {
+                    var efRepository = new EfRepository(context);
+                    var travelExpenseEntity = efRepository
+                        .List(new TravelExpenseByPublicId(existingPublicId))
+                        .SingleOrDefault();
+                    Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(true));
+                }
+            }
+        }
+        [Test]
+        public async Task ReportDone_ExistingTravelExpense_ReturnsOk()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseReportDoneResponse> actual;
+                var newDescription = testContext.Fixture.Create<string>();
+                Guid existingPublicId;
+                using (var context = new PolDbContext(testContext.DbContextOptions))
+                {
+                    var efRepository = new EfRepository(context);
+                    var existing = efRepository.List<TravelExpenseEntity>().First();
+                    existingPublicId = existing.PublicId;
+                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto { PublicId = existingPublicId };
+                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+
+                    // Act
+                    actual = await sut.ReportDone(travelExpenseReportDoneDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var okObjectResult = actual.Result as OkObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as TravelExpenseApproveResponse;
+                Assert.That(value, Is.Not.Null);
+                using (var context = new PolDbContext(testContext.DbContextOptions))
+                {
+                    var efRepository = new EfRepository(context);
+                    var travelExpenseEntity = efRepository
+                        .List(new TravelExpenseByPublicId(existingPublicId))
+                        .SingleOrDefault();
+                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(true));
+                }
+            }
+        }
+
+        [Test]
+        public async Task Post_ValidNewTravelExpense_ReturnsPublicId()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseCreateResponse> actual;
+                var newDescription = testContext.Fixture.Create<string>();
+                using (var context = new PolDbContext(testContext.DbContextOptions))
+                {
+                    var efRepository = new EfRepository(context);
+                    var travelExpenseCreateDto = new TravelExpenseCreateDto {Description = newDescription};
                     var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
 
                     // Act
@@ -125,9 +197,11 @@ namespace Tests.Web
                     var travelExpenseEntity = efRepository.List(new TravelExpenseByPublicId(value.PublicId))
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
-                    Assert.That(travelExpenseEntity.Description, Is.EqualTo(newDescription));
+                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
+                    Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(false));
                 }
             }
         }
     }
+
 }

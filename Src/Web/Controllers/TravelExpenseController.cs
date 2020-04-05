@@ -61,6 +61,33 @@ namespace Web.Controllers
                 PublicId=travelExpenseEntity.PublicId
             }));
         }
+
+        public async Task<ActionResult<TravelExpenseApproveResponse>> Approve(TravelExpenseApproveDto travelExpenseApproveDto)
+        {
+            var travelExpenseEntity = _repository
+                .List(new TravelExpenseByPublicId(travelExpenseApproveDto.PublicId))
+                .SingleOrDefault();
+            if (travelExpenseEntity == null)
+                throw new ArgumentException("Travel expense not found by PublicId: " + travelExpenseApproveDto.PublicId);
+            travelExpenseEntity.Approve();
+            _repository.Update(travelExpenseEntity);
+
+            return await Task.FromResult(Ok(new TravelExpenseApproveResponse { Result = true }));
+        }
+
+        public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(TravelExpenseReportDoneDto travelExpenseReportDoneDto)
+        {
+            var travelExpenseEntity = _repository
+                .List(new TravelExpenseByPublicId(travelExpenseReportDoneDto.PublicId))
+                .SingleOrDefault();
+            if (travelExpenseEntity == null)
+                throw new ArgumentException("Travel expense not found by PublicId: " + travelExpenseReportDoneDto.PublicId);
+            travelExpenseEntity.ReportDone();
+            _repository.Update(travelExpenseEntity);
+
+            return await Task.FromResult(Ok(new TravelExpenseApproveResponse { Result = true }));
+        }
+
     }
 
 }

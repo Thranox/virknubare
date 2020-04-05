@@ -22,5 +22,19 @@ namespace Domain
         {
             Description = description;
         }
+
+        public bool IsApproved { get; private set; }
+
+        public bool IsReportedDone { get; private set; }
+
+        public void Approve()
+        {
+            IsApproved = true;
+        }
+
+        public void ReportDone()
+        {
+            IsReportedDone = true;
+        }
     }
 }
