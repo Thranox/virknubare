@@ -10,7 +10,12 @@ namespace CleanArchitecture.Infrastructure.DomainEvents
     // http://lostechies.com/jimmybogard/2014/05/13/a-better-domain-events-pattern/
     public class DomainEventDispatcher : IDomainEventDispatcher
     {
-        private IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
+
+        public DomainEventDispatcher(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
 
         public void Dispatch(BaseDomainEvent domainEvent)
         {
@@ -28,11 +33,6 @@ namespace CleanArchitecture.Infrastructure.DomainEvents
                     handler.Handle(domainEvent);
                 }
             }
-        }
-
-        public void SetServiceProvider(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
         }
 
         private abstract class DomainEventHandler

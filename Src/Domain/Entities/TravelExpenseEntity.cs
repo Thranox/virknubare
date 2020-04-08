@@ -21,21 +21,29 @@ namespace Domain.Entities
         public void Update(string description)
         {
             Description = description;
+
+            Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
 
         public void Certify()
         {
             IsCertified = true;
+
+            Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
 
         public void ReportDone()
         {
             IsReportedDone = true;
+
+            Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
 
         public void AssignPayment()
         {
             IsAssignedPayment = true;
+
+            Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
     }
 }
