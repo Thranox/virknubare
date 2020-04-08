@@ -194,5 +194,40 @@ namespace Web.Controllers
                 return await Task.FromResult(BadRequest());
             }
         }
+
+        [HttpPost]
+        [Route("AssignPayment")]
+        public async Task<ActionResult<TravelExpenseAssignPaymentResponse>> AssignPayment(TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto)
+        {
+            try
+            {
+                var travelExpenseEntity = _unitOfWork
+                    .Repository
+                    .List(new TravelExpenseById(travelExpenseAssignPaymentDto.Id))
+                    .SingleOrDefault();
+
+                var validationResult = _travelExpenseValidator
+                    .GetValidationResult(new AssignPaymentValidationItemAdapter(travelExpenseAssignPaymentDto, travelExpenseEntity));
+                if (!validationResult.IsValid)
+                {
+                    _logger.Error(validationResult.ToString());
+                    return BadRequest(validationResult.ToString());
+                }
+
+                travelExpenseEntity.AssignPayment();
+                _unitOfWork
+                    .Repository
+                    .Update(travelExpenseEntity);
+
+                _unitOfWork.Commit();
+
+                return await Task.FromResult(Ok(new TravelExpenseAssignPaymentResponse()));
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "During " + MethodBase.GetCurrentMethod().Name);
+                return await Task.FromResult(BadRequest());
+            }
+        }
     }
 }

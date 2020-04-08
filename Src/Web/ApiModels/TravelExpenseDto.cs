@@ -9,5 +9,6 @@ namespace Web.ApiModels
         public Guid Id { get; set; }
         public bool IsCertified { get; set; }
         public bool IsReportedDone { get; set; }
+        public bool IsAssignedPayment { get; set; }
     }
 }

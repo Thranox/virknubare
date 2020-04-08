@@ -5,6 +5,7 @@
         Update,
         Create,
         Certify,
-        ReportDone
+        ReportDone,
+        AssignPayment
     }
 }

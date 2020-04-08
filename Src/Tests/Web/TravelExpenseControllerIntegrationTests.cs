@@ -71,7 +71,7 @@ namespace Tests.Web
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        { Id = existingId, Description = newDescription };
+                        {Id = existingId, Description = newDescription};
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
@@ -94,6 +94,7 @@ namespace Tests.Web
                 }
             }
         }
+
         [Test]
         public async Task Put_NonExistingTravelExpenseWithChanges_ReturnsBadRequest()
         {
@@ -107,7 +108,7 @@ namespace Tests.Web
                 {
                     existingId = Guid.NewGuid();
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        { Id = existingId, Description = newDescription };
+                        {Id = existingId, Description = newDescription};
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
@@ -124,7 +125,7 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task Approve_ExistingTravelExpense_ReturnsOk()
+        public async Task Certify_ExistingTravelExpense_ReturnsOk()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
@@ -135,7 +136,7 @@ namespace Tests.Web
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
-                    var travelExpenseApproveDto = new TravelExpenseCertifyDto { Id = existingId };
+                    var travelExpenseApproveDto = new TravelExpenseCertifyDto {Id = existingId};
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
@@ -169,7 +170,7 @@ namespace Tests.Web
                 using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
                     var existingId = Guid.NewGuid();
-                    var travelExpenseCertifyDto = new TravelExpenseCertifyDto { Id = existingId };
+                    var travelExpenseCertifyDto = new TravelExpenseCertifyDto {Id = existingId};
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
@@ -246,6 +247,67 @@ namespace Tests.Web
                 Assert.That(value, Is.Not.Null);
             }
         }
+        [Test]
+        public async Task AssignPayment_ExistingTravelExpense_ReturnsOk()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseAssignPaymentResponse> actual;
+                Guid existingId;
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
+                    existingId = existing.Id;
+                    var travelExpenseAssignPaymentDto = new TravelExpenseAssignPaymentDto { Id = existingId };
+                    var sut = GetSut(testContext, unitOfWork);
+
+                    // Act
+                    actual = await sut.AssignPayment(travelExpenseAssignPaymentDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var okObjectResult = actual.Result as OkObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as TravelExpenseAssignPaymentResponse;
+                Assert.That(value, Is.Not.Null);
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var travelExpenseEntity = unitOfWork
+                        .Repository
+                        .List(new TravelExpenseById(existingId))
+                        .Single();
+                    Assert.That(travelExpenseEntity.IsAssignedPayment, Is.EqualTo(true));
+                }
+            }
+        }
+
+        [Test]
+        public async Task AssignPayment_NonExistingTravelExpense_ReturnsBadRequest()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseAssignPaymentResponse> actual;
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var existingId = Guid.NewGuid();
+                    var travelExpenseReportDoneDto = new TravelExpenseAssignPaymentDto { Id = existingId };
+                    var sut = GetSut(testContext, unitOfWork);
+
+                    // Act
+                    actual = await sut.AssignPayment(travelExpenseReportDoneDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
+                var okObjectResult = actual.Result as BadRequestObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as string;
+                Assert.That(value, Is.Not.Null);
+            }
+        }
 
         [Test]
         public async Task Post_ValidNewTravelExpense_ReturnsId()
@@ -287,7 +349,8 @@ namespace Tests.Web
 
         private static TravelExpenseController GetSut(IntegrationTestContext testContext, IUnitOfWork unitOfWork)
         {
-            return new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork, testContext.TravelExpenseValidator);
+            return new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork,
+                testContext.TravelExpenseValidator);
         }
     }
 }

@@ -11,17 +11,16 @@ namespace Web.Validation
         {
             _travelExpenseValidatorRules = travelExpenseValidatorRules;
         }
+
         public TravelExpenseValidationResult GetValidationResult(IValidationInput validationInput)
         {
             var list = new List<TravelExpenseValidationItem>();
             foreach (var travelExpenseValidatorRule in _travelExpenseValidatorRules)
-            {
                 if (travelExpenseValidatorRule.RuleApplies(validationInput))
                 {
                     var travelExpenseValidationItems = travelExpenseValidatorRule.GetValidations(validationInput);
                     list.AddRange(travelExpenseValidationItems);
                 }
-            }
 
             return new TravelExpenseValidationResult(list.ToArray());
         }
