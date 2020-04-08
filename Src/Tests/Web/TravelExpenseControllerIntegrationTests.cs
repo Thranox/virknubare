@@ -23,9 +23,10 @@ namespace Tests.Web
             using (var testContext = new IntegrationTestContext())
             {
                 using (var context = new PolDbContext(testContext.DbContextOptions))
+                    using(var unitOfWork=new UnitOfWork(new EfRepository(context)))
                 {
                     var efRepository = new EfRepository(context);
-                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork);
 
                     // Act
                     var actual = await sut.Get();
@@ -69,14 +70,14 @@ namespace Tests.Web
                 ActionResult<TravelExpenseUpdateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
-                using (var context = new PolDbContext(testContext.DbContextOptions))
-                {
-                    var efRepository = new EfRepository(context);
-                    var existing = efRepository.List<TravelExpenseEntity>().First();
+                    using (var context = new PolDbContext(testContext.DbContextOptions))
+                    using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
+                { 
+                    var existing =unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
                         {Id = existingId, Description = newDescription};
-                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
 
                     // Act
                     actual = await sut.Put(travelExpenseUpdateDto);
@@ -109,12 +110,12 @@ namespace Tests.Web
                 var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
                 using (var context = new PolDbContext(testContext.DbContextOptions))
+                using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
                 {
-                    var efRepository = new EfRepository(context);
-                    var existing = efRepository.List<TravelExpenseEntity>().First();
+                    var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseApproveDto = new TravelExpenseApproveDto {Id = existingId};
-                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
 
                     // Act
                     actual = await sut.Approve(travelExpenseApproveDto);
@@ -147,12 +148,12 @@ namespace Tests.Web
                 var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
                 using (var context = new PolDbContext(testContext.DbContextOptions))
+                using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
                 {
-                    var efRepository = new EfRepository(context);
-                    var existing = efRepository.List<TravelExpenseEntity>().First();
+                    var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto {Id = existingId};
-                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
 
                     // Act
                     actual = await sut.ReportDone(travelExpenseReportDoneDto);
@@ -184,10 +185,10 @@ namespace Tests.Web
                 ActionResult<TravelExpenseCreateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
                 using (var context = new PolDbContext(testContext.DbContextOptions))
+                using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
                 {
-                    var efRepository = new EfRepository(context);
                     var travelExpenseCreateDto = new TravelExpenseCreateDto {Description = newDescription};
-                    var sut = new TravelExpenseController(testContext.Logger, efRepository, testContext.Mapper);
+                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
 
                     // Act
                     actual = await sut.Post(travelExpenseCreateDto);

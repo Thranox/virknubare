@@ -48,7 +48,6 @@ namespace Infrastructure.Data
             baseEntity.Id = Guid.NewGuid();
 
             _dbContext.Set<T>().Add(entity);
-            _dbContext.SaveChanges();
 
             return entity;
         }
@@ -56,13 +55,16 @@ namespace Infrastructure.Data
         public void Delete<T>(T entity) where T : BaseEntity
         {
             _dbContext.Set<T>().Remove(entity);
+        }
+
+        public void Commit()
+        {
             _dbContext.SaveChanges();
         }
 
         public void Update<T>(T entity) where T : BaseEntity
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
-            _dbContext.SaveChanges();
         }
     }
 }
