@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using Domain;
 using Domain.Entities;
 using Domain.Specifications;
 using Infrastructure.Data;
@@ -22,11 +20,9 @@ namespace Tests.Web
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                using (var context = new PolDbContext(testContext.DbContextOptions))
-                    using(var unitOfWork=new UnitOfWork(new EfRepository(context)))
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
-                    var efRepository = new EfRepository(context);
-                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork);
+                    var sut = GetSut(testContext, unitOfWork);
 
                     // Act
                     var actual = await sut.Get();
@@ -37,7 +33,7 @@ namespace Tests.Web
                     Assert.That(okObjectResult, Is.Not.Null);
                     var value = okObjectResult.Value as TravelExpenseGetResponse;
                     Assert.That(value, Is.Not.Null);
-                    var v=(value.Result as IEnumerable<TravelExpenseDto>).ToArray();
+                    var v = value.Result.ToArray();
                     Assert.That(v.Length, Is.EqualTo(3));
                     Assert.That(v,
                         Has.One.EqualTo(new TravelExpenseDto
@@ -70,14 +66,13 @@ namespace Tests.Web
                 ActionResult<TravelExpenseUpdateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
-                    using (var context = new PolDbContext(testContext.DbContextOptions))
-                    using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
-                { 
-                    var existing =unitOfWork.Repository.List<TravelExpenseEntity>().First();
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Id = existingId, Description = newDescription};
-                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
+                        { Id = existingId, Description = newDescription };
+                    var sut = GetSut(testContext, unitOfWork);
 
                     // Act
                     actual = await sut.Put(travelExpenseUpdateDto);
@@ -89,14 +84,42 @@ namespace Tests.Web
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as TravelExpenseUpdateResponse;
                 Assert.That(value, Is.Not.Null);
-                using (var context = new PolDbContext(testContext.DbContextOptions))
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
-                    var efRepository = new EfRepository(context);
-                    var travelExpenseEntity = efRepository
+                    var travelExpenseEntity = unitOfWork
+                        .Repository
                         .List(new TravelExpenseById(existingId))
                         .Single();
                     Assert.That(travelExpenseEntity.Description, Is.EqualTo(newDescription));
                 }
+            }
+        }
+        [Test]
+        public async Task Put_NonExistingTravelExpenseWithChanges_ReturnsBadRequest()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseUpdateResponse> actual;
+                var newDescription = testContext.Fixture.Create<string>();
+                Guid existingId;
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    existingId = Guid.NewGuid();
+                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto
+                        { Id = existingId, Description = newDescription };
+                    var sut = GetSut(testContext, unitOfWork);
+
+                    // Act
+                    actual = await sut.Put(travelExpenseUpdateDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
+                var badRequestObjectResult = actual.Result as BadRequestObjectResult;
+                Assert.That(badRequestObjectResult, Is.Not.Null);
+                var value = badRequestObjectResult.Value as string;
+                Assert.That(value, Is.Not.Null);
             }
         }
 
@@ -107,15 +130,13 @@ namespace Tests.Web
             using (var testContext = new IntegrationTestContext())
             {
                 ActionResult<TravelExpenseApproveResponse> actual;
-                var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
-                using (var context = new PolDbContext(testContext.DbContextOptions))
-                using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
-                    var travelExpenseApproveDto = new TravelExpenseApproveDto {Id = existingId};
-                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
+                    var travelExpenseApproveDto = new TravelExpenseApproveDto { Id = existingId };
+                    var sut = GetSut(testContext, unitOfWork);
 
                     // Act
                     actual = await sut.Approve(travelExpenseApproveDto);
@@ -127,14 +148,39 @@ namespace Tests.Web
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as TravelExpenseApproveResponse;
                 Assert.That(value, Is.Not.Null);
-                using (var context = new PolDbContext(testContext.DbContextOptions))
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
-                    var efRepository = new EfRepository(context);
-                    var travelExpenseEntity = efRepository
+                    var travelExpenseEntity = unitOfWork
+                        .Repository
                         .List(new TravelExpenseById(existingId))
                         .Single();
                     Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(true));
                 }
+            }
+        }
+        [Test]
+        public async Task Approve_NonExistingTravelExpense_ReturnsBadRequest()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseApproveResponse> actual;
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var existingId = Guid.NewGuid();
+                    var travelExpenseApproveDto = new TravelExpenseApproveDto { Id = existingId };
+                    var sut = GetSut(testContext, unitOfWork);
+
+                    // Act
+                    actual = await sut.Approve(travelExpenseApproveDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
+                var okObjectResult = actual.Result as BadRequestObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as string;
+                Assert.That(value, Is.Not.Null);
             }
         }
 
@@ -145,15 +191,13 @@ namespace Tests.Web
             using (var testContext = new IntegrationTestContext())
             {
                 ActionResult<TravelExpenseReportDoneResponse> actual;
-                var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
-                using (var context = new PolDbContext(testContext.DbContextOptions))
-                using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
-                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto {Id = existingId};
-                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
+                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto { Id = existingId };
+                    var sut = GetSut(testContext, unitOfWork);
 
                     // Act
                     actual = await sut.ReportDone(travelExpenseReportDoneDto);
@@ -165,14 +209,40 @@ namespace Tests.Web
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as TravelExpenseReportDoneResponse;
                 Assert.That(value, Is.Not.Null);
-                using (var context = new PolDbContext(testContext.DbContextOptions))
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
-                    var efRepository = new EfRepository(context);
-                    var travelExpenseEntity = efRepository
+                    var travelExpenseEntity = unitOfWork
+                        .Repository
                         .List(new TravelExpenseById(existingId))
                         .Single();
                     Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(true));
                 }
+            }
+        }
+
+        [Test]
+        public async Task ReportDone_NonExistingTravelExpense_ReturnsBadRequest()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseReportDoneResponse> actual;
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var existingId = Guid.NewGuid();
+                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto { Id = existingId };
+                    var sut = GetSut(testContext, unitOfWork);
+
+                    // Act
+                    actual = await sut.ReportDone(travelExpenseReportDoneDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
+                var okObjectResult = actual.Result as BadRequestObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as string;
+                Assert.That(value, Is.Not.Null);
             }
         }
 
@@ -184,11 +254,11 @@ namespace Tests.Web
             {
                 ActionResult<TravelExpenseCreateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
-                using (var context = new PolDbContext(testContext.DbContextOptions))
-                using (var unitOfWork = new UnitOfWork(new EfRepository(context)))
+
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
                     var travelExpenseCreateDto = new TravelExpenseCreateDto {Description = newDescription};
-                    var sut = new TravelExpenseController(testContext.Logger, testContext.Mapper,unitOfWork);
+                    var sut = GetSut(testContext, unitOfWork);
 
                     // Act
                     actual = await sut.Post(travelExpenseCreateDto);
@@ -201,16 +271,22 @@ namespace Tests.Web
                 var value = okObjectResult.Value as TravelExpenseCreateResponse;
                 Assert.That(value, Is.Not.Null);
                 Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
-                using (var context = new PolDbContext(testContext.DbContextOptions))
+
+                using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
-                    var efRepository = new EfRepository(context);
-                    var travelExpenseEntity = efRepository.List(new TravelExpenseById(value.Id))
+                    var travelExpenseEntity = unitOfWork
+                        .Repository.List(new TravelExpenseById(value.Id))
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
                     Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
                     Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(false));
                 }
             }
+        }
+
+        private static TravelExpenseController GetSut(IntegrationTestContext testContext, IUnitOfWork unitOfWork)
+        {
+            return new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork, testContext.TravelExpenseValidator);
         }
     }
 }
