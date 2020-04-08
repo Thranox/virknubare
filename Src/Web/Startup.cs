@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
+using Domain.SharedKernel;
 using Infrastructure.Data;
+using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -68,6 +72,8 @@ namespace Web
                 {
                     services.AddScoped(typeof(ITravelExpenseValidatorRule), t);
                 });
+
+            services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,10 +97,6 @@ namespace Web
                 // Migrate database as needed.
                 var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
                 context.Database.Migrate();
-
-                // Give DomainEventDispatcher an instance of iserviceprovider
-                var domainEventDispatcher = serviceScope.ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
-                domainEventDispatcher.SetServiceProvider(app.ApplicationServices);
             }
 
             app.UseHttpsRedirection();
