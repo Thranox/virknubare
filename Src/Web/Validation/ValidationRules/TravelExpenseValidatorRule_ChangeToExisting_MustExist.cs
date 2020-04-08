@@ -9,13 +9,15 @@ namespace Web.Validation.ValidationRules
             return
                 validationInput.Context == ValidationInputContextEnum.Update ||
                 validationInput.Context == ValidationInputContextEnum.ReportDone ||
-                validationInput.Context == ValidationInputContextEnum.Certify;
+                validationInput.Context == ValidationInputContextEnum.Certify ||
+                validationInput.Context == ValidationInputContextEnum.AssignPayment;
         }
 
         public IEnumerable<TravelExpenseValidationItem> GetValidations(IValidationInput validationInput)
         {
             if (validationInput.TravelExpenseEntity == null)
-                yield return new TravelExpenseValidationItem(TravelExpenseValidationLevelEnum.Error, "Den angivne rejseafregning findes ikke");
+                yield return new TravelExpenseValidationItem(TravelExpenseValidationLevelEnum.Error,
+                    "Den angivne rejseafregning findes ikke");
         }
     }
 }

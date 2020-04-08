@@ -14,10 +14,9 @@ namespace Domain.Entities
         }
 
         public string Description { get; private set; }
-
         public bool IsCertified { get; private set; }
-
         public bool IsReportedDone { get; private set; }
+        public bool IsAssignedPayment { get; private set; }
 
         public void Update(string description)
         {
@@ -32,6 +31,11 @@ namespace Domain.Entities
         public void ReportDone()
         {
             IsReportedDone = true;
+        }
+
+        public void AssignPayment()
+        {
+            IsAssignedPayment = true;
         }
     }
 }
