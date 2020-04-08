@@ -9,6 +9,8 @@ using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Web.ApiModels;
+using Web.Validation;
+using Web.Validation.Adapters;
 
 namespace Web.Controllers
 {
@@ -19,12 +21,14 @@ namespace Web.Controllers
         private readonly Serilog.ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITravelExpenseValidator _travelExpenseValidator;
 
-        public TravelExpenseController(Serilog.ILogger logger, IMapper mapper, IUnitOfWork unitOfWork)
+        public TravelExpenseController(Serilog.ILogger logger, IMapper mapper, IUnitOfWork unitOfWork, ITravelExpenseValidator travelExpenseValidator)
         {
             _logger = logger;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _travelExpenseValidator = travelExpenseValidator;
         }
 
         [HttpGet]
@@ -60,10 +64,18 @@ namespace Web.Controllers
                     .Repository
                     .List(new TravelExpenseById(travelExpenseUpdateDto.Id))
                     .SingleOrDefault();
-                if (travelExpenseEntity == null)
-                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseUpdateDto.Id);
+
+                var validationResult = _travelExpenseValidator
+                    .GetValidationResult(new UpdateValidationItemAdapter(travelExpenseUpdateDto,travelExpenseEntity));
+                if (!validationResult.IsValid)
+                {
+                    _logger.Error(validationResult.ToString());
+                    return BadRequest(validationResult.ToString());
+                }
+
                 travelExpenseEntity.Update(travelExpenseUpdateDto.Description);
-               _unitOfWork
+
+                _unitOfWork
                    .Repository
                    .Update(travelExpenseEntity);
 
@@ -84,6 +96,15 @@ namespace Web.Controllers
             try
             {
                 var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description);
+
+                var validationResult = _travelExpenseValidator
+                    .GetValidationResult(new CreateValidationItemAdapter(travelExpenseCreateDto, travelExpenseEntity));
+                if (!validationResult.IsValid)
+                {
+                    _logger.Error(validationResult.ToString());
+                    return BadRequest(validationResult.ToString());
+                }
+
                 _unitOfWork
                     .Repository
                     .Add(travelExpenseEntity);
@@ -103,25 +124,34 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        [Route("Approve")]
-        public async Task<ActionResult<TravelExpenseApproveResponse>> Approve(TravelExpenseApproveDto travelExpenseApproveDto)
+        [Route("Certify")]
+        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(TravelExpenseCertifyDto travelExpenseCertifyDto)
         {
             try
             {
                 var travelExpenseEntity = _unitOfWork
                     .Repository
-                    .List(new TravelExpenseById(travelExpenseApproveDto.Id))
+                    .List(new TravelExpenseById(travelExpenseCertifyDto.Id))
                     .SingleOrDefault();
+
+                var validationResult = _travelExpenseValidator
+                    .GetValidationResult(new CertifyValidationItemAdapter(travelExpenseCertifyDto, travelExpenseEntity));
+                if (!validationResult.IsValid)
+                {
+                    _logger.Error(validationResult.ToString());
+                    return BadRequest(validationResult.ToString());
+                }
+
                 if (travelExpenseEntity == null)
-                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseApproveDto.Id);
-                travelExpenseEntity.Approve();
+                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseCertifyDto.Id);
+                travelExpenseEntity.Certify();
                 _unitOfWork
                     .Repository
                     .Update(travelExpenseEntity);
 
                 _unitOfWork.Commit();
 
-                return await Task.FromResult(Ok(new TravelExpenseApproveResponse { }));
+                return await Task.FromResult(Ok(new TravelExpenseCertifyResponse { }));
             }
             catch (Exception e)
             {
@@ -140,8 +170,15 @@ namespace Web.Controllers
                     .Repository
                     .List(new TravelExpenseById(travelExpenseReportDoneDto.Id))
                     .SingleOrDefault();
-                if (travelExpenseEntity == null)
-                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseReportDoneDto.Id);
+
+                var validationResult = _travelExpenseValidator
+                    .GetValidationResult(new ReportDoneValidationItemAdapter(travelExpenseReportDoneDto, travelExpenseEntity));
+                if (!validationResult.IsValid)
+                {
+                    _logger.Error(validationResult.ToString());
+                    return BadRequest(validationResult.ToString());
+                }
+                
                 travelExpenseEntity.ReportDone();
                 _unitOfWork
                     .Repository

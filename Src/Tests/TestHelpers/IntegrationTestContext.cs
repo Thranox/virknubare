@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Core;
 using Web.Controllers;
+using Web.Validation;
+using Web.Validation.ValidationRules;
 
 namespace Tests
 {
@@ -27,6 +29,8 @@ namespace Tests
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
+            TravelExpenseValidator = new TravelExpenseValidator(new ITravelExpenseValidatorRule[]{new TravelExpenseValidatorRule_ChangeToExisting_MustExist()});
+
             Fixture = new Fixture();
             SeedDb();
         }
@@ -36,6 +40,8 @@ namespace Tests
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
+        public ITravelExpenseValidator TravelExpenseValidator
+        { get; }
 
         public void Dispose()
         {
@@ -52,6 +58,12 @@ namespace Tests
 
                 dbContext.SaveChanges();
             }
+        }
+
+        public IUnitOfWork CreateUnitOfWork()
+        {
+            var context = new PolDbContext(DbContextOptions);
+            return new UnitOfWork(new EfRepository(context));
         }
     }
 }
