@@ -124,18 +124,18 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        [Route("Approve")]
-        public async Task<ActionResult<TravelExpenseApproveResponse>> Approve(TravelExpenseApproveDto travelExpenseApproveDto)
+        [Route("Certify")]
+        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(TravelExpenseCertifyDto travelExpenseCertifyDto)
         {
             try
             {
                 var travelExpenseEntity = _unitOfWork
                     .Repository
-                    .List(new TravelExpenseById(travelExpenseApproveDto.Id))
+                    .List(new TravelExpenseById(travelExpenseCertifyDto.Id))
                     .SingleOrDefault();
 
                 var validationResult = _travelExpenseValidator
-                    .GetValidationResult(new ApproveValidationItemAdapter(travelExpenseApproveDto, travelExpenseEntity));
+                    .GetValidationResult(new CertifyValidationItemAdapter(travelExpenseCertifyDto, travelExpenseEntity));
                 if (!validationResult.IsValid)
                 {
                     _logger.Error(validationResult.ToString());
@@ -143,15 +143,15 @@ namespace Web.Controllers
                 }
 
                 if (travelExpenseEntity == null)
-                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseApproveDto.Id);
-                travelExpenseEntity.Approve();
+                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseCertifyDto.Id);
+                travelExpenseEntity.Certify();
                 _unitOfWork
                     .Repository
                     .Update(travelExpenseEntity);
 
                 _unitOfWork.Commit();
 
-                return await Task.FromResult(Ok(new TravelExpenseApproveResponse { }));
+                return await Task.FromResult(Ok(new TravelExpenseCertifyResponse { }));
             }
             catch (Exception e)
             {

@@ -3,11 +3,11 @@ using Web.ApiModels;
 
 namespace Web.Validation.Adapters
 {
-    public class ApproveValidationItemAdapter : IValidationInput
+    public class CertifyValidationItemAdapter : IValidationInput
     {
-        public ApproveValidationItemAdapter(TravelExpenseApproveDto travelExpenseApproveDto, TravelExpenseEntity travelExpenseEntity)
+        public CertifyValidationItemAdapter(TravelExpenseCertifyDto travelExpenseCertifyDto, TravelExpenseEntity travelExpenseEntity)
         {
-            Context = ValidationInputContextEnum.Approve;
+            Context = ValidationInputContextEnum.Certify;
             TravelExpenseEntity = travelExpenseEntity;
         }
 

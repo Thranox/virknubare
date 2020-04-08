@@ -129,24 +129,24 @@ namespace Tests.Web
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseApproveResponse> actual;
+                ActionResult<TravelExpenseCertifyResponse> actual;
                 Guid existingId;
                 using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
-                    var travelExpenseApproveDto = new TravelExpenseApproveDto { Id = existingId };
+                    var travelExpenseApproveDto = new TravelExpenseCertifyDto { Id = existingId };
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.Approve(travelExpenseApproveDto);
+                    actual = await sut.Certify(travelExpenseApproveDto);
                 }
 
                 // Assert
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
                 var okObjectResult = actual.Result as OkObjectResult;
                 Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as TravelExpenseApproveResponse;
+                var value = okObjectResult.Value as TravelExpenseCertifyResponse;
                 Assert.That(value, Is.Not.Null);
                 using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
@@ -154,25 +154,26 @@ namespace Tests.Web
                         .Repository
                         .List(new TravelExpenseById(existingId))
                         .Single();
-                    Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(true));
+                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(true));
                 }
             }
         }
+
         [Test]
-        public async Task Approve_NonExistingTravelExpense_ReturnsBadRequest()
+        public async Task Certify_NonExistingTravelExpense_ReturnsBadRequest()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseApproveResponse> actual;
+                ActionResult<TravelExpenseCertifyResponse> actual;
                 using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
                     var existingId = Guid.NewGuid();
-                    var travelExpenseApproveDto = new TravelExpenseApproveDto { Id = existingId };
+                    var travelExpenseCertifyDto = new TravelExpenseCertifyDto { Id = existingId };
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.Approve(travelExpenseApproveDto);
+                    actual = await sut.Certify(travelExpenseCertifyDto);
                 }
 
                 // Assert
@@ -279,7 +280,7 @@ namespace Tests.Web
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
                     Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
-                    Assert.That(travelExpenseEntity.IsApproved, Is.EqualTo(false));
+                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
                 }
             }
         }

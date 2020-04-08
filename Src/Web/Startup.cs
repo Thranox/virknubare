@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
@@ -13,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
+using Web.Validation;
+using Web.Validation.ValidationRules;
 
 namespace Web
 {
@@ -55,6 +58,16 @@ namespace Web
                 x.SwaggerDoc(_version, new OpenApiInfo {Title = _politikerafregningApi, Version = _version});
             });
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
+
+            Assembly
+                .GetEntryAssembly()
+                .GetTypesAssignableFrom<ITravelExpenseValidatorRule>()
+                .ForEach(t =>
+                {
+                    services.AddScoped(typeof(ITravelExpenseValidatorRule), t);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

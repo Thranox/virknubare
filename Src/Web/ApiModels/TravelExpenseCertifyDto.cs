@@ -3,7 +3,7 @@ using Domain.SharedKernel;
 
 namespace Web.ApiModels
 {
-    public class TravelExpenseApproveDto:ValueObject
+    public class TravelExpenseCertifyDto:ValueObject
     {
         public Guid Id { get; set; }
     }
