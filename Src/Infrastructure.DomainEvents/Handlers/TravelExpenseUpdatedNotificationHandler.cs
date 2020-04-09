@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Domain.SharedKernel;
 using Serilog;
 
@@ -9,8 +6,8 @@ namespace Infrastructure.DomainEvents.Handlers
 {
     public class TravelExpenseUpdatedNotificationHandler : IHandle<TravelExpenseUpdatedDomainEvent>
     {
-        private readonly IRepository _repository;
         private readonly ILogger _logger;
+        private readonly IRepository _repository;
 
         public TravelExpenseUpdatedNotificationHandler(IRepository repository, ILogger logger)
         {

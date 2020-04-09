@@ -12,6 +12,7 @@ namespace Tests.Web
         [Explicit]
         public async Task SendEmail()
         {
+            // Note: This API Key for sendgrid is for dev & test only. If we use sendgrid for production we need an improvento account.
             var client = new SendGridClient("SG"+
                                             "."+
                                             "yNWsGff6QIK9Ob1hQ0_EGw"+
