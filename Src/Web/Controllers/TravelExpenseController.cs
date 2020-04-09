@@ -4,13 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using Domain;
 using Domain.Entities;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Web.ApiModels;
-using Web.Validation;
-using Web.Validation.Adapters;
 
 namespace Web.Controllers
 {
@@ -18,17 +18,15 @@ namespace Web.Controllers
     [Route("[controller]")]
     public class TravelExpenseController : ControllerBase
     {
-        private readonly Serilog.ILogger _logger;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ITravelExpenseValidator _travelExpenseValidator;
 
-        public TravelExpenseController(Serilog.ILogger logger, IMapper mapper, IUnitOfWork unitOfWork, ITravelExpenseValidator travelExpenseValidator)
+        public TravelExpenseController(ILogger logger, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _travelExpenseValidator = travelExpenseValidator;
         }
 
         [HttpGet]
@@ -41,7 +39,7 @@ namespace Web.Controllers
 
                 return await Task.FromResult(Ok(new TravelExpenseGetResponse
                 {
-                    Result =_unitOfWork
+                    Result = _unitOfWork
                         .Repository
                         .List<TravelExpenseEntity>()
                         .Select(x => _mapper.Map<TravelExpenseDto>(x))
@@ -60,27 +58,31 @@ namespace Web.Controllers
         {
             try
             {
-                var travelExpenseEntity =_unitOfWork
+                var travelExpenseEntity = _unitOfWork
                     .Repository
                     .List(new TravelExpenseById(travelExpenseUpdateDto.Id))
                     .SingleOrDefault();
 
-                var validationResult = _travelExpenseValidator
-                    .GetValidationResult(new UpdateValidationItemAdapter(travelExpenseUpdateDto,travelExpenseEntity));
-                if (!validationResult.IsValid)
+                if (travelExpenseEntity == null)
                 {
-                    _logger.Error(validationResult.ToString());
-                    return BadRequest(validationResult.ToString());
+                    _logger.Error("TravelExpense not found by Id: " + travelExpenseUpdateDto.Id);
+                    return NotFound(new TravelExpenseIdDto {Id = travelExpenseUpdateDto.Id});
                 }
 
                 travelExpenseEntity.Update(travelExpenseUpdateDto.Description);
 
                 _unitOfWork
-                   .Repository
-                   .Update(travelExpenseEntity);
+                    .Repository
+                    .Update(travelExpenseEntity);
 
                 _unitOfWork.Commit();
-                return await Task.FromResult(Ok(new TravelExpenseUpdateResponse { }));
+                return await Task.FromResult(Ok(new TravelExpenseUpdateResponse()));
+            }
+            catch (BusinessRuleViolationException brve)
+            {
+                _logger.Error(brve, "BRVE During " + MethodBase.GetCurrentMethod().Name);
+                return await Task.FromResult(BadRequest(new BusinessRuleViolationResponseDto
+                    {EntityId = brve.EntityId, Message = brve.Message}));
             }
             catch (Exception e)
             {
@@ -91,19 +93,11 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("Post")]
-        public async Task<ActionResult< TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
+        public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             try
             {
                 var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description);
-
-                var validationResult = _travelExpenseValidator
-                    .GetValidationResult(new CreateValidationItemAdapter(travelExpenseCreateDto, travelExpenseEntity));
-                if (!validationResult.IsValid)
-                {
-                    _logger.Error(validationResult.ToString());
-                    return BadRequest(validationResult.ToString());
-                }
 
                 _unitOfWork
                     .Repository
@@ -116,6 +110,12 @@ namespace Web.Controllers
                     Id = travelExpenseEntity.Id
                 }));
             }
+            catch (BusinessRuleViolationException brve)
+            {
+                _logger.Error(brve, "BRVE During " + MethodBase.GetCurrentMethod().Name);
+                return await Task.FromResult(BadRequest(new BusinessRuleViolationResponseDto
+                    {EntityId = brve.EntityId, Message = brve.Message}));
+            }
             catch (Exception e)
             {
                 _logger.Error(e, "During " + MethodBase.GetCurrentMethod().Name);
@@ -125,7 +125,8 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("Certify")]
-        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(TravelExpenseCertifyDto travelExpenseCertifyDto)
+        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(
+            TravelExpenseCertifyDto travelExpenseCertifyDto)
         {
             try
             {
@@ -134,16 +135,12 @@ namespace Web.Controllers
                     .List(new TravelExpenseById(travelExpenseCertifyDto.Id))
                     .SingleOrDefault();
 
-                var validationResult = _travelExpenseValidator
-                    .GetValidationResult(new CertifyValidationItemAdapter(travelExpenseCertifyDto, travelExpenseEntity));
-                if (!validationResult.IsValid)
+                if (travelExpenseEntity == null)
                 {
-                    _logger.Error(validationResult.ToString());
-                    return BadRequest(validationResult.ToString());
+                    _logger.Error("TravelExpense not found by Id: " + travelExpenseCertifyDto.Id);
+                    return NotFound(new TravelExpenseIdDto {Id = travelExpenseCertifyDto.Id});
                 }
 
-                if (travelExpenseEntity == null)
-                    throw new ArgumentException("Travel expense not found by Id: " + travelExpenseCertifyDto.Id);
                 travelExpenseEntity.Certify();
                 _unitOfWork
                     .Repository
@@ -151,7 +148,13 @@ namespace Web.Controllers
 
                 _unitOfWork.Commit();
 
-                return await Task.FromResult(Ok(new TravelExpenseCertifyResponse { }));
+                return await Task.FromResult(Ok(new TravelExpenseCertifyResponse()));
+            }
+            catch (BusinessRuleViolationException brve)
+            {
+                _logger.Error(brve, "BRVE During " + MethodBase.GetCurrentMethod().Name);
+                return await Task.FromResult(BadRequest(new BusinessRuleViolationResponseDto
+                    {EntityId = brve.EntityId, Message = brve.Message}));
             }
             catch (Exception e)
             {
@@ -162,7 +165,8 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("ReportDone")]
-        public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(TravelExpenseReportDoneDto travelExpenseReportDoneDto)
+        public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(
+            TravelExpenseReportDoneDto travelExpenseReportDoneDto)
         {
             try
             {
@@ -171,14 +175,12 @@ namespace Web.Controllers
                     .List(new TravelExpenseById(travelExpenseReportDoneDto.Id))
                     .SingleOrDefault();
 
-                var validationResult = _travelExpenseValidator
-                    .GetValidationResult(new ReportDoneValidationItemAdapter(travelExpenseReportDoneDto, travelExpenseEntity));
-                if (!validationResult.IsValid)
+                if (travelExpenseEntity == null)
                 {
-                    _logger.Error(validationResult.ToString());
-                    return BadRequest(validationResult.ToString());
+                    _logger.Error("TravelExpense not found by Id: " + travelExpenseReportDoneDto.Id);
+                    return NotFound(new TravelExpenseIdDto {Id = travelExpenseReportDoneDto.Id});
                 }
-                
+
                 travelExpenseEntity.ReportDone();
                 _unitOfWork
                     .Repository
@@ -186,7 +188,13 @@ namespace Web.Controllers
 
                 _unitOfWork.Commit();
 
-                return await Task.FromResult(Ok(new TravelExpenseReportDoneResponse { }));
+                return await Task.FromResult(Ok(new TravelExpenseReportDoneResponse()));
+            }
+            catch (BusinessRuleViolationException brve)
+            {
+                _logger.Error(brve, "BRVE During " + MethodBase.GetCurrentMethod().Name);
+                return await Task.FromResult(BadRequest(new BusinessRuleViolationResponseDto
+                    {EntityId = brve.EntityId, Message = brve.Message}));
             }
             catch (Exception e)
             {
@@ -197,7 +205,8 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("AssignPayment")]
-        public async Task<ActionResult<TravelExpenseAssignPaymentResponse>> AssignPayment(TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto)
+        public async Task<ActionResult<TravelExpenseAssignPaymentResponse>> AssignPayment(
+            TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto)
         {
             try
             {
@@ -206,12 +215,10 @@ namespace Web.Controllers
                     .List(new TravelExpenseById(travelExpenseAssignPaymentDto.Id))
                     .SingleOrDefault();
 
-                var validationResult = _travelExpenseValidator
-                    .GetValidationResult(new AssignPaymentValidationItemAdapter(travelExpenseAssignPaymentDto, travelExpenseEntity));
-                if (!validationResult.IsValid)
+                if (travelExpenseEntity == null)
                 {
-                    _logger.Error(validationResult.ToString());
-                    return BadRequest(validationResult.ToString());
+                    _logger.Error("TravelExpense not found by Id: " + travelExpenseAssignPaymentDto.Id);
+                    return NotFound(new TravelExpenseIdDto {Id = travelExpenseAssignPaymentDto.Id});
                 }
 
                 travelExpenseEntity.AssignPayment();
@@ -222,6 +229,12 @@ namespace Web.Controllers
                 _unitOfWork.Commit();
 
                 return await Task.FromResult(Ok(new TravelExpenseAssignPaymentResponse()));
+            }
+            catch (BusinessRuleViolationException brve)
+            {
+                _logger.Error(brve, "BRVE During " + MethodBase.GetCurrentMethod().Name);
+                return await Task.FromResult(BadRequest(new BusinessRuleViolationResponseDto
+                    {EntityId = brve.EntityId, Message = brve.Message}));
             }
             catch (Exception e)
             {

@@ -18,8 +18,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
-using Web.Validation;
-using Web.Validation.ValidationRules;
 
 namespace Web
 {
@@ -63,15 +61,16 @@ namespace Web
             });
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
+            //services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
 
-            Assembly
-                .GetEntryAssembly()
-                .GetTypesAssignableFrom<ITravelExpenseValidatorRule>()
-                .ForEach(t =>
-                {
-                    services.AddScoped(typeof(ITravelExpenseValidatorRule), t);
-                });
+            // We'll be needing this construct for other thing, keeping it in code for now.
+            //Assembly
+            //    .GetEntryAssembly()
+            //    .GetTypesAssignableFrom<ITravelExpenseValidatorRule>()
+            //    .ForEach(t =>
+            //    {
+            //        services.AddScoped(typeof(ITravelExpenseValidatorRule), t);
+            //    });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
