@@ -33,7 +33,8 @@ import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callba
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent }
+      { path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent },
+      { path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent }
     ]),
   ],
   providers: [],

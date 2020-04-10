@@ -48,20 +48,16 @@ namespace IDP
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false,
-                    RedirectUris = new List<string>
-                    {
-                        "https://localhost:44324/signin-redirect-callback"
-                    },
+                    RequireConsent = false,
+                    RedirectUris = new List<string>{"https://localhost:44324/signin-redirect-callback"},
+                    PostLogoutRedirectUris = new List<string>(){"https://localhost:44324/signout-redirect-callback"},
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "roles"
                     },
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
+                    ClientSecrets ={new Secret("secret".Sha256())},
                     AllowedCorsOrigins = new List<string> {"https://localhost:44324"}
                 }
             };
