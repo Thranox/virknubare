@@ -15,10 +15,11 @@ export class AuthService {
     const stsSettings = {
       authority: Constants.stsAuthority,
       client_id: Constants.clientId,
-      redirect_uri: `${Constants.clientRoot}signin-callback`,
-      scope: 'openid profile',
+      
+      redirect_uri: `${Constants.clientRoot}signin-redirect-callback`,
+      scope: 'openid profile roles',
       response_type: 'code',
-      post_logout_redirect_uri: `${Constants.clientRoot}signout-callback`,
+      post_logout_redirect_uri: `${Constants.clientRoot}signout-redirect-callback`,
       // metadata: {
       //   issuer: `${Constants.stsAuthority}`,
       //   authorization_endpoint: `${Constants.stsAuthority}authorize?audience=projects-api`,

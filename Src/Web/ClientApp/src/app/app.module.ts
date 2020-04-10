@@ -11,6 +11,8 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 
 import { CoreModule } from './core/core.module';
+import { SigninRedirectCallbackComponent } from "./home/signin-redirect-callback.component";
+import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callback.component";
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { CoreModule } from './core/core.module';
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
+    SigninRedirectCallbackComponent,
+    SignoutRedirectCallbackComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -28,7 +32,8 @@ import { CoreModule } from './core/core.module';
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent }
+      { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent }
     ]),
   ],
   providers: [],

@@ -11,10 +11,17 @@ namespace IDP
     public static class Config
     {
         public static IEnumerable<IdentityResource> Ids =>
-            new IdentityResource[]
+            new[]
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
+                new IdentityResources.Profile(),
+                new IdentityResource("roles",
+                    "Your roles(s)",
+                    new List<string>
+                    {
+                        "role"
+                    }
+                )
             };
 
         public static IEnumerable<ApiResource> Apis =>
@@ -36,19 +43,20 @@ namespace IDP
             {
                 new Client
                 {
-                    ClientName = "Pol Angular Client",
+                    ClientName = "Politikerafregning (Angular)",
                     ClientId = "polangularclient",
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
+                    RequireClientSecret = false,
                     RedirectUris = new List<string>
                     {
-                        "https://localhost:44324/signin-callback"
+                        "https://localhost:44324/signin-redirect-callback"
                     },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
-                        //,"projects-api"
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "roles"
                     },
                     ClientSecrets =
                     {
