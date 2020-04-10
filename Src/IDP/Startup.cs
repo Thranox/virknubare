@@ -31,6 +31,17 @@ namespace IDP
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
+
+            services.AddCors(setup =>
+            {
+                setup.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.WithOrigins("https://localhost:44324");
+                    policy.AllowCredentials();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app)

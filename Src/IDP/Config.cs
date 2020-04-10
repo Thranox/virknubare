@@ -19,7 +19,17 @@ namespace IDP
 
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
-                { };
+            {
+                //new ApiResource
+                //{
+                //    Name = "projects-api",
+                //    Enabled = true,
+                //    Scopes = new List<Scope>
+                //    {
+                //        new Scope("projects-api")
+                //    }
+                //}
+            };
 
         public static IEnumerable<Client> Clients =>
             new[]
@@ -32,17 +42,19 @@ namespace IDP
                     RequirePkce = true,
                     RedirectUris = new List<string>
                     {
-                        "https://localhost:44305/signin-oidc"
+                        "https://localhost:44324/signin-callback"
                     },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile
+                        //,"projects-api"
                     },
                     ClientSecrets =
                     {
                         new Secret("secret".Sha256())
-                    }
+                    },
+                    AllowedCorsOrigins = new List<string> {"https://localhost:44324"}
                 }
             };
     }
