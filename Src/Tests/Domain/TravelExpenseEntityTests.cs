@@ -27,7 +27,7 @@ namespace Tests.Domain
         }
 
         [Test]
-        public void Update_InStateReportedDone_IsNotAllowed()
+        public void Update_InReportedDoneState_IsNotAllowed()
         {
             // Arrange
             using (var unitTestContext = new UnitTestContext())
@@ -36,6 +36,41 @@ namespace Tests.Domain
                 var newDescription = unitTestContext.Fixture.Create<string>();
                 var sut = new TravelExpenseEntity(description);
                 sut.ReportDone();
+
+                // Act & Assert
+                Assert.Throws<BusinessRuleViolationException>(() => sut.Update(newDescription));
+            }
+        }
+
+        [Test]
+        public void Update_InCertifiedState_IsNotAllowed()
+        {
+            // Arrange
+            using (var unitTestContext = new UnitTestContext())
+            {
+                var description = unitTestContext.Fixture.Create<string>();
+                var newDescription = unitTestContext.Fixture.Create<string>();
+                var sut = new TravelExpenseEntity(description);
+                sut.ReportDone();
+                sut.Certify();
+
+                // Act & Assert
+                Assert.Throws<BusinessRuleViolationException>(() => sut.Update(newDescription));
+            }
+        }
+
+        [Test]
+        public void Update_InAssignedPaymentState_IsNotAllowed()
+        {
+            // Arrange
+            using (var unitTestContext = new UnitTestContext())
+            {
+                var description = unitTestContext.Fixture.Create<string>();
+                var newDescription = unitTestContext.Fixture.Create<string>();
+                var sut = new TravelExpenseEntity(description);
+                sut.ReportDone();
+                sut.Certify();
+                sut.AssignPayment();
 
                 // Act & Assert
                 Assert.Throws<BusinessRuleViolationException>(() => sut.Update(newDescription));
@@ -56,6 +91,39 @@ namespace Tests.Domain
 
                 // Assert
                 Assert.That(sut.IsReportedDone, Is.EqualTo(true));
+            }
+        }
+
+        [Test]
+        public void ReportDone_InCertifiedState_IsNotAllowed()
+        {
+            // Arrange
+            using (var unitTestContext = new UnitTestContext())
+            {
+                var description = unitTestContext.Fixture.Create<string>();
+                var sut = new TravelExpenseEntity(description);
+                sut.ReportDone();
+                sut.Certify();
+
+                // Act & Assert
+                Assert.Throws<BusinessRuleViolationException>(() => sut.ReportDone());
+            }
+        }
+
+        [Test]
+        public void ReportDone_InAssignedPaymentState_IsNotAllowed()
+        {
+            // Arrange
+            using (var unitTestContext = new UnitTestContext())
+            {
+                var description = unitTestContext.Fixture.Create<string>();
+                var sut = new TravelExpenseEntity(description);
+                sut.ReportDone();
+                sut.Certify();
+                sut.AssignPayment();
+
+                // Act & Assert
+                Assert.Throws<BusinessRuleViolationException>(() => sut.ReportDone());
             }
         }
 
@@ -105,7 +173,24 @@ namespace Tests.Domain
         }
 
         [Test]
-        public void Certify_InStateReportedDone_IsAllowed()
+        public void Certify_InAssignedPaymentState_IsNotAllowed()
+        {
+            // Arrange
+            using (var unitTestContext = new UnitTestContext())
+            {
+                var description = unitTestContext.Fixture.Create<string>();
+                var sut = new TravelExpenseEntity(description);
+                sut.ReportDone();
+                sut.Certify();
+                sut.AssignPayment();
+
+                // Act & Assert
+                Assert.Throws<BusinessRuleViolationException>(() => sut.Certify());
+            }
+        }
+
+        [Test]
+        public void Certify_InReportedDoneState_IsAllowed()
         {
             // Arrange
             using (var unitTestContext = new UnitTestContext())
@@ -121,6 +206,7 @@ namespace Tests.Domain
                 Assert.That(sut.IsCertified, Is.EqualTo(true));
             }
         }
+
         [Test]
         public void AssignPayment_InDefaultState_IsNotAllowed()
         {
@@ -129,6 +215,21 @@ namespace Tests.Domain
             {
                 var description = unitTestContext.Fixture.Create<string>();
                 var sut = new TravelExpenseEntity(description);
+
+                // Act & Assert
+                Assert.Throws<BusinessRuleViolationException>(() => sut.AssignPayment());
+            }
+        }
+
+        [Test]
+        public void AssignPayment_InReportedDoneState_IsNotAllowed()
+        {
+            // Arrange
+            using (var unitTestContext = new UnitTestContext())
+            {
+                var description = unitTestContext.Fixture.Create<string>();
+                var sut = new TravelExpenseEntity(description);
+                sut.ReportDone();
 
                 // Act & Assert
                 Assert.Throws<BusinessRuleViolationException>(() => sut.AssignPayment());
@@ -153,7 +254,7 @@ namespace Tests.Domain
         }
 
         [Test]
-        public void AssignPayment_InStateCertified_IsAllowed()
+        public void AssignPayment_InCertifiedState_IsAllowed()
         {
             // Arrange
             using (var unitTestContext = new UnitTestContext())
