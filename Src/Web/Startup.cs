@@ -1,15 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents.Handlers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
+using Microsoft.Extensions.Identity.Core;
 
 namespace Web
 {
@@ -73,6 +73,18 @@ namespace Web
             //    });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
+
+            services.AddMvc();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    // base-address of your identityserver
+                    options.Authority = "https://localhost:44305/";
+                    options.RequireHttpsMetadata = false;
+                    // name of the API resource
+                    options.Audience = "test.api";
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,6 +110,7 @@ namespace Web
                 context.Database.Migrate();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             app.UseSwagger();
@@ -108,6 +121,7 @@ namespace Web
             if (!env.IsDevelopment()) app.UseSpaStaticFiles();
 
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -125,6 +139,7 @@ namespace Web
 
                 if (env.IsDevelopment()) spa.UseAngularCliServer("start");
             });
+
 
             logger.Information("TravelExpense Web started. Version=" + configuration.GetValue<string>("Version"));
         }

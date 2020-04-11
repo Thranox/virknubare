@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ILogger = Serilog.ILogger;
+using Microsoft.Extensions.Logging;
 
-namespace Web.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -16,16 +17,15 @@ namespace Web.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger _logger;
+        private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(Serilog.ILogger logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
         }
 
-        //[Authorize(Roles = "tecreator")]
-        //[Authorize]
         [HttpGet]
+        [Authorize()]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();

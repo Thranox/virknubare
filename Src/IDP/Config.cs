@@ -25,20 +25,12 @@ namespace IDP
             };
 
         public static IEnumerable<ApiResource> Apis =>
-            new ApiResource[]
-            {
-                //new ApiResource
-                //{
-                //    Name = "projects-api",
-                //    Enabled = true,
-                //    Scopes = new List<Scope>
-                //    {
-                //        new Scope("projects-api")
-                //    }
-                //}
-            };
+        new ApiResource[]
+        {
+            new ApiResource("teapi","Travel Expense API")
+        };
 
-        public static IEnumerable<Client> Clients =>
+    public static IEnumerable<Client> Clients =>
             new[]
             {
                 new Client
@@ -55,10 +47,12 @@ namespace IDP
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "roles"
+                        "roles", 
+                        "teapi"
                     },
                     ClientSecrets ={new Secret("secret".Sha256())},
-                    AllowedCorsOrigins = new List<string> {"https://localhost:44324"}
+                    AllowedCorsOrigins = new List<string> {"https://localhost:44324"},
+                    AccessTokenType = AccessTokenType.Jwt
                 }
             };
     }

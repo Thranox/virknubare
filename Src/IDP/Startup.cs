@@ -20,7 +20,6 @@ namespace IDP
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // uncomment, if you want to add an MVC-based UI
             services.AddControllersWithViews();
 
             var builder = services.AddIdentityServer()
@@ -51,13 +50,11 @@ namespace IDP
                 app.UseDeveloperExceptionPage();
             }
 
-            // uncomment if you want to add MVC
             app.UseStaticFiles();
             app.UseRouting();
 
             app.UseIdentityServer();
 
-            // uncomment, if you want to add MVC
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
