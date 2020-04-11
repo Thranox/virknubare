@@ -13,6 +13,7 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { CoreModule } from './core/core.module';
 import { SigninRedirectCallbackComponent } from "./home/signin-redirect-callback.component";
 import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callback.component";
+import { UnauthorizedComponent } from "./home/unauthorized.component";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callba
     CounterComponent,
     FetchDataComponent,
     SigninRedirectCallbackComponent,
-    SignoutRedirectCallbackComponent
+    SignoutRedirectCallbackComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -34,7 +36,8 @@ import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callba
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent },
-      { path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent }
+      { path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent },
+      { path: 'unauthorized', component: UnauthorizedComponent }
     ]),
   ],
   providers: [],

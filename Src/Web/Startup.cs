@@ -110,6 +110,7 @@ namespace Web
                 context.Database.Migrate();
             }
 
+            app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();
             app.UseHttpsRedirection();
 

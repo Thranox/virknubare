@@ -3,6 +3,7 @@
 
 
 using System.Collections.Generic;
+using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
@@ -27,7 +28,16 @@ namespace IDP
         public static IEnumerable<ApiResource> Apis =>
         new ApiResource[]
         {
-            new ApiResource("teapi","Travel Expense API")
+            new ApiResource("teapi","Travel Expense API", new List<string>()
+            {
+                JwtClaimTypes.Subject,
+                JwtClaimTypes.Name,
+                JwtClaimTypes.Email,
+                JwtClaimTypes.EmailVerified,
+                JwtClaimTypes.GivenName,
+                JwtClaimTypes.FamilyName,
+                JwtClaimTypes.Role
+            }){}
         };
 
     public static IEnumerable<Client> Clients =>
@@ -35,12 +45,13 @@ namespace IDP
             {
                 new Client
                 {
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     ClientName = "Politikerafregning (Angular)",
                     ClientId = "polangularclient",
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false,
-                    RequireConsent = false,
+                    RequireConsent = true,
                     RedirectUris = new List<string>{"https://localhost:44324/signin-redirect-callback"},
                     PostLogoutRedirectUris = new List<string>(){"https://localhost:44324/signout-redirect-callback"},
                     AllowedScopes =
@@ -52,7 +63,8 @@ namespace IDP
                     },
                     ClientSecrets ={new Secret("secret".Sha256())},
                     AllowedCorsOrigins = new List<string> {"https://localhost:44324"},
-                    AccessTokenType = AccessTokenType.Jwt
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenLifetime = 15*60 // 15 mins
                 }
             };
     }
