@@ -367,7 +367,7 @@ namespace Tests.Web
 
         private static TravelExpenseController GetSut(IntegrationTestContext testContext, IUnitOfWork unitOfWork)
         {
-            return new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork, testContext.ServiceProvider );
+            return new TravelExpenseController(testContext.ServiceProvider );
         }
     }
 }

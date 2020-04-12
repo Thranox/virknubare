@@ -3,7 +3,7 @@ using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Web.Controllers
+namespace Web.ActionFilters
 {
     public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
     {

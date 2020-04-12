@@ -20,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
+using Web.ActionFilters;
 using Web.Controllers;
 
 namespace Web
@@ -39,10 +40,20 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Include handling of Domain Exceptions
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
+                .CreateLogger();
+            services.AddSingleton<ILogger>(logger);
+
+            
             services.AddControllersWithViews(
-                options=>options.Filters.Add(new HttpResponseExceptionFilter())
-                );
+                options=>
+                {
+                    // Include handling of Domain Exceptions
+                    options.Filters.Add(new HttpResponseExceptionFilter());
+                    // Log all entries and exits of controller methods.
+                    options.Filters.Add(new MethodLoggingActionFilter(logger));
+                });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
@@ -58,10 +69,6 @@ namespace Web
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRepository, EfRepository>();
 
-            var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
-                .CreateLogger();
-            services.AddSingleton<ILogger>(logger);
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc(_version, new OpenApiInfo {Title = _politikerafregningApi, Version = _version});

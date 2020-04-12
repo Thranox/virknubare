@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
-using AutoMapper;
-using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 
 namespace Web.Controllers
 {
@@ -16,17 +12,10 @@ namespace Web.Controllers
     [Route("[controller]")]
     public class TravelExpenseController : ControllerBase
     {
-        private readonly ILogger _logger;
-        private readonly IMapper _mapper;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public TravelExpenseController(ILogger logger, IMapper mapper, IUnitOfWork unitOfWork,
-            IServiceProvider serviceProvider)
+        public TravelExpenseController(IServiceProvider serviceProvider)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
             _serviceProvider = serviceProvider;
         }
 
@@ -34,20 +23,17 @@ namespace Web.Controllers
         [Route("GetById")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> GetById(Guid id)
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-
             var travelExpenseDto = await _serviceProvider
                 .GetService<IGetTravelExpenseService>()
                 .GetByIdAsync(id);
 
             return Ok(travelExpenseDto);
         }
+
         [HttpGet]
         [Route("Get")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-
             var travelExpenseDtos = await _serviceProvider
                 .GetService<IGetTravelExpenseService>()
                 .GetAsync();
@@ -59,8 +45,6 @@ namespace Web.Controllers
         [Route("Put")]
         public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-            
             var travelExpenseDtos = await _serviceProvider
                 .GetService<IUpdateTravelExpenseService>()
                 .UpdateAsync(travelExpenseUpdateDto);
@@ -72,8 +56,6 @@ namespace Web.Controllers
         [Route("Post")]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-
             var travelExpenseDtos = await _serviceProvider
                 .GetService<ICreateTravelExpenseService>()
                 .CreateAsync(travelExpenseCreateDto);
@@ -83,14 +65,13 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("Certify")]
-        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(TravelExpenseCertifyDto travelExpenseCertifyDto)
+        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(
+            TravelExpenseCertifyDto travelExpenseCertifyDto)
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-
             var travelExpenseDtos = await _serviceProvider
                 .GetService<ICertifyTravelExpenseService>()
                 .CertifyAsync(travelExpenseCertifyDto);
-            
+
             return Ok(travelExpenseDtos);
         }
 
@@ -99,12 +80,10 @@ namespace Web.Controllers
         public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(
             TravelExpenseReportDoneDto travelExpenseReportDoneDto)
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-
             var travelExpenseDtos = await _serviceProvider
                 .GetService<IReportDoneTravelExpenseService>()
                 .ReportDoneAsync(travelExpenseReportDoneDto);
-            
+
             return Ok(travelExpenseDtos);
         }
 
@@ -113,8 +92,6 @@ namespace Web.Controllers
         public async Task<ActionResult<TravelExpenseAssignPaymentResponse>> AssignPayment(
             TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto)
         {
-            _logger.Information(MethodBase.GetCurrentMethod().Name + " called.");
-
             var travelExpenseDtos = await _serviceProvider
                 .GetService<IAssignPaymentTravelExpenseService>()
                 .AssignPaymentAsync(travelExpenseAssignPaymentDto);
