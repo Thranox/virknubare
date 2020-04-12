@@ -1,12 +1,14 @@
 using System;
-using AutoFixture;
+using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Web.Controllers;
+using Web;
 
 namespace Tests.TestHelpers
 {
@@ -23,11 +25,25 @@ namespace Tests.TestHelpers
                 .Options;
             Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
 
+            var buildServiceProvider = new ServiceCollection();
+            buildServiceProvider.AddScoped<IAssignPaymentTravelExpenseService, AssignPaymentTravelExpenseService>();
+            buildServiceProvider.AddScoped<ICertifyTravelExpenseService, CertifyTravelExpenseService>();
+            buildServiceProvider.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
+            buildServiceProvider.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
+            buildServiceProvider.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
+            buildServiceProvider.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
+            buildServiceProvider.AddScoped(x => Serilog.Log.Logger);
+            buildServiceProvider.AddScoped(x => CreateUnitOfWork());
+            buildServiceProvider.AddAutoMapper(typeof(Startup));
+
+            ServiceProvider = buildServiceProvider.BuildServiceProvider();
+
             SeedDb();
         }
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
+        public IServiceProvider ServiceProvider { get; set; }
 
         private void SeedDb()
         {

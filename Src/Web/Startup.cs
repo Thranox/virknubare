@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
@@ -18,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
+using Web.Controllers;
 
 namespace Web
 {
@@ -36,7 +39,11 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            // Include handling of Domain Exceptions
+            services.AddControllersWithViews(
+                options=>options.Filters.Add(new HttpResponseExceptionFilter())
+                );
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
 
@@ -61,6 +68,14 @@ namespace Web
             });
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAssignPaymentTravelExpenseService, AssignPaymentTravelExpenseService>();
+            services.AddScoped<ICertifyTravelExpenseService, CertifyTravelExpenseService>();
+            services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
+            services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
+            services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
+            services.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
+
             //services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
 
             // We'll be needing this construct for other thing, keeping it in code for now.

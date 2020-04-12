@@ -1,16 +1,17 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Dtos;
 using AutoFixture;
+using Domain;
 using Domain.Entities;
+using Domain.Interfaces;
 using Domain.Specifications;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using Tests.TestHelpers;
-using Web.ApiModels;
 using Web.Controllers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Web
 {
@@ -98,63 +99,50 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task Put_NonExistingTravelExpenseWithChanges_ReturnsNotFound()
+        public void Put_NonExistingTravelExpenseWithChanges_ThrowsTravelExpenseNotFoundByIdException()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseUpdateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
                 var existingId = Guid.NewGuid();
-                using (var unitOfWork = testContext.CreateUnitOfWork())
-                {
+                var travelExpenseUpdateDto = new TravelExpenseUpdateDto { Id = existingId, Description = newDescription };
 
-                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        { Id = existingId, Description = newDescription };
+                using (var unitOfWork = testContext.ServiceProvider.GetService<IUnitOfWork>())
+                {
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.Put(travelExpenseUpdateDto);
-                }
+                    var travelExpenseNotFoundByIdException = Assert.ThrowsAsync<TravelExpenseNotFoundByIdException>(async () => await sut.Put(travelExpenseUpdateDto));
 
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(NotFoundObjectResult)));
-                var notFoundObjectResult = actual.Result as NotFoundObjectResult;
-                Assert.That(notFoundObjectResult, Is.Not.Null);
-                var value = notFoundObjectResult.Value as TravelExpenseIdDto;
-                Assert.That(value.Id, Is.EqualTo(existingId));
+                    // Assert
+                    Assert.That(travelExpenseNotFoundByIdException, Is.Not.Null);
+                    Assert.That(travelExpenseNotFoundByIdException.Id, Is.EqualTo(existingId));
+                }
             }
         }
 
         [Test]
-        public async Task Put_ExistingTravelExpenseButUpdateViolatesBusinessRule_ReturnsBadRequest()
+        public void Put_ExistingTravelExpenseButUpdateViolatesBusinessRule_ThrowsBusinessRuleViolationException()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseUpdateResponse> actual;
                 var newDescription = string.Empty;
-                Guid existingId;
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.ServiceProvider.GetService<IUnitOfWork>())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existing.ReportDone();
-                    existingId = existing.Id;
-                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        { Id = existingId, Description = newDescription };
+                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto { Id = existing.Id, Description = newDescription };
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.Put(travelExpenseUpdateDto);
-                }
+                    var businessRuleViolationException = Assert.ThrowsAsync<BusinessRuleViolationException>(async ()=> await sut.Put(travelExpenseUpdateDto));
 
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
-                var badRequestObjectResult = actual.Result as BadRequestObjectResult;
-                Assert.That(badRequestObjectResult, Is.Not.Null);
-                var value = badRequestObjectResult.Value as BusinessRuleViolationResponseDto;
-                Assert.That(value, Is.Not.Null);
-                Assert.That(value.EntityId, Is.EqualTo(existingId));
+                    // Assert
+                    Assert.That(businessRuleViolationException, Is.Not.Null);
+                    Assert.That(businessRuleViolationException.EntityId, Is.EqualTo(existing.Id));
+                }
             }
         }
 
@@ -171,6 +159,11 @@ namespace Tests.Web
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existing.ReportDone();
                     existingId = existing.Id;
+                    unitOfWork.Commit();
+                }
+
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                { 
                     var travelExpenseApproveDto = new TravelExpenseCertifyDto {Id = existingId};
                     var sut = GetSut(testContext, unitOfWork);
 
@@ -196,12 +189,11 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task Certify_NonExistingTravelExpense_ReturnsBadRequest()
+        public void Certify_NonExistingTravelExpense_ThrowsTravelExpenseNotFoundByIdException()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseCertifyResponse> actual;
                 var existingId = Guid.NewGuid();
                 using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
@@ -209,15 +201,8 @@ namespace Tests.Web
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.Certify(travelExpenseCertifyDto);
+                    Assert.ThrowsAsync<TravelExpenseNotFoundByIdException>( ()=>sut.Certify(travelExpenseCertifyDto));
                 }
-
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(NotFoundObjectResult)));
-                var notFoundObjectResult = actual.Result as NotFoundObjectResult;
-                Assert.That(notFoundObjectResult, Is.Not.Null);
-                var value = notFoundObjectResult.Value as TravelExpenseIdDto;
-                Assert.That(value.Id, Is.EqualTo(existingId));
             }
         }
 
@@ -258,28 +243,24 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task ReportDone_NonExistingTravelExpense_ReturnsNotFound()
+        public void ReportDone_NonExistingTravelExpense_ThrowsTravelExpenseNotFoundByIdException()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseReportDoneResponse> actual;
                 var existingId = Guid.NewGuid();
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto { Id = existingId };
+                using (var unitOfWork = testContext.ServiceProvider.GetService<IUnitOfWork>())
                 {
-                    var travelExpenseReportDoneDto = new TravelExpenseReportDoneDto { Id = existingId };
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.ReportDone(travelExpenseReportDoneDto);
-                }
+                    var travelExpenseNotFoundByIdException = Assert.ThrowsAsync<TravelExpenseNotFoundByIdException>(async () => await sut.ReportDone(travelExpenseReportDoneDto));
 
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(NotFoundObjectResult)));
-                var notFoundObjectResult = actual.Result as NotFoundObjectResult;
-                Assert.That(notFoundObjectResult, Is.Not.Null);
-                var value = notFoundObjectResult.Value as TravelExpenseIdDto;
-                Assert.That(value.Id, Is.EqualTo(existingId));
+                    // Assert
+                    Assert.That(travelExpenseNotFoundByIdException, Is.Not.Null);
+                    Assert.That(travelExpenseNotFoundByIdException.Id, Is.EqualTo(existingId));
+                }
             }
         }
 
@@ -296,7 +277,14 @@ namespace Tests.Web
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existing.ReportDone();
                     existing.Certify();
+                    
                     existingId = existing.Id;
+
+                    unitOfWork.Commit();
+                }
+
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
                     var travelExpenseAssignPaymentDto = new TravelExpenseAssignPaymentDto { Id = existingId };
                     var sut = GetSut(testContext, unitOfWork);
 
@@ -322,12 +310,11 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task AssignPayment_NonExistingTravelExpense_ReturnsNotFound()
+        public void AssignPayment_NonExistingTravelExpense_ThrowsTravelExpenseNotFoundByIdException()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseAssignPaymentResponse> actual;
                 var existingId = Guid.NewGuid();
                 using (var unitOfWork = testContext.CreateUnitOfWork())
                 {
@@ -335,15 +322,8 @@ namespace Tests.Web
                     var sut = GetSut(testContext, unitOfWork);
 
                     // Act
-                    actual = await sut.AssignPayment(travelExpenseReportDoneDto);
+                    Assert.ThrowsAsync<TravelExpenseNotFoundByIdException>(()=>sut.AssignPayment(travelExpenseReportDoneDto));
                 }
-
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(NotFoundObjectResult)));
-                var notFoundObjectResult = actual.Result as NotFoundObjectResult;
-                Assert.That(notFoundObjectResult, Is.Not.Null);
-                var value = notFoundObjectResult.Value as TravelExpenseIdDto;
-                Assert.That(value.Id, Is.EqualTo(existingId));
             }
         }
 
@@ -366,10 +346,10 @@ namespace Tests.Web
                 }
 
                 // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
-                var okObjectResult = actual.Result as OkObjectResult;
-                Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as TravelExpenseCreateResponse;
+                Assert.That(actual.Result, Is.InstanceOf(typeof(CreatedResult)));
+                var createdResult = actual.Result as CreatedResult;
+                Assert.That(createdResult, Is.Not.Null);
+                var value = createdResult.Value as TravelExpenseCreateResponse;
                 Assert.That(value, Is.Not.Null);
                 Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
 
@@ -387,7 +367,7 @@ namespace Tests.Web
 
         private static TravelExpenseController GetSut(IntegrationTestContext testContext, IUnitOfWork unitOfWork)
         {
-            return new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork);
+            return new TravelExpenseController(testContext.Logger, testContext.Mapper, unitOfWork, testContext.ServiceProvider );
         }
     }
 }
