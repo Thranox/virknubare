@@ -1,7 +1,6 @@
-﻿using System;
-using Domain.SharedKernel;
+﻿using Domain.SharedKernel;
 
-namespace Web.ApiModels
+namespace Application.Dtos
 {
     public class TravelExpenseCreateDto : ValueObject
     {
