@@ -63,7 +63,7 @@ namespace Web.Controllers
             return Created(nameof(GetById), travelExpenseDtos);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("Certify")]
         public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(
             TravelExpenseCertifyDto travelExpenseCertifyDto)
@@ -75,7 +75,7 @@ namespace Web.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("ReportDone")]
         public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(
             TravelExpenseReportDoneDto travelExpenseReportDoneDto)
@@ -87,7 +87,7 @@ namespace Web.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("AssignPayment")]
         public async Task<ActionResult<TravelExpenseAssignPaymentResponse>> AssignPayment(
             TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto)
