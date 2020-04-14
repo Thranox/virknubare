@@ -41,7 +41,7 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
+                .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
             services.AddSingleton<ILogger>(logger);
 
