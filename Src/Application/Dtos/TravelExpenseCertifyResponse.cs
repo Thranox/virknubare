@@ -1,4 +1,4 @@
-﻿namespace Web.ApiModels
+﻿namespace Application.Dtos
 {
     public class TravelExpenseCertifyResponse
     {

@@ -1,4 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
@@ -18,6 +23,8 @@ using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Microsoft.Extensions.Identity.Core;
+using Web.ActionFilters;
+using Web.Controllers;
 
 namespace Web
 {
@@ -36,7 +43,21 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
+            services.AddSingleton<ILogger>(logger);
+
+            
+            services.AddControllersWithViews(
+                options=>
+                {
+                    // Include handling of Domain Exceptions
+                    options.Filters.Add(new HttpResponseExceptionFilter());
+                    // Log all entries and exits of controller methods.
+                    options.Filters.Add(new MethodLoggingActionFilter(logger));
+                });
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
 
@@ -51,16 +72,20 @@ namespace Web
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRepository, EfRepository>();
 
-            var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
-                .CreateLogger();
-            services.AddSingleton<ILogger>(logger);
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc(_version, new OpenApiInfo {Title = _politikerafregningApi, Version = _version});
             });
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAssignPaymentTravelExpenseService, AssignPaymentTravelExpenseService>();
+            services.AddScoped<ICertifyTravelExpenseService, CertifyTravelExpenseService>();
+            services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
+            services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
+            services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
+            services.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
+
             //services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
 
             // We'll be needing this construct for other thing, keeping it in code for now.

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Web.ApiModels
+namespace Application.Dtos
 {
     public class TravelExpenseGetResponse
     {
