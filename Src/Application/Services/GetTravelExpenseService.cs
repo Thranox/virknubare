@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoMapper;
+using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,9 @@ namespace Application.Services
                 var travelExpenseEntity = unitOfWork
                     .Repository
                     .GetById<TravelExpenseEntity>(id);
+
+                if (travelExpenseEntity == null)
+                    throw new TravelExpenseNotFoundByIdException(id);
 
                 return await Task.FromResult(
                     new TravelExpenseGetByIdResponse
