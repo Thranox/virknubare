@@ -6,6 +6,7 @@ using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Infrastructure.Data;
@@ -118,6 +119,7 @@ namespace Web
                 // Migrate database as needed.
                 var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
                 context.Database.Migrate();
+                context.Seed();
             }
 
             app.UseHttpsRedirection();

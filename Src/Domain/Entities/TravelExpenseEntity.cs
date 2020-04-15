@@ -11,13 +11,16 @@ namespace Domain.Entities
         public TravelExpenseEntity(string description) : this()
         {
             Description = description;
+            Stage = TravelExpenseStage.Initial;
         }
-        public StageEntity Stage { get; set; }
+
+        public TravelExpenseStage Stage { get; private set; }
 
         public string Description { get; private set; }
         public bool IsCertified { get; private set; }
         public bool IsReportedDone { get; private set; }
         public bool IsAssignedPayment { get; private set; }
+        public bool IsFinalized { get; private set; }
 
         public void Update(string description)
         {
@@ -39,6 +42,7 @@ namespace Domain.Entities
                 throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke attesteres da den allerede er attesteret.");
 
             IsCertified = true;
+            Stage = TravelExpenseStage.Certified;
 
             Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
@@ -52,6 +56,7 @@ namespace Domain.Entities
                 throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke færdigmeldes da den allerede er færdigmeldt.");
 
             IsReportedDone = true;
+            Stage = TravelExpenseStage.ReportedDone;
 
             Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
@@ -67,8 +72,26 @@ namespace Domain.Entities
                 throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke anvises til betaling da den allerede er anvist til betaling.");
 
             IsAssignedPayment = true;
+            Stage = TravelExpenseStage.AssignedForPayment;
 
             Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
+
+        public void Finalize()
+        {
+            //BR: Can't be assigned payment if not certified:
+            if (!IsAssignedPayment)
+                throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke færdiggøres da den ikke er henvist til betaling.");
+
+            //BR: Can't be finalized if already finalized:
+            if (IsFinalized)
+                throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke færdiggøres da den allerede er færdiggjort.");
+
+            IsFinalized = true;
+            Stage = TravelExpenseStage.Final;
+
+            Events.Add(new TravelExpenseUpdatedDomainEvent());
+        }
+
     }
 }

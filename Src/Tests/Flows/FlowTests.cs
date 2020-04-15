@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Domain;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -28,80 +29,88 @@ namespace Tests
                 .GetServices<IProcessFlowStep>();
 
             // Arrange
-            var customer = new CustomerEntity();
-            customer.Steps.Add(new FlowStepEntity {From = Stages.Initial, Key = "Initial -> ReportedDone"});
-            customer.Steps.Add(new FlowStepEntity {From = Stages.ReportedDone, Key = "ReportedDone -> Certified"});
-            customer.Steps.Add(new FlowStepEntity {From = Stages.Certified, Key = "Certified -> Final"});
+            var customer = new CustomerEntity("dummy");
+            customer.Steps.Add(new FlowStepEntity(Globals.InitialReporteddone,TravelExpenseStage.Initial));
+            customer.Steps.Add(new FlowStepEntity(Globals.ReporteddoneCertified, TravelExpenseStage.ReportedDone));
+            customer.Steps.Add(new FlowStepEntity(Globals.CertifiedAssignedForPayment, TravelExpenseStage.Certified));
+            customer.Steps.Add(new FlowStepEntity(Globals.AssignedForPaymentFinal, TravelExpenseStage.AssignedForPayment));
 
-            var newTe = new NewTe {Stage = Stages.Initial};
+            var newTe = new TravelExpenseEntity("dummy") ;
 
             do
             {
-                Console.WriteLine("Stage: " + newTe.Stage.Description);
-                var nextFlowSteps = customer.GetNextSteps(newTe.Stage).First();
+                Console.WriteLine("Stage: " + newTe.Stage);
+                var nextFlowSteps = customer.Steps.First(x => x.From==newTe.Stage);
 
                 var processFlowStep = processFlowSteps
                     .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
                 processFlowStep.Process(newTe);
-            } while (newTe.Stage != Stages.Final);
+            } while (newTe.Stage != TravelExpenseStage.Final);
         }
     }
 
     public interface IProcessFlowStep
     {
         bool CanHandle(string key);
-        void Process(NewTe newte);
+        void Process(TravelExpenseEntity newte);
     }
 
     public class ProcessFlowStepInitialReportedDone : IProcessFlowStep
     {
-        private readonly StageEntity _toStageEntity = Stages.ReportedDone;
+        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.Initial;
 
         public bool CanHandle(string key)
         {
-            return key == "Initial -> ReportedDone";
+            return key ==Globals.InitialReporteddone;
         }
 
-        public void Process(NewTe newte)
+        public void Process(TravelExpenseEntity newte)
         {
-            newte.Stage = _toStageEntity;
+            newte.ReportDone();
         }
     }
 
     public class ProcessFlowStepReportedDoneCertified : IProcessFlowStep
     {
-        private readonly StageEntity _toStageEntity = Stages.Certified;
+        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.ReportedDone;
 
         public bool CanHandle(string key)
         {
-            return key == "ReportedDone -> Certified";
+            return key == Globals.ReporteddoneCertified;
         }
 
-        public void Process(NewTe newte)
+        public void Process(TravelExpenseEntity newte)
         {
-            newte.Stage = _toStageEntity;
+            newte.Certify();
         }
     }
 
-    public class ProcessFlowStepCertifiedFinal : IProcessFlowStep
+    public class ProcessFlowStepCertifiedAssignedForPayment : IProcessFlowStep
     {
-        private readonly StageEntity _toStageEntity = Stages.Final;
+        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.Certified;
 
         public bool CanHandle(string key)
         {
-            return key == "Certified -> Final";
+            return key == Globals.CertifiedAssignedForPayment;
         }
 
-        public void Process(NewTe newte)
+        public void Process(TravelExpenseEntity newte)
         {
-            newte.Stage = _toStageEntity;
+            newte.AssignPayment();
         }
     }
-
-
-    public class NewTe
+    public class ProcessFlowStepAssignedForPaymentFinal : IProcessFlowStep
     {
-        public StageEntity Stage { get; set; }
-    }
+        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.AssignedForPayment;
 
+        public bool CanHandle(string key)
+        {
+            return key == Globals.AssignedForPaymentFinal;
+        }
+
+        public void Process(TravelExpenseEntity newte)
+        {
+            newte.Finalize();
+        }
+    }
 }

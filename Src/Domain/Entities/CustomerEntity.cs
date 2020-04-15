@@ -1,25 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Domain.SharedKernel;
 
 namespace Domain.Entities
 {
-    public class CustomerEntity
+    public class CustomerEntity : BaseEntity
     {
-        public CustomerEntity()
+        private CustomerEntity()
         {
             Steps = new List<FlowStepEntity>();
+            Users = new List<UserEntity>();
+        }
+
+        public CustomerEntity(string name) : this()
+        {
+            Name = name;
         }
 
         public ICollection<FlowStepEntity> Steps { get; }
         public ICollection<UserEntity> Users { get; }
+        public string Name { get; set; }
 
-        public IEnumerable<FlowStepEntity> GetNextSteps(StageEntity newTeStage)
-        {
-            return Steps
-                .Where(x => x.From == newTeStage)
-                .ToArray();
-        }
+        //public IEnumerable<FlowStepEntity> GetNextSteps(StageEntity newTeStage)
+        //{
+        //    return Steps
+        //        .Where(x => x.From == newTeStage)
+        //        .ToArray();
+        //}
     }
 }

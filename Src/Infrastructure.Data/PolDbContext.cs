@@ -21,6 +21,7 @@ namespace Infrastructure.Data
         }
 
         public DbSet<TravelExpenseEntity> TravelExpenses { get; set; }
+        public DbSet<CustomerEntity> CustomerEntities { get; set; }
 
         public override int SaveChanges()
         {
@@ -48,6 +49,24 @@ namespace Infrastructure.Data
             //    .Metadata.FindNavigation(nameof(Guestbook.Entries));
 
             //navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+        }
+
+        public void Seed()
+        {
+            var dummyCustomer = "Dummy Customer";
+            if (CustomerEntities.Any(x => x.Name == dummyCustomer))
+                return;
+
+            var customerEntity = new CustomerEntity(dummyCustomer);
+            customerEntity.Users.Add(new UserEntity("dummy pol", "123450"));
+            customerEntity.Users.Add(new UserEntity("dummy sek", "123451"));
+            customerEntity.Users.Add(new UserEntity("dummy led", "123452"));
+
+            customerEntity.Steps.Add(new FlowStepEntity("0 - FM", TravelExpenseStage.Initial));
+            customerEntity.Steps.Add(new FlowStepEntity("FM - Att", TravelExpenseStage.ReportedDone));
+            customerEntity.Steps.Add(new FlowStepEntity("Att - Anv", TravelExpenseStage.AssignedForPayment));
+
+            SaveChanges();
         }
     }
 }
