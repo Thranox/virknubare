@@ -17,6 +17,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
+    arguments: '--configuration Release'
     projects: '**/*.csproj'
     
     
@@ -25,4 +26,17 @@ steps:
   inputs:
     command: test
     projects: '**/Tests/*.csproj'
-    publishTestResults: true
+    publishTestResults: false
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+# this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'politikerafregning'
