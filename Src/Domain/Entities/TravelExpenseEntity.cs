@@ -12,6 +12,7 @@ namespace Domain.Entities
         {
             Description = description;
         }
+        public StageEntity Stage { get; set; }
 
         public string Description { get; private set; }
         public bool IsCertified { get; private set; }

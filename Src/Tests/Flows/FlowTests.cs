@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Web;
@@ -97,52 +98,10 @@ namespace Tests
         }
     }
 
-    public class CustomerEntity
-    {
-        public CustomerEntity()
-        {
-            Steps = new List<FlowStepEntity>();
-        }
-
-        public ICollection<FlowStepEntity> Steps { get; }
-
-        public IEnumerable<FlowStepEntity> GetNextSteps(StageEntity newTeStage)
-        {
-            return Steps
-                .Where(x => x.From == newTeStage)
-                .ToArray();
-        }
-    }
-
-    public class FlowStepEntity
-    {
-        public string Key { get; set; }
-        public StageEntity From { get; set; }
-    }
 
     public class NewTe
     {
         public StageEntity Stage { get; set; }
     }
 
-    public class StageEntity
-    {
-        public StageEntity(string description)
-        {
-            Description = description;
-        }
-
-        public string Description { get; }
-    }
-
-    public static class Stages
-    {
-        public static StageEntity Initial { get; } = new StageEntity("Initial");
-
-        public static StageEntity ReportedDone { get; } = new StageEntity("ReportedDone");
-
-        public static StageEntity Certified { get; } = new StageEntity("Certified");
-
-        public static StageEntity Final { get; } = new StageEntity("Final");
-    }
 }
