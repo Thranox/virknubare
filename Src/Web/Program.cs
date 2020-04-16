@@ -25,8 +25,8 @@ namespace Web
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json",
                             optional: true, reloadOnChange: true);
 
-                    config.AddJsonFile($"appsettings.{Environment.UserName}.json", optional: true, reloadOnChange: true);
-
+                    config.AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
+                    
                     config.AddEnvironmentVariables();
 
                     if (args != null)

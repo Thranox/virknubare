@@ -12,9 +12,11 @@ using Domain.SharedKernel;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +51,10 @@ namespace Web
                 .CreateLogger();
             services.AddSingleton<ILogger>(logger);
 
-            
+            var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
             services.AddControllersWithViews(
                 options=>
                 {
@@ -57,6 +62,11 @@ namespace Web
                     options.Filters.Add(new HttpResponseExceptionFilter());
                     // Log all entries and exits of controller methods.
                     options.Filters.Add(new MethodLoggingActionFilter(logger));
+
+                    if(Configuration.GetValue<bool>("UseAuthentication"))
+                    {
+                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
+                    }
                 });
 
             // In production, the Angular files will be served from this directory
