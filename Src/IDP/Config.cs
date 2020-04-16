@@ -51,7 +51,7 @@ namespace IDP
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false,
-                    RequireConsent = true,
+                    RequireConsent = false,
                     RedirectUris = new List<string>{"https://localhost:44324/signin-redirect-callback"},
                     PostLogoutRedirectUris = new List<string>(){"https://localhost:44324/signout-redirect-callback"},
                     AllowedScopes =
