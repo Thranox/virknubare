@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Web.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("travelexpenses")]
     public class TravelExpenseController : ControllerBase
     {
         private readonly IServiceProvider _serviceProvider;
@@ -30,8 +30,7 @@ namespace Web.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpGet]
-        [Route("GetById")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> GetById(Guid id)
         {
             var travelExpenseDto = await _serviceProvider
@@ -42,7 +41,6 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [Route("Get")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
         {
             var travelExpenseDtos = await _serviceProvider
@@ -52,19 +50,17 @@ namespace Web.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPut]
-        [Route("Put")]
-        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(TravelExpenseUpdateDto travelExpenseUpdateDto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id, TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var travelExpenseDtos = await _serviceProvider
                 .GetService<IUpdateTravelExpenseService>()
-                .UpdateAsync(travelExpenseUpdateDto);
+                .UpdateAsync(id, travelExpenseUpdateDto);
 
             return Ok(travelExpenseDtos);
         }
 
         [HttpPost]
-        [Route("Post")]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             var travelExpenseDtos = await _serviceProvider

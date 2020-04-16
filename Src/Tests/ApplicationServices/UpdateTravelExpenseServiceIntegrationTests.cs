@@ -27,11 +27,11 @@ namespace Tests.ApplicationServices
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Id = existingId, Description = newDescription};
+                        {Description = newDescription};
                     var sut = testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>();
 
                     // Act
-                    var actual = await sut.UpdateAsync(travelExpenseUpdateDto);
+                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto);
 
                     // Assert
                     Assert.That(actual, Is.Not.Null);

@@ -19,17 +19,18 @@ namespace Application.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TravelExpenseUpdateResponse> UpdateAsync(TravelExpenseUpdateDto travelExpenseUpdateDto)
+        public async Task<TravelExpenseUpdateResponse> UpdateAsync(Guid id,
+            TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             using (var unitOfWork = _serviceProvider.GetService<IUnitOfWork>())
             {
                 var travelExpenseEntity = unitOfWork
                     .Repository
-                    .List(new TravelExpenseById(travelExpenseUpdateDto.Id))
+                    .List(new TravelExpenseById(id))
                     .SingleOrDefault();
 
                 if (travelExpenseEntity == null)
-                    throw new ItemNotFoundException( travelExpenseUpdateDto.Id.ToString(), "TravelExpense");
+                    throw new ItemNotFoundException( id.ToString(), "TravelExpense");
                 
                 travelExpenseEntity.Update(travelExpenseUpdateDto.Description);
 

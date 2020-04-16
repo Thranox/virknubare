@@ -45,7 +45,7 @@ namespace Application.Services
                     .GetById<TravelExpenseEntity>(id);
 
                 if (travelExpenseEntity == null)
-                    throw new ItemNotFoundException(id.ToString(),"TravelExpense");
+                    throw new ItemNotFoundException(id.ToString(), "TravelExpense");
 
                 return await Task.FromResult(
                     new TravelExpenseGetByIdResponse
