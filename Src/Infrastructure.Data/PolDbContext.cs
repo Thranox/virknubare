@@ -21,6 +21,7 @@ namespace Infrastructure.Data
         }
 
         public DbSet<TravelExpenseEntity> TravelExpenses { get; set; }
+        public DbSet<CustomerEntity> CustomerEntities { get; set; }
 
         public override int SaveChanges()
         {
@@ -44,10 +45,60 @@ namespace Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //var navigation = modelBuilder.Entity<Guestbook>()
-            //    .Metadata.FindNavigation(nameof(Guestbook.Entries));
+            modelBuilder.Entity<FlowStepUserPermissionEntity>()
+                .HasKey(bc => new {bc.FlowStepId, bc.UserId});
 
-            //navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<FlowStepUserPermissionEntity>()
+                .HasOne(bc => bc.FlowStep)
+                .WithMany(b => b.FlowStepUserPermissions)
+                .HasForeignKey(bc => bc.FlowStepId);
+            modelBuilder.Entity<FlowStepUserPermissionEntity>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.FlowStepUserPermissions)
+                .HasForeignKey(bc => bc.UserId);
+        }
+
+        public void Seed()
+        {
+            if (CustomerEntities.Any(x => x.Name == Globals.DummyCustomerName))
+                return;
+
+            var customerEntity = new CustomerEntity(Globals.DummyCustomerName);
+            var userEntityPol = new UserEntity("dummy pol", "123450");
+            customerEntity.Users.Add(userEntityPol);
+            var userEntitySek = new UserEntity("dummy sek", "123451");
+            customerEntity.Users.Add(userEntitySek);
+            var userEntityLed = new UserEntity("dummy led", "123452");
+            customerEntity.Users.Add(userEntityLed);
+
+            var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);
+            flowStepEntity1.FlowStepUserPermissions.Add(
+                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity1, User = userEntityPol}
+            );
+            customerEntity.FlowSteps.Add(flowStepEntity1);
+
+            var flowStepEntity2 = new FlowStepEntity(Globals.ReporteddoneCertified, TravelExpenseStage.ReportedDone);
+            flowStepEntity2.FlowStepUserPermissions.Add(
+                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity2, User = userEntitySek}
+            );
+            customerEntity.FlowSteps.Add(flowStepEntity2);
+
+            var flowStepEntity3 = new FlowStepEntity(Globals.CertifiedAssignedForPayment, TravelExpenseStage.Certified);
+            flowStepEntity3.FlowStepUserPermissions.Add(
+                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity3, User = userEntityLed}
+            );
+            customerEntity.FlowSteps.Add(flowStepEntity3);
+
+            var flowStepEntity4 =
+                new FlowStepEntity(Globals.AssignedForPaymentFinal, TravelExpenseStage.AssignedForPayment);
+            flowStepEntity4.FlowStepUserPermissions.Add(
+                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity4, User = userEntityLed}
+            );
+            customerEntity.FlowSteps.Add(flowStepEntity4);
+
+            this.CustomerEntities.Add(customerEntity);
+
+            SaveChanges();
         }
     }
 }

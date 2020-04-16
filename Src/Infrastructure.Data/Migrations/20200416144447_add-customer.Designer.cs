@@ -3,14 +3,16 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(PolDbContext))]
-    partial class PolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200416144447_add-customer")]
+    partial class addcustomer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,31 +55,10 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("FlowStepEntity");
                 });
 
-            modelBuilder.Entity("Domain.Entities.FlowStepUserPermissionEntity", b =>
-                {
-                    b.Property<Guid>("FlowStepId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("FlowStepId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FlowStepUserPermissionEntity");
-                });
-
             modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("CustomerEntityId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
@@ -99,8 +80,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerEntityId");
 
                     b.ToTable("TravelExpenses");
                 });
@@ -124,29 +103,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
                 {
                     b.HasOne("Domain.Entities.CustomerEntity", null)
-                        .WithMany("FlowSteps")
-                        .HasForeignKey("CustomerEntityId");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FlowStepUserPermissionEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.FlowStepEntity", "FlowStep")
-                        .WithMany("FlowStepUserPermissions")
-                        .HasForeignKey("FlowStepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.UserEntity", "User")
-                        .WithMany("FlowStepUserPermissions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.CustomerEntity", null)
-                        .WithMany("TravelExpenses")
+                        .WithMany("Steps")
                         .HasForeignKey("CustomerEntityId");
                 });
 

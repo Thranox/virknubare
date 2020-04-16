@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
@@ -27,10 +28,17 @@ namespace Infrastructure.Data
 
         public List<T> List<T>(ISpecification<T> spec = null) where T : BaseEntity
         {
-            //if (typeof(T) == typeof(Guestbook))
-            //{
-            //    return _dbContext.Set<Guestbook>().Include(g => g.Entries).ToList() as List<T>;
-            //}
+            if (typeof(T) == typeof(CustomerEntity))
+            {
+                return _dbContext
+                    .Set<CustomerEntity>()
+                    .Include(g => g.FlowSteps)
+                    .ThenInclude(gg=>gg.FlowStepUserPermissions)
+                    .Include(g=>g.TravelExpenses)
+                    .Include(g=>g.Users)
+                    .ThenInclude(gg=>gg.FlowStepUserPermissions)
+                    .ToList() as List<T>;
+            }
             var query = _dbContext.Set<T>().AsQueryable();
             if (spec != null)
             {
