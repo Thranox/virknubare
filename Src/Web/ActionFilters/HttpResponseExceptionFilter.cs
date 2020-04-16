@@ -13,7 +13,7 @@ namespace Web.ActionFilters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (context.Exception is TravelExpenseNotFoundByIdException travelExpenseNotFoundByIdException)
+            if (context.Exception is ItemNotFoundException travelExpenseNotFoundByIdException)
             {
                 context.Result = new ObjectResult(new{ Id=travelExpenseNotFoundByIdException.Id})
                 {

@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Application.Dtos;
+﻿//using System.Threading.Tasks;
+//using Application.Dtos;
 
-namespace Application.Interfaces
-{
-    public interface ICertifyTravelExpenseService
-    {
-        Task<TravelExpenseCertifyResponse> CertifyAsync(TravelExpenseCertifyDto travelExpenseCertifyDto);
-    }
-}
+//namespace Application.Interfaces
+//{
+//    public interface ICertifyTravelExpenseService
+//    {
+//        Task<TravelExpenseCertifyResponse> CertifyAsync(TravelExpenseCertifyDto travelExpenseCertifyDto);
+//    }
+//}

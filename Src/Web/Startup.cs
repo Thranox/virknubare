@@ -6,6 +6,7 @@ using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Infrastructure.Data;
@@ -76,23 +77,15 @@ namespace Web
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<IAssignPaymentTravelExpenseService, AssignPaymentTravelExpenseService>();
-            services.AddScoped<ICertifyTravelExpenseService, CertifyTravelExpenseService>();
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            services.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
-
-            //services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
-
-            // We'll be needing this construct for other thing, keeping it in code for now.
-            //Assembly
-            //    .GetEntryAssembly()
-            //    .GetTypesAssignableFrom<ITravelExpenseValidatorRule>()
-            //    .ForEach(t =>
-            //    {
-            //        services.AddScoped(typeof(ITravelExpenseValidatorRule), t);
-            //    });
+            services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
+            
+            Assembly
+                .GetAssembly(typeof(IProcessFlowStep))
+                .GetTypesAssignableFrom<IProcessFlowStep>()
+                .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
@@ -118,6 +111,7 @@ namespace Web
                 // Migrate database as needed.
                 var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
                 context.Database.Migrate();
+                context.Seed();
             }
 
             app.UseHttpsRedirection();
