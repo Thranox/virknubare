@@ -1,28 +1,25 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Application.Interfaces;
 using Domain;
-using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Specifications;
+using Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Tests.TestHelpers;
 using Web;
 
-namespace Tests
+namespace Tests.Flows
 {
     public class FlowTests
     {
         [Test]
-        [Timeout(2000)]
         public void Test()
         {
+            // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-
-                // A flow consists of flowsteps.
                 var buildServiceProvider = new ServiceCollection();
 
                 Assembly
@@ -33,28 +30,28 @@ namespace Tests
                 var serviceProvider = buildServiceProvider.BuildServiceProvider();
                 var processFlowSteps = serviceProvider
                     .GetServices<IProcessFlowStep>();
-                Assert.That(processFlowSteps.Any(), Is.True);
 
-                // Arrange
-                var customer = new CustomerEntity("dummy");
-                customer.Steps.Add(new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial));
-                customer.Steps.Add(new FlowStepEntity(Globals.ReporteddoneCertified, TravelExpenseStage.ReportedDone));
-                customer.Steps.Add(
-                    new FlowStepEntity(Globals.CertifiedAssignedForPayment, TravelExpenseStage.Certified));
-                customer.Steps.Add(new FlowStepEntity(Globals.AssignedForPaymentFinal,
-                    TravelExpenseStage.AssignedForPayment));
-
-                var newTe = new TravelExpenseEntity("dummy");
-
-                do
+                using (var polDbContext = new PolDbContext(testContext.DbContextOptions))
                 {
-                    Console.WriteLine("Stage: " + newTe.Stage);
-                    var nextFlowSteps = customer.Steps.First(x => x.From == newTe.Stage);
+                    var repository=new EfRepository(polDbContext);
+                    var customer = repository
+                        .List(new CustomerByName(Globals.DummyCustomerName))
+                        .Single();
 
-                    var processFlowStep = processFlowSteps
-                        .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
-                    processFlowStep.Process(newTe);
-                } while (newTe.Stage != TravelExpenseStage.Final);
+                    var newTe = polDbContext.TravelExpenses.First();
+
+                    // Act & Assert
+                    do
+                    {
+                        Console.WriteLine("Stage: " + newTe.Stage);
+                        var nextFlowSteps = customer.FlowSteps.First(x => x.From == newTe.Stage);
+
+                        var processFlowStep = processFlowSteps
+                            .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
+                        Assert.That(processFlowStep, Is.Not.Null);
+                        processFlowStep.Process(newTe);
+                    } while (newTe.Stage != TravelExpenseStage.Final);
+                }
             }
         }
     }

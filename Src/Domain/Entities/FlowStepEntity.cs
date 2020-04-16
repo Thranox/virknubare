@@ -1,4 +1,5 @@
-﻿using Domain.SharedKernel;
+﻿using System.Collections.Generic;
+using Domain.SharedKernel;
 
 namespace Domain.Entities
 {
@@ -6,7 +7,7 @@ namespace Domain.Entities
     {
         private FlowStepEntity()
         {
-
+            FlowStepUserPermissions=new List<FlowStepUserPermissionEntity>();
         }
 
         public FlowStepEntity(string key, TravelExpenseStage @from):this()
@@ -16,5 +17,6 @@ namespace Domain.Entities
         }
         public string Key { get; set; }
         public TravelExpenseStage From { get; set; }
+        public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.SharedKernel;
+﻿using System.Collections.Generic;
+using Domain.SharedKernel;
 
 namespace Domain.Entities
 {
@@ -17,5 +18,6 @@ namespace Domain.Entities
         public CustomerEntity Customer { get; set; }
         public string Name { get; }
         public string Subject { get; }
+        public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
     }
 }

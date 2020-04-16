@@ -8,8 +8,9 @@ namespace Domain.Entities
     {
         private CustomerEntity()
         {
-            Steps = new List<FlowStepEntity>();
+            FlowSteps = new List<FlowStepEntity>();
             Users = new List<UserEntity>();
+            TravelExpenses = new List<TravelExpenseEntity>();
         }
 
         public CustomerEntity(string name) : this()
@@ -17,15 +18,9 @@ namespace Domain.Entities
             Name = name;
         }
 
-        public ICollection<FlowStepEntity> Steps { get; }
+        public ICollection<TravelExpenseEntity> TravelExpenses { get; }
+        public ICollection<FlowStepEntity> FlowSteps { get; }
         public ICollection<UserEntity> Users { get; }
         public string Name { get; set; }
-
-        //public IEnumerable<FlowStepEntity> GetNextSteps(StageEntity newTeStage)
-        //{
-        //    return Steps
-        //        .Where(x => x.From == newTeStage)
-        //        .ToArray();
-        //}
     }
 }
