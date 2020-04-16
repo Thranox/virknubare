@@ -19,6 +19,17 @@ namespace Web.Controllers
             _serviceProvider = serviceProvider;
         }
 
+        [HttpPost]
+        [Route("ProcessStep")]
+        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(TravelExpenseProcessStepDto travelExpenseProcessStepDto)
+        {
+            var travelExpenseDtos = await _serviceProvider
+                .GetService<IProcessStepTravelExpenseService>()
+                .ProcessStepAsync(travelExpenseProcessStepDto);
+
+            return Ok(travelExpenseDtos);
+        }
+
         [HttpGet]
         [Route("GetById")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> GetById(Guid id)

@@ -84,16 +84,10 @@ namespace Web
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
             services.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
 
-            //services.AddScoped<ITravelExpenseValidator, TravelExpenseValidator>();
-
-            // We'll be needing this construct for other thing, keeping it in code for now.
-            //Assembly
-            //    .GetEntryAssembly()
-            //    .GetTypesAssignableFrom<ITravelExpenseValidatorRule>()
-            //    .ForEach(t =>
-            //    {
-            //        services.AddScoped(typeof(ITravelExpenseValidatorRule), t);
-            //    });
+            Assembly
+                .GetAssembly(typeof(IProcessFlowStep))
+                .GetTypesAssignableFrom<IProcessFlowStep>()
+                .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }

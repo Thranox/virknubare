@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Application.Interfaces;
 using Domain;
 using Domain.Entities;
+using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Web;
@@ -20,14 +22,14 @@ namespace Tests
             var buildServiceProvider = new ServiceCollection();
 
             Assembly
-                .GetAssembly(typeof(FlowTests))
+                .GetAssembly(typeof(IProcessFlowStep))
                 .GetTypesAssignableFrom<IProcessFlowStep>()
                 .ForEach(t => { buildServiceProvider.AddScoped(typeof(IProcessFlowStep), t); });
 
             var serviceProvider = buildServiceProvider.BuildServiceProvider();
             var processFlowSteps = serviceProvider
                 .GetServices<IProcessFlowStep>();
-
+            Assert.That(processFlowSteps.Any(), Is.True);
             // Arrange
             var customer = new CustomerEntity("dummy");
             customer.Steps.Add(new FlowStepEntity(Globals.InitialReporteddone,TravelExpenseStage.Initial));
@@ -46,71 +48,6 @@ namespace Tests
                     .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
                 processFlowStep.Process(newTe);
             } while (newTe.Stage != TravelExpenseStage.Final);
-        }
-    }
-
-    public interface IProcessFlowStep
-    {
-        bool CanHandle(string key);
-        void Process(TravelExpenseEntity newte);
-    }
-
-    public class ProcessFlowStepInitialReportedDone : IProcessFlowStep
-    {
-        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.Initial;
-
-        public bool CanHandle(string key)
-        {
-            return key ==Globals.InitialReporteddone;
-        }
-
-        public void Process(TravelExpenseEntity newte)
-        {
-            newte.ReportDone();
-        }
-    }
-
-    public class ProcessFlowStepReportedDoneCertified : IProcessFlowStep
-    {
-        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.ReportedDone;
-
-        public bool CanHandle(string key)
-        {
-            return key == Globals.ReporteddoneCertified;
-        }
-
-        public void Process(TravelExpenseEntity newte)
-        {
-            newte.Certify();
-        }
-    }
-
-    public class ProcessFlowStepCertifiedAssignedForPayment : IProcessFlowStep
-    {
-        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.Certified;
-
-        public bool CanHandle(string key)
-        {
-            return key == Globals.CertifiedAssignedForPayment;
-        }
-
-        public void Process(TravelExpenseEntity newte)
-        {
-            newte.AssignPayment();
-        }
-    }
-    public class ProcessFlowStepAssignedForPaymentFinal : IProcessFlowStep
-    {
-        private readonly TravelExpenseStage _fromStage = TravelExpenseStage.AssignedForPayment;
-
-        public bool CanHandle(string key)
-        {
-            return key == Globals.AssignedForPaymentFinal;
-        }
-
-        public void Process(TravelExpenseEntity newte)
-        {
-            newte.Finalize();
         }
     }
 }

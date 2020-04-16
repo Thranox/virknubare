@@ -365,6 +365,44 @@ namespace Tests.Web
             }
         }
 
+        [Test]
+        public async Task Process_V_ReturnsXXX()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                ActionResult<TravelExpenseProcessStepResponse> actual;
+                var newDescription = testContext.Fixture.Create<string>();
+
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var travelExpenseCreateDto = new TravelExpenseProcessStepDto() { };
+                    var sut = GetSut(testContext, unitOfWork);
+
+                    // Act
+                    actual = await sut.Process(travelExpenseCreateDto);
+                }
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(CreatedResult)));
+                var createdResult = actual.Result as CreatedResult;
+                Assert.That(createdResult, Is.Not.Null);
+                var value = createdResult.Value as TravelExpenseCreateResponse;
+                Assert.That(value, Is.Not.Null);
+                Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
+
+                using (var unitOfWork = testContext.CreateUnitOfWork())
+                {
+                    var travelExpenseEntity = unitOfWork
+                        .Repository.List(new TravelExpenseById(value.Id))
+                        .SingleOrDefault();
+                    Assert.That(travelExpenseEntity, Is.Not.Null);
+                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
+                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
+                }
+            }
+        }
+
         private static TravelExpenseController GetSut(IntegrationTestContext testContext, IUnitOfWork unitOfWork)
         {
             return new TravelExpenseController(testContext.ServiceProvider );
