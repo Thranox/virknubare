@@ -14,11 +14,13 @@ import { CoreModule } from './core/core.module';
 import { SigninRedirectCallbackComponent } from "./home/signin-redirect-callback.component";
 import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callback.component";
 import { UnauthorizedComponent } from "./home/unauthorized.component";
+import { ContactUsComponent } from "./home/contact-us.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
+    ContactUsComponent,
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
