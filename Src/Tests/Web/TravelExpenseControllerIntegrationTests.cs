@@ -366,7 +366,7 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task Process_V_ReturnsXXX()
+        public async Task Process_ValidTravelExpenseAndStep_ReturnsOk()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
@@ -384,22 +384,22 @@ namespace Tests.Web
                 }
 
                 // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(CreatedResult)));
-                var createdResult = actual.Result as CreatedResult;
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var createdResult = actual.Result as OkObjectResult;
                 Assert.That(createdResult, Is.Not.Null);
-                var value = createdResult.Value as TravelExpenseCreateResponse;
+                var value = createdResult.Value as TravelExpenseProcessStepResponse;
                 Assert.That(value, Is.Not.Null);
-                Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
+                //Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
 
-                using (var unitOfWork = testContext.CreateUnitOfWork())
-                {
-                    var travelExpenseEntity = unitOfWork
-                        .Repository.List(new TravelExpenseById(value.Id))
-                        .SingleOrDefault();
-                    Assert.That(travelExpenseEntity, Is.Not.Null);
-                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
-                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
-                }
+                //using (var unitOfWork = testContext.CreateUnitOfWork())
+                //{
+                //    var travelExpenseEntity = unitOfWork
+                //        .Repository.List(new TravelExpenseById(value.Id))
+                //        .SingleOrDefault();
+                //    Assert.That(travelExpenseEntity, Is.Not.Null);
+                //    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
+                //    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
+                //}
             }
         }
 

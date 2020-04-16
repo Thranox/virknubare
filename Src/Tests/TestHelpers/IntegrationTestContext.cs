@@ -33,6 +33,8 @@ namespace Tests.TestHelpers
             buildServiceProvider.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             buildServiceProvider.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
             buildServiceProvider.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
+            buildServiceProvider.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
+            
             buildServiceProvider.AddScoped(x => Serilog.Log.Logger);
             buildServiceProvider.AddScoped(x => CreateUnitOfWork());
             buildServiceProvider.AddAutoMapper(typeof(Startup));
@@ -55,6 +57,7 @@ namespace Tests.TestHelpers
         {
             using (var dbContext = new PolDbContext(DbContextOptions))
             {
+                dbContext.Seed();
                 dbContext.TravelExpenses.Add(TravelExpenseEntity1);
                 dbContext.TravelExpenses.Add(TravelExpenseEntity2);
                 dbContext.TravelExpenses.Add(TravelExpenseEntity3);

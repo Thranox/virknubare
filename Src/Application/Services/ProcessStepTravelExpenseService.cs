@@ -6,9 +6,13 @@ namespace Application.Services
 {
     public class ProcessStepTravelExpenseService : IProcessStepTravelExpenseService
     {
-        public Task<TravelExpenseProcessStepResponse> ProcessStepAsync(TravelExpenseProcessStepDto travelExpenseProcessStepDto)
+        public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(TravelExpenseProcessStepDto travelExpenseProcessStepDto)
         {
-            throw new System.NotImplementedException();
+            var travelExpenseId = travelExpenseProcessStepDto.TravelExpenseId;
+
+            return await Task.FromResult(new TravelExpenseProcessStepResponse
+            {
+            });
         }
     }
 }
