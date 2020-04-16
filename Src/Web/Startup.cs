@@ -83,7 +83,8 @@ namespace Web
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
             services.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
-
+            services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
+            
             Assembly
                 .GetAssembly(typeof(IProcessFlowStep))
                 .GetTypesAssignableFrom<IProcessFlowStep>()
