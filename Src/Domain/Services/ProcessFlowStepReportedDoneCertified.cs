@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.SharedKernel;
 
 namespace Domain.Services
 {
@@ -10,9 +11,15 @@ namespace Domain.Services
             return key == Globals.ReporteddoneCertified;
         }
 
-        public void Process(TravelExpenseEntity newte)
+        public TravelExpenseStage GetResultingStage(TravelExpenseEntity travelExpenseEntity)
         {
-            newte.Certify();
+            //BR: Can't be certified if not reported done:
+            if (travelExpenseEntity.Stage!=TravelExpenseStage.ReportedDone)
+                throw new BusinessRuleViolationException(travelExpenseEntity.Id, "Rejseafregning kan ikke attesteres da den ikke er færdigmeldt.");
+
+            travelExpenseEntity.Events.Add(new TravelExpenseUpdatedDomainEvent());
+
+            return TravelExpenseStage.Certified;
         }
     }
 }

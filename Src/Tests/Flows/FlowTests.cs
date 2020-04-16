@@ -15,6 +15,7 @@ namespace Tests.Flows
     public class FlowTests
     {
         [Test]
+        [Timeout(60000)]
         public void Test()
         {
             // Arrange
@@ -49,7 +50,7 @@ namespace Tests.Flows
                         var processFlowStep = processFlowSteps
                             .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
                         Assert.That(processFlowStep, Is.Not.Null);
-                        processFlowStep.Process(newTe);
+                        newTe.ApplyProcessStep( processFlowStep);
                     } while (newTe.Stage != TravelExpenseStage.Final);
                 }
             }

@@ -27,12 +27,9 @@ namespace Tests.TestHelpers
             Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
 
             var buildServiceProvider = new ServiceCollection();
-            buildServiceProvider.AddScoped<IAssignPaymentTravelExpenseService, AssignPaymentTravelExpenseService>();
-            buildServiceProvider.AddScoped<ICertifyTravelExpenseService, CertifyTravelExpenseService>();
             buildServiceProvider.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             buildServiceProvider.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             buildServiceProvider.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            buildServiceProvider.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
             buildServiceProvider.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
             
             buildServiceProvider.AddScoped(x => Serilog.Log.Logger);

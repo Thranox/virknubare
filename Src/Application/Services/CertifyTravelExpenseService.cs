@@ -1,46 +1,46 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Dtos;
-using Application.Interfaces;
-using Domain;
-using Domain.Interfaces;
-using Domain.Specifications;
-using Microsoft.Extensions.DependencyInjection;
+﻿//using System;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Application.Dtos;
+//using Application.Interfaces;
+//using Domain;
+//using Domain.Interfaces;
+//using Domain.Specifications;
+//using Microsoft.Extensions.DependencyInjection;
 
-namespace Application.Services
-{
-    public class CertifyTravelExpenseService : ICertifyTravelExpenseService
-    {
-        private readonly IServiceProvider _serviceProvider;
+//namespace Application.Services
+//{
+//    public class CertifyTravelExpenseService : ICertifyTravelExpenseService
+//    {
+//        private readonly IServiceProvider _serviceProvider;
 
-        public CertifyTravelExpenseService(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+//        public CertifyTravelExpenseService(IServiceProvider serviceProvider)
+//        {
+//            _serviceProvider = serviceProvider;
+//        }
 
-        public async Task<TravelExpenseCertifyResponse> CertifyAsync(TravelExpenseCertifyDto travelExpenseCertifyDto)
-        {
-            using (var unitOfWork = _serviceProvider.GetService<IUnitOfWork>())
-            {
-                var travelExpenseEntity = unitOfWork
-                    .Repository
-                    .List(new TravelExpenseById(travelExpenseCertifyDto.Id))
-                    .SingleOrDefault();
+//        public async Task<TravelExpenseCertifyResponse> CertifyAsync(TravelExpenseCertifyDto travelExpenseCertifyDto)
+//        {
+//            using (var unitOfWork = _serviceProvider.GetService<IUnitOfWork>())
+//            {
+//                var travelExpenseEntity = unitOfWork
+//                    .Repository
+//                    .List(new TravelExpenseById(travelExpenseCertifyDto.Id))
+//                    .SingleOrDefault();
 
-                if (travelExpenseEntity == null)
-                    throw new ItemNotFoundException(travelExpenseCertifyDto.Id.ToString(), "TravelExpense");
+//                if (travelExpenseEntity == null)
+//                    throw new ItemNotFoundException(travelExpenseCertifyDto.Id.ToString(), "TravelExpense");
 
-                travelExpenseEntity.Certify();
+//                travelExpenseEntity.Certify();
 
-                unitOfWork
-                    .Repository
-                    .Update(travelExpenseEntity);
+//                unitOfWork
+//                    .Repository
+//                    .Update(travelExpenseEntity);
 
-                unitOfWork.Commit();
+//                unitOfWork.Commit();
 
-                return await Task.FromResult(new TravelExpenseCertifyResponse());
-            }
-        }
-    }
-}
+//                return await Task.FromResult(new TravelExpenseCertifyResponse());
+//            }
+//        }
+//    }
+//}

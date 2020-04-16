@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.SharedKernel;
 
 namespace Domain.Services
 {
@@ -10,9 +11,15 @@ namespace Domain.Services
             return key == Globals.AssignedForPaymentFinal;
         }
 
-        public void Process(TravelExpenseEntity newte)
+        public TravelExpenseStage GetResultingStage(TravelExpenseEntity travelExpenseEntity)
         {
-            newte.Finalize();
+            //BR: Can't be assigned payment if not certified:
+            if (travelExpenseEntity.Stage!=TravelExpenseStage.AssignedForPayment)
+                throw new BusinessRuleViolationException(travelExpenseEntity.Id, "Rejseafregning kan ikke færdiggøres da den ikke er henvist til betaling.");
+
+            travelExpenseEntity.Events.Add(new TravelExpenseUpdatedDomainEvent());
+
+            return TravelExpenseStage.Final;
         }
     }
 }

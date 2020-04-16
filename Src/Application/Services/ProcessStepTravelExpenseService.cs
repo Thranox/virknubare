@@ -39,7 +39,7 @@ namespace Application.Services
                 if (processFlowStep == null)
                     throw new ItemNotFoundException(travelExpenseProcessStepDto.ProcessStepKey, "ProcessFlowStep");
 
-                processFlowStep.Process(travelExpenseEntity);
+                travelExpenseEntity.ApplyProcessStep(processFlowStep);
 
                 unitOfWork
                     .Repository

@@ -73,41 +73,5 @@ namespace Web.Controllers
 
             return Created(nameof(GetById), travelExpenseDtos);
         }
-
-        [HttpPut]
-        [Route("Certify")]
-        public async Task<ActionResult<TravelExpenseCertifyResponse>> Certify(
-            TravelExpenseCertifyDto travelExpenseCertifyDto)
-        {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<ICertifyTravelExpenseService>()
-                .CertifyAsync(travelExpenseCertifyDto);
-
-            return Ok(travelExpenseDtos);
-        }
-
-        [HttpPut]
-        [Route("ReportDone")]
-        public async Task<ActionResult<TravelExpenseReportDoneResponse>> ReportDone(
-            TravelExpenseReportDoneDto travelExpenseReportDoneDto)
-        {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<IReportDoneTravelExpenseService>()
-                .ReportDoneAsync(travelExpenseReportDoneDto);
-
-            return Ok(travelExpenseDtos);
-        }
-
-        [HttpPut]
-        [Route("AssignPayment")]
-        public async Task<ActionResult<TravelExpenseAssignPaymentResponse>> AssignPayment(
-            TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto)
-        {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<IAssignPaymentTravelExpenseService>()
-                .AssignPaymentAsync(travelExpenseAssignPaymentDto);
-
-            return Ok(travelExpenseDtos);
-        }
     }
 }

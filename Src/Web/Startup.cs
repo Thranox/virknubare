@@ -77,12 +77,9 @@ namespace Web
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<IAssignPaymentTravelExpenseService, AssignPaymentTravelExpenseService>();
-            services.AddScoped<ICertifyTravelExpenseService, CertifyTravelExpenseService>();
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            services.AddScoped<IReportDoneTravelExpenseService, ReportDoneTravelExpenseService>();
             services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
             
             Assembly

@@ -9,7 +9,7 @@ namespace Domain.Specifications
     {
         public CustomerByName(string name)
         {
-            Criteria = e =>e.Name ==name;
+            Criteria = e => e.Name == name;
         }
 
         public Expression<Func<CustomerEntity, bool>> Criteria { get; }

@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Application.Dtos;
+﻿//using System.Threading.Tasks;
+//using Application.Dtos;
 
-namespace Application.Interfaces
-{
-    public interface IAssignPaymentTravelExpenseService
-    {
-        Task<TravelExpenseAssignPaymentResponse> AssignPaymentAsync(TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto);
-    }
-}
+//namespace Application.Interfaces
+//{
+//    public interface IAssignPaymentTravelExpenseService
+//    {
+//        Task<TravelExpenseAssignPaymentResponse> AssignPaymentAsync(TravelExpenseAssignPaymentDto travelExpenseAssignPaymentDto);
+//    }
+//}
