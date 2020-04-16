@@ -16,8 +16,8 @@ namespace Domain.Entities
         }
 
         public CustomerEntity Customer { get; set; }
-        public string Name { get; }
-        public string Subject { get; }
+        public string Name { get; set; }
+        public string Subject { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
     }
 }

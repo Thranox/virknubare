@@ -11,7 +11,7 @@ export class FetchDataComponent {
 
   constructor(http: HttpClient, authService: AuthService, @Inject('BASE_URL') baseUrl: string) {
     authService.getAccessToken().then(token => {
-      baseUrl = 'https://localhost:44396/';
+      baseUrl = 'https://localhost:44324/';
       console.info(token);
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
       http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { headers: headers }).subscribe(result => {

@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using Application.Interfaces;
 using Application.Services;
@@ -6,6 +7,7 @@ using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
 using Domain.SharedKernel;
+using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +24,7 @@ using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Web.ActionFilters;
+using Web.Controllers;
 
 namespace Web
 {
@@ -44,6 +47,14 @@ namespace Web
                 .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
             services.AddSingleton<ILogger>(logger);
+
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "https://localhost:44305";
+                    options.ApiName = "teapi";
+                    options.RequireHttpsMetadata = false;
+                });
 
             var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
@@ -71,8 +82,7 @@ namespace Web
                         .UseMySql(connectionString, mySqlOptions => mySqlOptions
                             .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
                         );
-                },
-                ServiceLifetime.Transient);
+                });
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRepository, EfRepository>();
 
@@ -94,18 +104,10 @@ namespace Web
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
+            services.AddScoped<IUserManager, UserManager>();
 
             services.AddMvc();
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    // base-address of your identityserver
-                    options.Authority = "https://localhost:44305/";
-                    options.RequireHttpsMetadata = false;
-                    // name of the API resource
-                    options.Audience = "test.api";
-                });
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

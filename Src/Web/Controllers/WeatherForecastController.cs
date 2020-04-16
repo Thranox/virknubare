@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ILogger = Serilog.ILogger;
@@ -17,10 +18,12 @@ namespace Web.Controllers
         };
 
         private readonly ILogger _logger;
+        private readonly IUserManager _userManager;
 
-        public WeatherForecastController(Serilog.ILogger logger)
+        public WeatherForecastController(Serilog.ILogger logger, IUserManager userManager)
         {
             _logger = logger;
+            _userManager = userManager;
         }
 
         //[Authorize(Roles = "tecreator")]
@@ -28,6 +31,7 @@ namespace Web.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+            var user = _userManager.GetUser(User.Identity);
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
