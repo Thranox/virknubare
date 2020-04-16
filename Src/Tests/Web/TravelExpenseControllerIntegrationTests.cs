@@ -368,17 +368,10 @@ namespace Tests.Web
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                ActionResult<TravelExpenseProcessStepResponse> actual;
-
-                var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto
-                {
-                    TravelExpenseId = testContext.TravelExpenseEntity1.Id,
-                    ProcessStepKey = Globals.InitialReporteddone
-                };
                 var sut = GetSut(testContext);
 
                 // Act
-                actual = await sut.Process(travelExpenseProcessStepDto);
+                var actual = await sut.Process(testContext.TravelExpenseEntity1.Id, Globals.InitialReporteddone);
 
                 // Assert
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));

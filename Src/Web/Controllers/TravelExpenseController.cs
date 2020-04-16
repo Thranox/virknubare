@@ -19,10 +19,10 @@ namespace Web.Controllers
             _serviceProvider = serviceProvider;
         }
 
-        [HttpPost]
-        [Route("ProcessStep")]
-        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(TravelExpenseProcessStepDto travelExpenseProcessStepDto)
+        [HttpPost("{id}/ProcessStep/{processStepKey}")]
+        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(Guid id, string processStepKey)
         {
+            var travelExpenseProcessStepDto=new TravelExpenseProcessStepDto(){TravelExpenseId = id,ProcessStepKey = processStepKey};
             var travelExpenseDtos = await _serviceProvider
                 .GetService<IProcessStepTravelExpenseService>()
                 .ProcessStepAsync(travelExpenseProcessStepDto);
