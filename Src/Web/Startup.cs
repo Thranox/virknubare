@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
 using CleanArchitecture.Infrastructure.DomainEvents;
-using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Infrastructure.Data;
@@ -15,7 +12,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
-using Microsoft.Extensions.Identity.Core;
 using Web.ActionFilters;
-using Web.Controllers;
 
 namespace Web
 {
@@ -56,30 +50,29 @@ namespace Web
                 .Build();
 
             services.AddControllersWithViews(
-                options=>
+                options =>
                 {
                     // Include handling of Domain Exceptions
                     options.Filters.Add(new HttpResponseExceptionFilter());
                     // Log all entries and exits of controller methods.
                     options.Filters.Add(new MethodLoggingActionFilter(logger));
 
-                    if(Configuration.GetValue<bool>("UseAuthentication"))
-                    {
+                    if (Configuration.GetValue<bool>("UseAuthentication"))
                         options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
-                    }
                 });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
 
             services.AddDbContext<PolDbContext>(options =>
-            {
-                var connectionString = Configuration.GetConnectionString("PolDb");
-                options
-                    .UseMySql(connectionString, mySqlOptions => mySqlOptions
-                        .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
-                    );
-            });
+                {
+                    var connectionString = Configuration.GetConnectionString("PolDb");
+                    options
+                        .UseMySql(connectionString, mySqlOptions => mySqlOptions
+                            .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
+                        );
+                },
+                ServiceLifetime.Transient);
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRepository, EfRepository>();
 
@@ -88,13 +81,13 @@ namespace Web
                 x.SwaggerDoc(_version, new OpenApiInfo {Title = _politikerafregningApi, Version = _version});
             });
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
             services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
-            
+
             Assembly
                 .GetAssembly(typeof(IProcessFlowStep))
                 .GetTypesAssignableFrom<IProcessFlowStep>()

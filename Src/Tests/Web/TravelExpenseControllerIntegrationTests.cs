@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
+using Application.Interfaces;
 using AutoFixture;
 using Domain;
 using Domain.Entities;
@@ -384,7 +385,11 @@ namespace Tests.Web
 
         private static TravelExpenseController GetSut(IntegrationTestContext testContext)
         {
-            return new TravelExpenseController(testContext.ServiceProvider);
+            return new TravelExpenseController(testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>(),
+                testContext.ServiceProvider.GetService< IGetTravelExpenseService> (),
+                testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>(),
+                testContext.ServiceProvider.GetService<ICreateTravelExpenseService>()
+                );
         }
     }
 }

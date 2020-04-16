@@ -6,41 +6,37 @@ using Application.Interfaces;
 using Domain;
 using Domain.Interfaces;
 using Domain.Specifications;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Services
 {
     public class UpdateTravelExpenseService : IUpdateTravelExpenseService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateTravelExpenseService(IServiceProvider serviceProvider)
+        public UpdateTravelExpenseService(IServiceProvider serviceProvider, IUnitOfWork unitOfWork)
         {
-            _serviceProvider = serviceProvider;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<TravelExpenseUpdateResponse> UpdateAsync(Guid id,
             TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
-            using (var unitOfWork = _serviceProvider.GetService<IUnitOfWork>())
-            {
-                var travelExpenseEntity = unitOfWork
-                    .Repository
-                    .List(new TravelExpenseById(id))
-                    .SingleOrDefault();
+            var travelExpenseEntity = _unitOfWork
+                .Repository
+                .List(new TravelExpenseById(id))
+                .SingleOrDefault();
 
-                if (travelExpenseEntity == null)
-                    throw new ItemNotFoundException( id.ToString(), "TravelExpense");
-                
-                travelExpenseEntity.Update(travelExpenseUpdateDto.Description);
+            if (travelExpenseEntity == null)
+                throw new ItemNotFoundException(id.ToString(), "TravelExpense");
 
-                unitOfWork
-                    .Repository
-                    .Update(travelExpenseEntity);
+            travelExpenseEntity.Update(travelExpenseUpdateDto.Description);
 
-                unitOfWork.Commit();
-                return await Task.FromResult(new TravelExpenseUpdateResponse());
-            }
+            _unitOfWork
+                .Repository
+                .Update(travelExpenseEntity);
+
+            _unitOfWork.Commit();
+            return await Task.FromResult(new TravelExpenseUpdateResponse());
         }
     }
 }
