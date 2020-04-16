@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,13 +24,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "tecreator")]
+        [Authorize]
         public IEnumerable<WeatherForecast> Get()
         {
-            if (User.IsInRole("tecertifier"))
-            {
-
-            }
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
