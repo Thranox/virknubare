@@ -29,7 +29,7 @@ namespace Application.Services
                     .SingleOrDefault();
 
                 if (travelExpenseEntity == null)
-                    throw new TravelExpenseNotFoundByIdException(travelExpenseCertifyDto.Id);
+                    throw new ItemNotFoundException(travelExpenseCertifyDto.Id.ToString(), "TravelExpense");
 
                 travelExpenseEntity.Certify();
 

@@ -29,7 +29,7 @@ namespace Application.Services
                     .SingleOrDefault();
 
                 if (travelExpenseEntity == null)
-                    throw new TravelExpenseNotFoundByIdException(travelExpenseReportDoneDto.Id);
+                    throw new ItemNotFoundException(travelExpenseReportDoneDto.Id.ToString(), "TravelExpense");
 
                 travelExpenseEntity.ReportDone();
 

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Specifications;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,11 +30,10 @@ namespace Application.Services
             {
                 var travelExpenseEntity = unitOfWork
                     .Repository
-                    .List(new TravelExpenseById(travelExpenseAssignPaymentDto.Id))
-                    .SingleOrDefault();
+                    .GetById<TravelExpenseEntity>(travelExpenseAssignPaymentDto.Id);
 
                 if (travelExpenseEntity == null)
-                    throw new TravelExpenseNotFoundByIdException(travelExpenseAssignPaymentDto.Id);
+                    throw new ItemNotFoundException(travelExpenseAssignPaymentDto.Id.ToString(), "TravelExpense");
 
                 travelExpenseEntity.AssignPayment();
 
