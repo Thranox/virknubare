@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
@@ -35,6 +36,11 @@ namespace Tests.TestHelpers
             buildServiceProvider.AddScoped(x => Serilog.Log.Logger);
             buildServiceProvider.AddScoped(x => CreateUnitOfWork());
             buildServiceProvider.AddAutoMapper(typeof(Startup));
+
+            Assembly
+                .GetAssembly(typeof(IProcessFlowStep))
+                .GetTypesAssignableFrom<IProcessFlowStep>()
+                .ForEach(t => { buildServiceProvider.AddScoped(typeof(IProcessFlowStep), t); });
 
             ServiceProvider = buildServiceProvider.BuildServiceProvider();
 
