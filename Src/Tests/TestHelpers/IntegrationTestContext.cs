@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Application.Interfaces;
 using Application.Services;
@@ -15,9 +16,9 @@ namespace Tests.TestHelpers
 {
     public class IntegrationTestContext :BaseTestContext
     {
-        public TravelExpenseEntity TravelExpenseEntity1 = new TravelExpenseEntity("Expense1") {Id = Guid.NewGuid()};
-        public TravelExpenseEntity TravelExpenseEntity2 = new TravelExpenseEntity("Expense2") {Id = Guid.NewGuid()};
-        public TravelExpenseEntity TravelExpenseEntity3 = new TravelExpenseEntity("Expense3") {Id = Guid.NewGuid()};
+        public TravelExpenseEntity TravelExpenseEntity1;
+        public TravelExpenseEntity TravelExpenseEntity2;
+        public TravelExpenseEntity TravelExpenseEntity3;
 
         public IntegrationTestContext()
         {
@@ -49,16 +50,16 @@ namespace Tests.TestHelpers
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
-        public string SubUsedForTest { get; }
 
         private void SeedDb()
         {
             using (var dbContext = new PolDbContext(DbContextOptions))
             {
                 dbContext.Seed();
-                dbContext.TravelExpenses.Add(TravelExpenseEntity1);
-                dbContext.TravelExpenses.Add(TravelExpenseEntity2);
-                dbContext.TravelExpenses.Add(TravelExpenseEntity3);
+                var travelExpenseEntities = dbContext.CustomerEntities.First().TravelExpenses.ToList();
+                TravelExpenseEntity1 = travelExpenseEntities[0];
+                TravelExpenseEntity2 = travelExpenseEntities[1];
+                TravelExpenseEntity3 = travelExpenseEntities[2];
 
                 dbContext.SaveChanges();
             }

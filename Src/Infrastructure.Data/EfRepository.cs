@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Infrastructure.Data
 {
@@ -30,15 +32,38 @@ namespace Infrastructure.Data
         {
             if (typeof(T) == typeof(CustomerEntity))
             {
-                return _dbContext
+                IQueryable<CustomerEntity> includableQueryable = _dbContext
                     .Set<CustomerEntity>()
                     .Include(g => g.FlowSteps)
-                    .ThenInclude(gg=>gg.FlowStepUserPermissions)
-                    .Include(g=>g.TravelExpenses)
-                    .Include(g=>g.Users)
-                    .ThenInclude(gg=>gg.FlowStepUserPermissions)
-                    .ToList() as List<T>;
+                    .ThenInclude(gg => gg.FlowStepUserPermissions)
+                    .Include(g => g.TravelExpenses)
+                    .Include(g => g.Users)
+                    .ThenInclude(gg => gg.FlowStepUserPermissions);
+
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<CustomerEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+                return includableQueryable.ToList() as List<T>;
             }
+            
+            if (typeof(T) == typeof(UserEntity))
+            {
+                IQueryable<UserEntity> includableQueryable = _dbContext
+                    .Set<UserEntity>()
+                    .Include(g => g.FlowStepUserPermissions)
+                    .ThenInclude(gg => gg.FlowStep)
+                    .Include(g => g.Customer)
+                    .ThenInclude(gg=>gg.TravelExpenses);
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<UserEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+                return includableQueryable.ToList() as List<T>;
+            }
+
             var query = _dbContext.Set<T>().AsQueryable();
             if (spec != null)
             {

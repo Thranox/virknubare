@@ -7,6 +7,7 @@ namespace Domain.Entities
     {
         private UserEntity()
         {
+            FlowStepUserPermissions=new List<FlowStepUserPermissionEntity>();
         }
 
         public UserEntity(string name, string subject) : this()

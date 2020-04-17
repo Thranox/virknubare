@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
+using Domain;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Tests.TestHelpers;
@@ -18,7 +19,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetAsync(testContext.SubUsedForTest);
+                var actual = await sut.GetAsync(Globals.DummyPolSub);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -53,7 +54,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, testContext.SubUsedForTest);
+                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSub);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

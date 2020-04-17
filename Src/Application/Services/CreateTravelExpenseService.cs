@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Specifications;
 
 namespace Application.Services
 {
@@ -18,7 +20,8 @@ namespace Application.Services
         public async Task<TravelExpenseCreateResponse> CreateAsync(TravelExpenseCreateDto travelExpenseCreateDto,
             string sub)
         {
-            var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description);
+            var creatingUser = _unitOfWork.Repository.List(new UserBySubSpecification(sub)).FirstOrDefault();
+            var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description, creatingUser);
 
             _unitOfWork
                 .Repository

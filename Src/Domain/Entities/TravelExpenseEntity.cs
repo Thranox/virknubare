@@ -9,13 +9,16 @@ namespace Domain.Entities
         {
         }
 
-        public TravelExpenseEntity(string description) : this()
+        public TravelExpenseEntity(string description, UserEntity userEntity) : this()
         {
             Description = description;
             Stage = TravelExpenseStage.Initial;
+            OwnedByUserEntity = userEntity;
         }
 
         public TravelExpenseStage Stage { get; private set; }
+
+        public UserEntity OwnedByUserEntity { get; private set; }
 
         public string Description { get; private set; }
         public bool IsCertified { get; private set; }

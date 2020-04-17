@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoFixture;
+using Domain;
 using Domain.Specifications;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -24,7 +25,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
                 // Act
-                var actual = await sut.CreateAsync(travelExpenseCreateDto, testContext.SubUsedForTest);
+                var actual = await sut.CreateAsync(travelExpenseCreateDto, Globals.DummyPolSub);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

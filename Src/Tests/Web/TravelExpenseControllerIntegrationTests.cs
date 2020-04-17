@@ -389,7 +389,8 @@ namespace Tests.Web
         private static TravelExpenseController GetSut(IntegrationTestContext testContext)
         {
             var subManagementService = new Moq.Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(testContext.SubUsedForTest);
+            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(Globals.DummyPolSub);
+
             return new TravelExpenseController(testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>(),
                 testContext.ServiceProvider.GetService< IGetTravelExpenseService> (),
                 testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>(),

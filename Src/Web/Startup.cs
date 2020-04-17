@@ -139,7 +139,10 @@ namespace Web
                 // Migrate database as needed.
                 var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
                 context.Database.Migrate();
-                context.Seed();
+                if (!env.IsProduction())
+                {
+                    context.Seed();
+                }
             }
 
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());

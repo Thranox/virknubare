@@ -64,7 +64,7 @@ namespace IDP
                     ClientSecrets ={new Secret("secret".Sha256())},
                     AllowedCorsOrigins = new List<string> {"https://localhost:44324"},
                     AccessTokenType = AccessTokenType.Jwt,
-                    AccessTokenLifetime = 15*60 // 15 mins
+                    AccessTokenLifetime = 15*60*60 // 15 hrs
                 }
             };
     }

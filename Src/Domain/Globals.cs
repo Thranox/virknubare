@@ -7,5 +7,6 @@ namespace Domain
         public const string ReporteddoneCertified = "ReportedDone -> Certified";
         public const string CertifiedAssignedForPayment = "Certified -> Assigned For Payment";
         public const string AssignedForPaymentFinal = "Assigned For Payment -> Final";
+        public const string DummyPolSub = "123450";
     }
 }

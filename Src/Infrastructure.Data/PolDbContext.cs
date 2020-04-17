@@ -64,7 +64,7 @@ namespace Infrastructure.Data
                 return;
 
             var customerEntity = new CustomerEntity(Globals.DummyCustomerName);
-            var userEntityPol = new UserEntity("dummy pol", "123450");
+            var userEntityPol = new UserEntity("dummy pol", Globals.DummyPolSub);
             customerEntity.Users.Add(userEntityPol);
             var userEntitySek = new UserEntity("dummy sek", "123451");
             customerEntity.Users.Add(userEntitySek);
@@ -96,7 +96,11 @@ namespace Infrastructure.Data
             );
             customerEntity.FlowSteps.Add(flowStepEntity4);
 
-            this.CustomerEntities.Add(customerEntity);
+            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description1", userEntityPol));
+            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description2", userEntityPol));
+            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description3", userEntityPol));
+
+            CustomerEntities.Add(customerEntity);
 
             SaveChanges();
         }

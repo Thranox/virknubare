@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Specifications;
 
 namespace Application.Services
 {
@@ -23,11 +24,25 @@ namespace Application.Services
 
         public async Task<TravelExpenseGetResponse> GetAsync(string sub)
         {
+            var userEntities = _unitOfWork
+                .Repository
+                .List<UserEntity>(new UserBySubSpecification(sub));
+            var userEntity = userEntities
+                .SingleOrDefault();
+
+            if(userEntity==null)
+                throw new ItemNotFoundException(sub, "UserEntity");
+
+            var travelExpenseStages = userEntity.FlowStepUserPermissions.Select(x => x.FlowStep.From).Distinct().ToList();
+            var customer = userEntity.Customer;
+
             return await Task.FromResult(new TravelExpenseGetResponse
             {
-                Result = _unitOfWork
-                    .Repository
-                    .List<TravelExpenseEntity>()
+                Result = customer
+                    .TravelExpenses
+                    .Where(x=>
+                        travelExpenseStages.Contains( x.Stage) || 
+                        x.OwnedByUserEntity == userEntity)
                     .Select(x => _mapper.Map<TravelExpenseDto>(x))
             });
         }
