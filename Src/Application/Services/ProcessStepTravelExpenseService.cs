@@ -21,7 +21,7 @@ namespace Application.Services
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
-            TravelExpenseProcessStepDto travelExpenseProcessStepDto)
+            TravelExpenseProcessStepDto travelExpenseProcessStepDto, string sub)
         {
             var travelExpenseEntity = _unitOfWork
                 .Repository

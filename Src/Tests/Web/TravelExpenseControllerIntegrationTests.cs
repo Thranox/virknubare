@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
@@ -10,9 +11,11 @@ using Domain.Interfaces;
 using Domain.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 using Tests.TestHelpers;
 using Web.Controllers;
+using Web.Services;
 
 namespace Tests.Web
 {
@@ -385,11 +388,13 @@ namespace Tests.Web
 
         private static TravelExpenseController GetSut(IntegrationTestContext testContext)
         {
+            var subManagementService = new Moq.Mock<ISubManagementService>();
+            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(testContext.SubUsedForTest);
             return new TravelExpenseController(testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>(),
                 testContext.ServiceProvider.GetService< IGetTravelExpenseService> (),
                 testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>(),
-                testContext.ServiceProvider.GetService<ICreateTravelExpenseService>()
-                );
+                testContext.ServiceProvider.GetService<ICreateTravelExpenseService>(),
+                subManagementService.Object);
         }
     }
 }

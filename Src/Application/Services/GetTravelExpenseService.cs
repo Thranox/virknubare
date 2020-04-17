@@ -21,7 +21,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<TravelExpenseGetResponse> GetAsync()
+        public async Task<TravelExpenseGetResponse> GetAsync(string sub)
         {
             return await Task.FromResult(new TravelExpenseGetResponse
             {
@@ -32,7 +32,7 @@ namespace Application.Services
             });
         }
 
-        public async Task<TravelExpenseGetByIdResponse> GetByIdAsync(Guid id)
+        public async Task<TravelExpenseGetByIdResponse> GetByIdAsync(Guid id, string sub)
         {
             var travelExpenseEntity = _unitOfWork
                 .Repository

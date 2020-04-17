@@ -24,7 +24,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
                 // Act
-                var actual = await sut.CreateAsync(travelExpenseCreateDto);
+                var actual = await sut.CreateAsync(travelExpenseCreateDto, testContext.SubUsedForTest);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

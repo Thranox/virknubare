@@ -18,7 +18,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetAsync();
+                var actual = await sut.GetAsync(testContext.SubUsedForTest);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -53,7 +53,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id);
+                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, testContext.SubUsedForTest);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

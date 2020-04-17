@@ -49,6 +49,7 @@ namespace Tests.TestHelpers
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
+        public string SubUsedForTest { get; }
 
         private void SeedDb()
         {

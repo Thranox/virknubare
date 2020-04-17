@@ -25,6 +25,7 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Web.ActionFilters;
 using Web.Controllers;
+using Web.Services;
 
 namespace Web
 {
@@ -56,10 +57,6 @@ namespace Web
                     options.RequireHttpsMetadata = false;
                 });
 
-            var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
             services.AddControllersWithViews(
                 options =>
                 {
@@ -67,9 +64,20 @@ namespace Web
                     options.Filters.Add(new HttpResponseExceptionFilter());
                     // Log all entries and exits of controller methods.
                     options.Filters.Add(new MethodLoggingActionFilter(logger));
+                    // Find user for request
 
                     if (Configuration.GetValue<bool>("UseAuthentication"))
+                    {
+                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
+                            .RequireAuthenticatedUser()
+                            .Build();
                         options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
+                        services.AddScoped<ISubManagementService, SubManagementService>();
+                    }
+                    else
+                    {
+                        services.AddScoped<ISubManagementService, FakeSubManagementService>();
+                    }
                 });
 
             // In production, the Angular files will be served from this directory
@@ -104,7 +112,7 @@ namespace Web
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
-            services.AddScoped<IUserManager, UserManager>();
+            services.AddScoped<ISubManagementService, SubManagementService>();
 
             services.AddMvc();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

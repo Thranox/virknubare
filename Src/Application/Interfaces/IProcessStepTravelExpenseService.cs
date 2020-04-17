@@ -5,6 +5,7 @@ namespace Application.Interfaces
 {
     public interface IProcessStepTravelExpenseService
     {
-        Task<TravelExpenseProcessStepResponse> ProcessStepAsync(TravelExpenseProcessStepDto travelExpenseProcessStepDto);
+        Task<TravelExpenseProcessStepResponse> ProcessStepAsync(TravelExpenseProcessStepDto travelExpenseProcessStepDto,
+            string sub);
     }
 }
