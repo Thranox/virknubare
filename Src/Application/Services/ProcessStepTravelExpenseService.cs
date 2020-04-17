@@ -5,6 +5,7 @@ using Application.Dtos;
 using Application.Interfaces;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 
 namespace Application.Services

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Domain;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

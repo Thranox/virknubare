@@ -7,6 +7,7 @@ using Application.Interfaces;
 using AutoFixture;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Exceptions;
+using Domain.Interfaces;
 using Domain.SharedKernel;
 
 namespace Domain.Entities

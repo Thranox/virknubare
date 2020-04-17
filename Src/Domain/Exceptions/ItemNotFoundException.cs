@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain
+namespace Domain.Exceptions
 {
     public class ItemNotFoundException : Exception
     {
