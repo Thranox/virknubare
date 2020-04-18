@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain;
+using Domain.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Tests.TestHelpers;
@@ -67,6 +68,18 @@ namespace Tests.ApplicationServices
                     Id = testContext.TravelExpenseEntity1.Id,
                     Stage = "Initial"
                 }));
+            }
+        }
+
+        [Test]
+        public async Task GetByIdAsync_IdOfExistingButNotAllowed_ThrowsItemNotAllowedException()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
+                // Act & Assert
+                Assert.ThrowsAsync<ItemNotAllowedException>(()=> sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSek));
             }
         }
     }
