@@ -9,7 +9,6 @@ using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Web.Controllers;
 using Web;
 
 namespace Tests.TestHelpers
@@ -25,7 +24,7 @@ namespace Tests.TestHelpers
             DbContextOptions = new DbContextOptionsBuilder<PolDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
+            //Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
 
             var buildServiceProvider = new ServiceCollection();
             buildServiceProvider.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
@@ -48,7 +47,7 @@ namespace Tests.TestHelpers
         }
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
-        public IMapper Mapper { get; }
+        //public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
 
         private void SeedDb()
