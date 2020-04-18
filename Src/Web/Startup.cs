@@ -98,15 +98,19 @@ namespace Web
 
         public static void AddToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
+            // Infrastructure
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRepository, EfRepository>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            // Application services
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
             services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
+            services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
 
             if (configuration.GetValue<bool>("UseAuthentication"))
             {
@@ -121,6 +125,7 @@ namespace Web
                 .GetTypesAssignableFrom<IProcessFlowStep>()
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
+            // Domain event handlers
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
 
