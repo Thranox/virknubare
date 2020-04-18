@@ -64,11 +64,11 @@ namespace Infrastructure.Data
                 return;
 
             var customerEntity = new CustomerEntity(Globals.DummyCustomerName);
-            var userEntityPol = new UserEntity("dummy pol", Globals.DummyPolSub);
+            var userEntityPol = new UserEntity("dummy pol Alice", Globals.DummyPolSub);
             customerEntity.Users.Add(userEntityPol);
-            var userEntitySek = new UserEntity("dummy sek", "123451");
+            var userEntitySek = new UserEntity("dummy sek Bob", Globals.DummyPolSek);
             customerEntity.Users.Add(userEntitySek);
-            var userEntityLed = new UserEntity("dummy led", "123452");
+            var userEntityLed = new UserEntity("dummy led Charlie", Globals.DummyPolLed);
             customerEntity.Users.Add(userEntityLed);
 
             var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);

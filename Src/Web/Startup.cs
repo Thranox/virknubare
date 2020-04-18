@@ -61,7 +61,7 @@ namespace Web
                 options =>
                 {
                     // Include handling of Domain Exceptions
-                    options.Filters.Add(new HttpResponseExceptionFilter());
+                    options.Filters.Add(new HttpResponseExceptionFilter(logger));
                     // Log all entries and exits of controller methods.
                     options.Filters.Add(new MethodLoggingActionFilter(logger));
                     // Find user for request
@@ -122,6 +122,8 @@ namespace Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
             IConfiguration configuration)
         {
+            logger.Information("------------------------------------------------------------");
+            logger.Information("Starting Politikerafregning Web API...");
             if (env.IsDevelopment())
             {
                 logger.Information("In Development environment");
@@ -138,6 +140,7 @@ namespace Web
             {
                 // Migrate database as needed.
                 var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
+                //context.Database.ExecuteSqlRaw("drop table __efmigrationshistory; \r\ndrop table flowstepuserpermissionentity; \r\ndrop table flowstepentity; \r\ndrop table travelexpenses; \r\ndrop table userentity; \r\ndrop table customerentities; ");
                 context.Database.Migrate();
                 if (!env.IsProduction())
                 {
@@ -178,6 +181,7 @@ namespace Web
 
 
             logger.Information("TravelExpense Web started. Version=" + configuration.GetValue<string>("Version"));
+            logger.Information("------------------------------------------------------------");
         }
     }
 }

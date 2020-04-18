@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
+using Serilog;
 
 namespace Application.Services
 {
@@ -14,11 +15,13 @@ namespace Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
-        public GetTravelExpenseService(IMapper mapper, IUnitOfWork unitOfWork)
+        public GetTravelExpenseService(IMapper mapper, IUnitOfWork unitOfWork, ILogger logger)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<TravelExpenseGetResponse> GetAsync(string sub)
@@ -37,6 +40,9 @@ namespace Application.Services
             var travelExpenseStages =
                 userEntity.FlowStepUserPermissions.Select(x => x.FlowStep.From).Distinct().ToList();
             var customer = userEntity.Customer;
+
+            _logger.Debug("During GetAsync -- travelExpenseStages={travelExpenseStages}", travelExpenseStages);
+            _logger.Debug("During GetAsync (Delete this!) -- customer.travelExpenses={travelexpensescount}", customer.TravelExpenses.Count);
 
             // The user may see the travel expense if
             // 1) owned by the user or if
