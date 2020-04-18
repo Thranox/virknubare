@@ -45,19 +45,22 @@ namespace Tests.Web
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity1.Description,
-                        Id = testContext.TravelExpenseEntity1.Id
+                        Id = testContext.TravelExpenseEntity1.Id,
+                        Stage = "Initial"
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity2.Description,
-                        Id = testContext.TravelExpenseEntity2.Id
+                        Id = testContext.TravelExpenseEntity2.Id,
+                        Stage = "Initial"
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity3.Description,
-                        Id = testContext.TravelExpenseEntity3.Id
+                        Id = testContext.TravelExpenseEntity3.Id,
+                        Stage = "Initial"
                     }));
             }
         }
