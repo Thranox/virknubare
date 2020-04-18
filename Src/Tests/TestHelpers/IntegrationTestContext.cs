@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Web;
 using Web.MapperProfiles;
@@ -25,7 +26,8 @@ namespace Tests.TestHelpers
             Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new EntityDtoProfile())));
 
             var serviceCollection = new ServiceCollection();
-            Startup.AddToServiceCollection(serviceCollection);
+            var configurationBuilder = new ConfigurationBuilder();
+            Startup.AddToServiceCollection(serviceCollection, configurationBuilder.Build());
 
             serviceCollection.AddScoped(x => Serilog.Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
