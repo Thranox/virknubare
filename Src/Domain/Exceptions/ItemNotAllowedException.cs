@@ -12,6 +12,6 @@ namespace Domain.Exceptions
 
         public string Id { get; }
 
-        public string Item { get; set; }
+        public string Item { get; }
     }
 }

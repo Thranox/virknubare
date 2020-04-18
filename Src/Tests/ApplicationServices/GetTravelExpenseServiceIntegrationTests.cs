@@ -72,14 +72,16 @@ namespace Tests.ApplicationServices
         }
 
         [Test]
-        public async Task GetByIdAsync_IdOfExistingButNotAllowed_ThrowsItemNotAllowedException()
+        public void GetByIdAsync_IdOfExistingButNotAllowed_ThrowsItemNotAllowedException()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act & Assert
-                Assert.ThrowsAsync<ItemNotAllowedException>(()=> sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSek));
+                var itemNotAllowedException = Assert.ThrowsAsync<ItemNotAllowedException>(()=> sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSek));
+                Assert.That(itemNotAllowedException.Id, Is.EqualTo(testContext.TravelExpenseEntity1.Id.ToString()));
+                Assert.That(itemNotAllowedException.Item, Is.EqualTo("TravelExpense"));
             }
         }
     }
