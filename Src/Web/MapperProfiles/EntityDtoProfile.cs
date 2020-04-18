@@ -2,13 +2,14 @@
 using AutoMapper;
 using Domain.Entities;
 
-namespace Web.Controllers
+namespace Web.MapperProfiles
 {
-    public class TravelExpenseProfile:Profile
+    public class EntityDtoProfile : Profile
     {
-        public TravelExpenseProfile()
+        public EntityDtoProfile()
         {
             CreateMap<TravelExpenseEntity, TravelExpenseDto>();
+            CreateMap<FlowStepEntity, FlowStepDto>();
         }
     }
 }

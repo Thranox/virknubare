@@ -32,7 +32,7 @@ namespace Tests.ApplicationServices
                     var sut = testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>();
 
                     // Act
-                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto, Globals.DummyPolSub);
+                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto, TestData.DummyPolSub);
 
                     // Assert
                     Assert.That(actual, Is.Not.Null);

@@ -20,7 +20,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetAsync(Globals.DummyPolSub);
+                var actual = await sut.GetAsync(TestData.DummyPolSub);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -58,7 +58,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSub);
+                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, TestData.DummyPolSub);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -79,7 +79,7 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act & Assert
-                var itemNotAllowedException = Assert.ThrowsAsync<ItemNotAllowedException>(()=> sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSek));
+                var itemNotAllowedException = Assert.ThrowsAsync<ItemNotAllowedException>(()=> sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, TestData.DummyPolSek));
                 Assert.That(itemNotAllowedException.Id, Is.EqualTo(testContext.TravelExpenseEntity1.Id.ToString()));
                 Assert.That(itemNotAllowedException.Item, Is.EqualTo("TravelExpense"));
             }

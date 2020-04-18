@@ -60,15 +60,15 @@ namespace Infrastructure.Data
 
         public void Seed()
         {
-            if (CustomerEntities.Any(x => x.Name == Globals.DummyCustomerName))
+            if (CustomerEntities.Any(x => x.Name == TestData.DummyCustomerName))
                 return;
 
-            var customerEntity = new CustomerEntity(Globals.DummyCustomerName);
-            var userEntityPol = new UserEntity("dummy pol Alice", Globals.DummyPolSub);
+            var customerEntity = new CustomerEntity(TestData.DummyCustomerName);
+            var userEntityPol = new UserEntity("dummy pol Alice", TestData.DummyPolSub);
             customerEntity.Users.Add(userEntityPol);
-            var userEntitySek = new UserEntity("dummy sek Bob", Globals.DummyPolSek);
+            var userEntitySek = new UserEntity("dummy sek Bob", TestData.DummyPolSek);
             customerEntity.Users.Add(userEntitySek);
-            var userEntityLed = new UserEntity("dummy led Charlie", Globals.DummyPolLed);
+            var userEntityLed = new UserEntity("dummy led Charlie", TestData.DummyPolLed);
             customerEntity.Users.Add(userEntityLed);
 
             var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);

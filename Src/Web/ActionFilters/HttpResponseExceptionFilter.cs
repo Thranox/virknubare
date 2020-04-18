@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -21,7 +22,8 @@ namespace Web.ActionFilters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (context.Exception != null) _logger.Error(context.Exception, "Exception occured");
+            var errorId = Guid.NewGuid();
+            if (context.Exception != null) _logger.Error(context.Exception, "Exception occured: {ErrorId}",errorId);
 
             if (context.Exception is ItemNotFoundException travelExpenseNotFoundByIdException)
             {
@@ -44,9 +46,22 @@ namespace Web.ActionFilters
 
             if (context.Exception is ItemNotAllowedException itemNotAllowedException)
             {
-                context.Result = new ObjectResult(new {itemNotAllowedException.Id, itemNotAllowedException.Message})
+                context.Result = new ObjectResult(new { itemNotAllowedException.Id, itemNotAllowedException.Message })
                 {
-                    StatusCode = (int) HttpStatusCode.Unauthorized // 401
+                    StatusCode = (int)HttpStatusCode.Unauthorized // 401
+                };
+                context.ExceptionHandled = true;
+            }
+
+            if (context.Exception!=null && !context.ExceptionHandled )
+            {
+                context.Result = new ObjectResult(new
+                {
+                    Message ="Internal server error -- please see log and look for errorId="+errorId.ToString(),
+                    context.Exception
+                })
+                {
+                    StatusCode = (int)HttpStatusCode.InternalServerError // 500
                 };
                 context.ExceptionHandled = true;
             }

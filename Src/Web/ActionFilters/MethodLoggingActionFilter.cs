@@ -13,6 +13,8 @@ namespace Web.ActionFilters
             _logger = logger;
         }
 
+        public int Order { get; set; } = int.MaxValue - 20;
+
         public void OnActionExecuting(ActionExecutingContext context)
         {
             _logger.Information("{MethodName} -- Entry", context.ActionDescriptor.DisplayName);

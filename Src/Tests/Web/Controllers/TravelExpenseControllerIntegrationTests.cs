@@ -18,7 +18,7 @@ using Tests.TestHelpers;
 using Web.Controllers;
 using Web.Services;
 
-namespace Tests.Web
+namespace Tests.Web.Controllers
 {
     public class TravelExpenseControllerIntegrationTests
     {
@@ -393,7 +393,7 @@ namespace Tests.Web
         private static TravelExpenseController GetSut(IntegrationTestContext testContext)
         {
             var subManagementService = new Moq.Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(Globals.DummyPolSub);
+            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSub);
 
             return new TravelExpenseController(testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>(),
                 testContext.ServiceProvider.GetService< IGetTravelExpenseService> (),

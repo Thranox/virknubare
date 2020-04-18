@@ -42,7 +42,6 @@ namespace Application.Services
             var customer = userEntity.Customer;
 
             _logger.Debug("During GetAsync -- travelExpenseStages={travelExpenseStages}", travelExpenseStages);
-            _logger.Debug("During GetAsync (Delete this!) -- customer.travelExpenses={travelexpensescount}", customer.TravelExpenses.Count);
 
             // The user may see the travel expense if
             // 1) owned by the user or if

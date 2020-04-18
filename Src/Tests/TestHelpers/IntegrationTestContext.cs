@@ -1,8 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
-using Application.Interfaces;
-using Application.Services;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -10,6 +7,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Web;
+using Web.MapperProfiles;
 
 namespace Tests.TestHelpers
 {
@@ -24,30 +22,21 @@ namespace Tests.TestHelpers
             DbContextOptions = new DbContextOptionsBuilder<PolDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            //Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
+            Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new EntityDtoProfile())));
 
-            var buildServiceProvider = new ServiceCollection();
-            buildServiceProvider.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
-            buildServiceProvider.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
-            buildServiceProvider.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            buildServiceProvider.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
-            
-            buildServiceProvider.AddScoped(x => Serilog.Log.Logger);
-            buildServiceProvider.AddScoped(x => CreateUnitOfWork());
-            buildServiceProvider.AddAutoMapper(typeof(Startup));
+            var serviceCollection = new ServiceCollection();
+            Startup.AddToServiceCollection(serviceCollection);
 
-            Assembly
-                .GetAssembly(typeof(IProcessFlowStep))
-                .GetTypesAssignableFrom<IProcessFlowStep>()
-                .ForEach(t => { buildServiceProvider.AddScoped(typeof(IProcessFlowStep), t); });
+            serviceCollection.AddScoped(x => Serilog.Log.Logger);
+            serviceCollection.AddScoped(x => CreateUnitOfWork());
 
-            ServiceProvider = buildServiceProvider.BuildServiceProvider();
+            ServiceProvider = serviceCollection.BuildServiceProvider();
 
             SeedDb();
         }
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
-        //public IMapper Mapper { get; }
+        public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
 
         private void SeedDb()

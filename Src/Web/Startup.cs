@@ -10,7 +10,6 @@ using Domain.SharedKernel;
 using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents.Handlers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,7 +23,6 @@ using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Web.ActionFilters;
-using Web.Controllers;
 using Web.Services;
 
 namespace Web
@@ -72,11 +70,6 @@ namespace Web
                             .RequireAuthenticatedUser()
                             .Build();
                         options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
-                        services.AddScoped<ISubManagementService, SubManagementService>();
-                    }
-                    else
-                    {
-                        services.AddScoped<ISubManagementService, FakeSubManagementService>();
                     }
                 });
 
@@ -91,31 +84,44 @@ namespace Web
                             .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
                         );
                 });
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<IRepository, EfRepository>();
 
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc(_version, new OpenApiInfo {Title = _politikerafregningApi, Version = _version});
             });
+
+            AddToServiceCollection(services,Configuration);
+
+            services.AddMvc();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+        }
+
+        public static void AddToServiceCollection(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IRepository, EfRepository>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
             services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
+            services.AddScoped<IGetFlowStepService, GetFlowStepService>();
 
+            if (configuration.GetValue<bool>("UseAuthentication"))
+            {
+                services.AddScoped<ISubManagementService, SubManagementService>();
+            }
+            else
+            {
+                services.AddScoped<ISubManagementService, FakeSubManagementService>();
+            }
             Assembly
                 .GetAssembly(typeof(IProcessFlowStep))
                 .GetTypesAssignableFrom<IProcessFlowStep>()
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
-            services.AddScoped<ISubManagementService, SubManagementService>();
-
-            services.AddMvc();
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
