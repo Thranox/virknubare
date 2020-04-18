@@ -7,6 +7,7 @@ namespace Domain.Entities
     {
         private UserEntity()
         {
+            FlowStepUserPermissions=new List<FlowStepUserPermissionEntity>();
         }
 
         public UserEntity(string name, string subject) : this()
@@ -16,8 +17,8 @@ namespace Domain.Entities
         }
 
         public CustomerEntity Customer { get; set; }
-        public string Name { get; }
-        public string Subject { get; }
+        public string Name { get; set; }
+        public string Subject { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
     }
 }

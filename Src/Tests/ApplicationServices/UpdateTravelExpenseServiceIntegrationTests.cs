@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoFixture;
+using Domain;
 using Domain.Entities;
 using Domain.Specifications;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,11 +28,11 @@ namespace Tests.ApplicationServices
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Id = existingId, Description = newDescription};
+                        {Description = newDescription};
                     var sut = testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>();
 
                     // Act
-                    var actual = await sut.UpdateAsync(travelExpenseUpdateDto);
+                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto, TestData.DummyPolSub);
 
                     // Assert
                     Assert.That(actual, Is.Not.Null);

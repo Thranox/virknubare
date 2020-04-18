@@ -1,39 +1,38 @@
-﻿using System;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+using Domain.Specifications;
 
 namespace Application.Services
 {
     public class CreateTravelExpenseService : ICreateTravelExpenseService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateTravelExpenseService(IServiceProvider serviceProvider)
+        public CreateTravelExpenseService(IUnitOfWork unitOfWork)
         {
-            _serviceProvider = serviceProvider;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<TravelExpenseCreateResponse> CreateAsync(TravelExpenseCreateDto travelExpenseCreateDto)
+        public async Task<TravelExpenseCreateResponse> CreateAsync(TravelExpenseCreateDto travelExpenseCreateDto,
+            string sub)
         {
-            using (var unitOfWork = _serviceProvider.GetService<IUnitOfWork>())
+            var creatingUser = _unitOfWork.Repository.List(new UserBySubSpecification(sub)).FirstOrDefault();
+            var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description, creatingUser);
+
+            _unitOfWork
+                .Repository
+                .Add(travelExpenseEntity);
+
+            _unitOfWork.Commit();
+
+            return await Task.FromResult(new TravelExpenseCreateResponse
             {
-                var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description);
-
-                unitOfWork
-                    .Repository
-                    .Add(travelExpenseEntity);
-
-                unitOfWork.Commit();
-
-                return await Task.FromResult(new TravelExpenseCreateResponse
-                {
-                    Id = travelExpenseEntity.Id
-                });
-            }
+                Id = travelExpenseEntity.Id
+            });
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Application.Dtos
         public bool IsCertified { get; set; }
         public bool IsReportedDone { get; set; }
         public bool IsAssignedPayment { get; set; }
+        public string Stage { get; set; }
     }
 }

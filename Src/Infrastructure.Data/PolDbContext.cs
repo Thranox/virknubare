@@ -60,15 +60,15 @@ namespace Infrastructure.Data
 
         public void Seed()
         {
-            if (CustomerEntities.Any(x => x.Name == Globals.DummyCustomerName))
+            if (CustomerEntities.Any(x => x.Name == TestData.DummyCustomerName))
                 return;
 
-            var customerEntity = new CustomerEntity(Globals.DummyCustomerName);
-            var userEntityPol = new UserEntity("dummy pol", "123450");
+            var customerEntity = new CustomerEntity(TestData.DummyCustomerName);
+            var userEntityPol = new UserEntity("dummy pol Alice", TestData.DummyPolSub);
             customerEntity.Users.Add(userEntityPol);
-            var userEntitySek = new UserEntity("dummy sek", "123451");
+            var userEntitySek = new UserEntity("dummy sek Bob", TestData.DummyPolSek);
             customerEntity.Users.Add(userEntitySek);
-            var userEntityLed = new UserEntity("dummy led", "123452");
+            var userEntityLed = new UserEntity("dummy led Charlie", TestData.DummyPolLed);
             customerEntity.Users.Add(userEntityLed);
 
             var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);
@@ -96,7 +96,11 @@ namespace Infrastructure.Data
             );
             customerEntity.FlowSteps.Add(flowStepEntity4);
 
-            this.CustomerEntities.Add(customerEntity);
+            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description1", userEntityPol));
+            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description2", userEntityPol));
+            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description3", userEntityPol));
+
+            CustomerEntities.Add(customerEntity);
 
             SaveChanges();
         }

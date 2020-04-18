@@ -4,72 +4,77 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+using Web.Services;
 
 namespace Web.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("travelexpenses")]
     public class TravelExpenseController : ControllerBase
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IGetTravelExpenseService _getTravelExpenseService;
+        private readonly IUpdateTravelExpenseService _updateTravelExpenseService;
+        private readonly ICreateTravelExpenseService _createTravelExpenseService;
+        private readonly ISubManagementService _subManagementService;
+        private readonly IProcessStepTravelExpenseService _processStepTravelExpenseService;
 
-        public TravelExpenseController(IServiceProvider serviceProvider)
+        public TravelExpenseController(IProcessStepTravelExpenseService processStepTravelExpenseService,
+            IGetTravelExpenseService getTravelExpenseService,
+            IUpdateTravelExpenseService updateTravelExpenseService,
+            ICreateTravelExpenseService createTravelExpenseService,
+            ISubManagementService subManagementService)
         {
-            _serviceProvider = serviceProvider;
+            _processStepTravelExpenseService = processStepTravelExpenseService;
+            _getTravelExpenseService = getTravelExpenseService;
+            _updateTravelExpenseService = updateTravelExpenseService;
+            _createTravelExpenseService = createTravelExpenseService;
+            _subManagementService = subManagementService;
         }
 
-        [HttpPost]
-        [Route("ProcessStep")]
-        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(TravelExpenseProcessStepDto travelExpenseProcessStepDto)
+        [HttpPost("{id}/ProcessStep/{processStepKey}")]
+        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(Guid id, string processStepKey)
         {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<IProcessStepTravelExpenseService>()
-                .ProcessStepAsync(travelExpenseProcessStepDto);
+            var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto {TravelExpenseId = id, ProcessStepKey = processStepKey};
+            var sub = _subManagementService.GetSub(User);
+
+            var travelExpenseDtos = await _processStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
 
             return Ok(travelExpenseDtos);
         }
 
-        [HttpGet]
-        [Route("GetById")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> GetById(Guid id)
         {
-            var travelExpenseDto = await _serviceProvider
-                .GetService<IGetTravelExpenseService>()
-                .GetByIdAsync(id);
+            var sub = _subManagementService.GetSub(User);
+            var travelExpenseDto = await _getTravelExpenseService.GetByIdAsync(id, sub);
 
             return Ok(travelExpenseDto);
         }
 
         [HttpGet]
-        [Route("Get")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
         {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<IGetTravelExpenseService>()
-                .GetAsync();
+            var sub = _subManagementService.GetSub(User);
+            var travelExpenseDtos = await _getTravelExpenseService.GetAsync(sub);
 
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPut]
-        [Route("Put")]
-        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(TravelExpenseUpdateDto travelExpenseUpdateDto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id,
+            TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<IUpdateTravelExpenseService>()
-                .UpdateAsync(travelExpenseUpdateDto);
+            var sub = _subManagementService.GetSub(User);
+            var travelExpenseDtos = await _updateTravelExpenseService.UpdateAsync(id, travelExpenseUpdateDto, sub);
 
             return Ok(travelExpenseDtos);
         }
 
         [HttpPost]
-        [Route("Post")]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
-            var travelExpenseDtos = await _serviceProvider
-                .GetService<ICreateTravelExpenseService>()
-                .CreateAsync(travelExpenseCreateDto);
+            var sub = _subManagementService.GetSub(User);
+            var travelExpenseDtos = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto,sub);
 
             return Created(nameof(GetById), travelExpenseDtos);
         }

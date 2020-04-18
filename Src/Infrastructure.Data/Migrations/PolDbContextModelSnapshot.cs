@@ -89,11 +89,11 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("IsCertified")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("IsFinalized")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("IsReportedDone")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<Guid?>("OwnedByUserEntityId")
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("Stage")
                         .HasColumnType("int");
@@ -101,6 +101,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerEntityId");
+
+                    b.HasIndex("OwnedByUserEntityId");
 
                     b.ToTable("TravelExpenses");
                 });
@@ -113,6 +115,12 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("CustomerId")
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -148,6 +156,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("Domain.Entities.CustomerEntity", null)
                         .WithMany("TravelExpenses")
                         .HasForeignKey("CustomerEntityId");
+
+                    b.HasOne("Domain.Entities.UserEntity", "OwnedByUserEntity")
+                        .WithMany()
+                        .HasForeignKey("OwnedByUserEntityId");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserEntity", b =>

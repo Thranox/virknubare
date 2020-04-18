@@ -36,7 +36,7 @@ namespace Tests.Flows
                 {
                     var repository=new EfRepository(polDbContext);
                     var customer = repository
-                        .List(new CustomerByName(Globals.DummyCustomerName))
+                        .List(new CustomerByName(TestData.DummyCustomerName))
                         .Single();
 
                     var newTe = polDbContext.TravelExpenses.First();

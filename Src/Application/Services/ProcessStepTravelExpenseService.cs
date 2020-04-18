@@ -1,54 +1,52 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Services
 {
     public class ProcessStepTravelExpenseService : IProcessStepTravelExpenseService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IEnumerable<IProcessFlowStep> _processFlowSteps;
 
-        public ProcessStepTravelExpenseService(IServiceProvider serviceProvider)
+        public ProcessStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps)
         {
-            _serviceProvider = serviceProvider;
+            _unitOfWork = unitOfWork;
+            _processFlowSteps = processFlowSteps;
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
-            TravelExpenseProcessStepDto travelExpenseProcessStepDto)
+            TravelExpenseProcessStepDto travelExpenseProcessStepDto, string sub)
         {
-            using (var unitOfWork = _serviceProvider.GetService<IUnitOfWork>())
-            {
-                var travelExpenseEntity = unitOfWork
-                    .Repository
-                    .GetById<TravelExpenseEntity>(travelExpenseProcessStepDto.TravelExpenseId);
+            var travelExpenseEntity = _unitOfWork
+                .Repository
+                .GetById<TravelExpenseEntity>(travelExpenseProcessStepDto.TravelExpenseId);
 
-                if (travelExpenseEntity == null)
-                    throw new ItemNotFoundException(travelExpenseProcessStepDto.TravelExpenseId.ToString(),
-                        "TravelExpense");
+            if (travelExpenseEntity == null)
+                throw new ItemNotFoundException(travelExpenseProcessStepDto.TravelExpenseId.ToString(),
+                    "TravelExpense");
 
-                var processFlowStep = _serviceProvider
-                    .GetServices<IProcessFlowStep>()
-                    .SingleOrDefault(x => x.CanHandle(travelExpenseProcessStepDto.ProcessStepKey));
+            var processFlowStep = _processFlowSteps
+                .SingleOrDefault(x => x.CanHandle(travelExpenseProcessStepDto.ProcessStepKey));
 
-                if (processFlowStep == null)
-                    throw new ItemNotFoundException(travelExpenseProcessStepDto.ProcessStepKey, "ProcessFlowStep");
+            if (processFlowStep == null)
+                throw new ItemNotFoundException(travelExpenseProcessStepDto.ProcessStepKey, "ProcessFlowStep");
 
-                travelExpenseEntity.ApplyProcessStep(processFlowStep);
+            travelExpenseEntity.ApplyProcessStep(processFlowStep);
 
-                unitOfWork
-                    .Repository
-                    .Update(travelExpenseEntity);
+            _unitOfWork
+                .Repository
+                .Update(travelExpenseEntity);
 
-                unitOfWork.Commit();
+            _unitOfWork.Commit();
 
-                return await Task.FromResult(new TravelExpenseProcessStepResponse());
-            }
+            return await Task.FromResult(new TravelExpenseProcessStepResponse());
         }
     }
 }

@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from "../core/auth-service.component";
 
 @Component({
   selector: 'app-fetch-data',
@@ -8,10 +9,16 @@ import { HttpClient } from '@angular/common/http';
 export class FetchDataComponent {
   public forecasts: WeatherForecast[];
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<WeatherForecast[]>(baseUrl + 'weatherforecast').subscribe(result => {
-      this.forecasts = result;
-    }, error => console.error(error));
+  constructor(http: HttpClient, authService: AuthService, @Inject('BASE_URL') baseUrl: string) {
+    authService.getAccessToken().then(token => {
+      baseUrl = 'https://localhost:44324/';
+      console.info(token);
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { headers: headers }).subscribe(result => {
+        this.forecasts = result;
+      }, error => console.error(error));
+  });
+
   }
 }
 

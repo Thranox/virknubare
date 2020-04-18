@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 
@@ -16,7 +17,7 @@ namespace Domain.Services
             //BR: Can't be reported done unless...:
             //if (IsReportedDone) throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke ændres når den er færdigmeldt.");
             //BR: Can't be certified if not reported done:
-            if (travelExpenseEntity.IsReportedDone)
+            if (travelExpenseEntity.Stage!=TravelExpenseStage.Initial)
                 throw new BusinessRuleViolationException(travelExpenseEntity.Id,
                     "Rejseafregning kan ikke færdigmeldes da den allerede er færdigmeldt.");
 

@@ -1,47 +1,38 @@
 using System;
-using System.Reflection;
-using Application.Interfaces;
-using Application.Services;
+using System.Linq;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Web.Controllers;
 using Web;
+using Web.MapperProfiles;
 
 namespace Tests.TestHelpers
 {
     public class IntegrationTestContext :BaseTestContext
     {
-        public TravelExpenseEntity TravelExpenseEntity1 = new TravelExpenseEntity("Expense1") {Id = Guid.NewGuid()};
-        public TravelExpenseEntity TravelExpenseEntity2 = new TravelExpenseEntity("Expense2") {Id = Guid.NewGuid()};
-        public TravelExpenseEntity TravelExpenseEntity3 = new TravelExpenseEntity("Expense3") {Id = Guid.NewGuid()};
+        public TravelExpenseEntity TravelExpenseEntity1;
+        public TravelExpenseEntity TravelExpenseEntity2;
+        public TravelExpenseEntity TravelExpenseEntity3;
 
         public IntegrationTestContext()
         {
             DbContextOptions = new DbContextOptionsBuilder<PolDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new TravelExpenseProfile())));
+            Mapper = new Mapper(new MapperConfiguration(x => x.AddProfile(new EntityDtoProfile())));
 
-            var buildServiceProvider = new ServiceCollection();
-            buildServiceProvider.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
-            buildServiceProvider.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
-            buildServiceProvider.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            buildServiceProvider.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
-            
-            buildServiceProvider.AddScoped(x => Serilog.Log.Logger);
-            buildServiceProvider.AddScoped(x => CreateUnitOfWork());
-            buildServiceProvider.AddAutoMapper(typeof(Startup));
+            var serviceCollection = new ServiceCollection();
+            var configurationBuilder = new ConfigurationBuilder();
+            Startup.AddToServiceCollection(serviceCollection, configurationBuilder.Build());
 
-            Assembly
-                .GetAssembly(typeof(IProcessFlowStep))
-                .GetTypesAssignableFrom<IProcessFlowStep>()
-                .ForEach(t => { buildServiceProvider.AddScoped(typeof(IProcessFlowStep), t); });
+            serviceCollection.AddScoped(x => Serilog.Log.Logger);
+            serviceCollection.AddScoped(x => CreateUnitOfWork());
 
-            ServiceProvider = buildServiceProvider.BuildServiceProvider();
+            ServiceProvider = serviceCollection.BuildServiceProvider();
 
             SeedDb();
         }
@@ -55,9 +46,10 @@ namespace Tests.TestHelpers
             using (var dbContext = new PolDbContext(DbContextOptions))
             {
                 dbContext.Seed();
-                dbContext.TravelExpenses.Add(TravelExpenseEntity1);
-                dbContext.TravelExpenses.Add(TravelExpenseEntity2);
-                dbContext.TravelExpenses.Add(TravelExpenseEntity3);
+                var travelExpenseEntities = dbContext.CustomerEntities.First().TravelExpenses.ToList();
+                TravelExpenseEntity1 = travelExpenseEntities[0];
+                TravelExpenseEntity2 = travelExpenseEntities[1];
+                TravelExpenseEntity3 = travelExpenseEntities[2];
 
                 dbContext.SaveChanges();
             }

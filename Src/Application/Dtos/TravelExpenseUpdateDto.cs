@@ -8,6 +8,5 @@ namespace Application.Dtos
     {
         [Required]
         public string Description { get; set; }
-        public Guid Id { get; set; }
     }
 }
