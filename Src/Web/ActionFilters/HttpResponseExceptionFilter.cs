@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Domain;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -27,6 +26,14 @@ namespace Web.ActionFilters
                 context.Result = new ObjectResult(new{ Id=businessRuleViolationException.EntityId, Message=businessRuleViolationException.Message})
                 {
                     StatusCode = (int)HttpStatusCode.UnprocessableEntity // 422
+                };
+                context.ExceptionHandled = true;
+            }
+            if (context.Exception is ItemNotAllowedException itemNotAllowedException)
+            {
+                context.Result = new ObjectResult(new { Id = itemNotAllowedException.Id, Message = itemNotAllowedException.Message })
+                {
+                    StatusCode = (int)HttpStatusCode.Unauthorized // 401
                 };
                 context.ExceptionHandled = true;
             }
