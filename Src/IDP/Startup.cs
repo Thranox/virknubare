@@ -6,9 +6,11 @@ using System.Linq;
 using System.Reflection;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using IDP.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +67,7 @@ namespace IDP
         public void ConfigureServices(IServiceCollection services)
         {
             // Basic webapp with pages
+            services.AddMvc();
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -73,6 +76,8 @@ namespace IDP
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddTransient<IEmailSender, EmailSenderService>();
 
             // IdentityServer4
             var connectionString = _configuration.GetConnectionString("IdentityServer4");
@@ -97,8 +102,8 @@ namespace IDP
                             sql => sql.MigrationsAssembly(migrationsAssembly));
 
                     // this enables automatic token cleanup. this is optional.
-                    options.EnableTokenCleanup = true;
-                    options.TokenCleanupInterval = 30;
+                    //options.EnableTokenCleanup = true;
+                    //options.TokenCleanupInterval = 30;
                 })
                 // not recommended for production - you need to store your key material somewhere secure
                 .AddDeveloperSigningCredential();
@@ -130,15 +135,14 @@ namespace IDP
             app.UseIdentityServer();
 
             app.UseAuthorization();
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapDefaultControllerRoute();
-            //});
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                //endpoints.MapControllers();
+                endpoints.MapRazorPages();
             });
         }
     }
