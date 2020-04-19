@@ -11,16 +11,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace IDP
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
         public IWebHostEnvironment Environment { get; }
 
-        public Startup(IWebHostEnvironment environment)
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
+            _configuration = configuration;
         }
         private void InitializeDatabase(IApplicationBuilder app)
         {
@@ -62,8 +65,7 @@ namespace IDP
         {
             services.AddControllersWithViews();
 
-
-            const string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;database=IdentityServer4;trusted_connection=yes;";
+            var connectionString = _configuration.GetConnectionString("IdentityServer4");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             // configure identity server with in-memory stores, keys, clients and scopes
@@ -90,13 +92,6 @@ namespace IDP
                 })
                 // not recommended for production - you need to store your key material somewhere secure
                 .AddDeveloperSigningCredential();
-
-            //var builder = services.AddIdentityServer()
-            //    .AddInMemoryIdentityResources(Config.Ids)
-            //    .AddInMemoryApiResources(Config.Apis)
-            //    .AddInMemoryClients(Config.Clients)
-            //    .AddTestUsers(TestUsers.Users)
-            //    .AddProfileService<CustomProfileService>();
 
             services.AddCors(setup =>
             {
