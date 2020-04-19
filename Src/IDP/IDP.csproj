@@ -6,6 +6,7 @@
   
   <ItemGroup>
     <PackageReference Include="IdentityServer4" Version="3.1.2" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.1.2" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -33,6 +34,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Identity\Pages\Account\Manage\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>

@@ -73,9 +73,11 @@ namespace IDP
 
             // ASP.NET Core Identity
             services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("AspNetCoreIdentity")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddUserManager<UserManager<ApplicationUser>>()
+                .AddSignInManager<SignInManager<ApplicationUser>>();
 
             services.AddTransient<IEmailSender, EmailSenderService>();
 
@@ -105,6 +107,7 @@ namespace IDP
                     //options.EnableTokenCleanup = true;
                     //options.TokenCleanupInterval = 30;
                 })
+                .AddAspNetIdentity<ApplicationUser>()
                 // not recommended for production - you need to store your key material somewhere secure
                 .AddDeveloperSigningCredential();
 

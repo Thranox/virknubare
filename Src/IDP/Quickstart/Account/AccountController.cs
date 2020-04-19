@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4;
+using Microsoft.AspNetCore.Identity;
 
 namespace IDP
 {
@@ -29,27 +30,28 @@ namespace IDP
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly TestUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AccountController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            TestUserStore users = null)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager
+            )
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
-
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         /// <summary>
@@ -109,11 +111,12 @@ namespace IDP
 
             if (ModelState.IsValid)
             {
-                // validate username/password against in-memory store
-                if (_users.ValidateCredentials(model.Username, model.Password))
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, false);
+
+                if (result.Succeeded)
                 {
-                    var user = _users.FindByUsername(model.Username);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.ClientId));
+                    var user = _userManager.Users.SingleOrDefault(x=>x.Email==model.Username);
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.SubjectId, user.UserName, clientId: context?.ClientId));
 
                     // only set explicit expiration here if user chooses "remember me". 
                     // otherwise we rely upon expiration configured in cookie middleware.
@@ -130,19 +133,19 @@ namespace IDP
                     // issue authentication cookie with subject ID and username
                     var isuser = new IdentityServerUser(user.SubjectId)
                     {
-                        DisplayName = user.Username
+                        DisplayName = user.UserName
                     };
 
                     await HttpContext.SignInAsync(isuser, props);
 
                     if (context != null)
                     {
-                        if (await _clientStore.IsPkceClientAsync(context.ClientId))
-                        {
-                            // if the client is PKCE then we assume it's native, so this change in how to
-                            // return the response is for better UX for the end user.
-                            return this.LoadingPage("Redirect", model.ReturnUrl);
-                        }
+                        //if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                        //{
+                        //    // if the client is PKCE then we assume it's native, so this change in how to
+                        //    // return the response is for better UX for the end user.
+                        //    return this.LoadingPage("Redirect", model.ReturnUrl);
+                        //}
 
                         // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                         return Redirect(model.ReturnUrl);
