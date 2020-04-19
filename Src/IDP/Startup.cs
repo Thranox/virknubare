@@ -8,6 +8,7 @@ using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -63,8 +64,17 @@ namespace IDP
         }
         public void ConfigureServices(IServiceCollection services)
         {
+            // Basic webapp with pages
             services.AddControllersWithViews();
+            services.AddRazorPages();
 
+            // ASP.NET Core Identity
+            services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("AspNetCoreIdentity")));
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<UserIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            // IdentityServer4
             var connectionString = _configuration.GetConnectionString("IdentityServer4");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
