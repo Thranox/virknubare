@@ -111,7 +111,12 @@ namespace IDP
             services.AddRazorPages();
 
             // ASP.NET Core Identity
-            services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("AspNetCoreIdentity")));
+            services.AddDbContext<UserIdentityDbContext>(options =>
+            {
+                var connectionString1 = _configuration.GetConnectionString("AspNetCoreIdentity");
+                Log.Logger.Information("AspNetCoreIdentity CS = {connectionstring}" , connectionString1);
+                options.UseSqlServer(connectionString1);
+            });
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders()
