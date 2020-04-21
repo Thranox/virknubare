@@ -8,6 +8,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace IDP
 {
@@ -15,12 +16,20 @@ namespace IDP
     {
         public static int Main(string[] args)
         {
+            var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.Sources.Clear();
+
+            configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            configurationBuilder.AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
+            configurationBuilder.AddEnvironmentVariables();
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+                .ReadFrom.Configuration(configurationBuilder.Build())
                 // uncomment to write to Azure diagnostics stream
                 //.WriteTo.File(
                 //    @"D:\home\LogFiles\Application\identityserver.txt",
