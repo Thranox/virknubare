@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System;
 using System.Linq;
 using System.Reflection;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace IDP
 {
@@ -32,10 +34,46 @@ namespace IDP
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+                try
+                {
+                    Log.Logger.Information("Creating/Migrating UserIdentityDbContext");
+                    var userIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<UserIdentityDbContext>();
+                    userIdentityDbContext.Database.EnsureCreated();
+                    userIdentityDbContext.Database.Migrate();
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Error(e, "During Creating/Migrating UserIdentityDbContext");
+                    throw;
+                }
 
-                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-                context.Database.Migrate();
+                try
+                {
+                    Log.Logger.Information("Creating/Migrating PersistedGrantDbContext");
+                    var persistedGrantDbContext = serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+                    persistedGrantDbContext.Database.EnsureCreated();
+                    persistedGrantDbContext.Database.Migrate();
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Error(e, "During Creating/Migrating PersistedGrantDbContext");
+                    throw;
+                }
+
+                ConfigurationDbContext context;
+                try
+                {
+                    Log.Logger.Information("Creating/Migrating ConfigurationDbContext");
+                    context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                    context.Database.EnsureCreated();
+                    context.Database.Migrate();
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Error(e, "During Creating/Migrating ConfigurationDbContext");
+                    throw;
+                }
+
                 if (!context.Clients.Any())
                 {
                     foreach (var client in Config.Clients)
@@ -66,6 +104,7 @@ namespace IDP
         }
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger.Information("ConfigureServices()");
             // Basic webapp with pages
             services.AddMvc();
             services.AddControllersWithViews();
@@ -125,6 +164,8 @@ namespace IDP
 
         public void Configure(IApplicationBuilder app)
         {
+            Log.Logger.Information("Configure()");
+
             InitializeDatabase(app);
 
             if (Environment.IsDevelopment())
