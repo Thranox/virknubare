@@ -31,6 +31,8 @@
 
     <PackageReference Include="Serilog.Sinks.ElasticSearch" Version="8.0.1" />
 
+    <PackageReference Include="Serilog.Sinks.Humio" Version="1.0.12" />
+
     <!-- <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" /> -->
   </ItemGroup>
   <ItemGroup>

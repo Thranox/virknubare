@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.Humio;
 using Serilog.Sinks.SystemConsole.Themes;
 
 namespace IDP
@@ -35,6 +37,16 @@ namespace IDP
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                         .MinimumLevel.Override("System", LogEventLevel.Warning)
                         .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                        .WriteTo.HumioSink(new HumioSinkConfiguration
+                        {
+                            BatchSizeLimit = 50,
+                            Period = TimeSpan.FromSeconds(5),
+                            Tags = new KeyValuePair<string, string>[]{
+                                new KeyValuePair<string, string>("source", "ApplicationLog"),
+                                new KeyValuePair<string, string>("environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
+                            },
+                            IngestToken = Environment.GetEnvironmentVariable("HUMIO_KEY") 
+                        })
                         .Enrich.FromLogContext()
                         .ReadFrom.Configuration(config.Build())
                         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
