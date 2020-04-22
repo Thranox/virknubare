@@ -129,7 +129,6 @@ namespace IDP
             services.AddTransient<IEmailSender, EmailSenderService>();
 
             // IdentityServer4
-            var connectionString = _configuration.GetConnectionString("IdentityServer4");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             // configure identity server with in-memory stores, keys, clients and scopes
@@ -139,15 +138,20 @@ namespace IDP
                 // this adds the config data from DB (clients, resources)
                 .AddConfigurationStore(options =>
                 {
+                    var connectionStringService = services.BuildServiceProvider().GetRequiredService<IConnectionStringService>();
+                    var conIdentityServer4 = connectionStringService.GetConnectionString("IdentityServer4");
+                    
                     options.ConfigureDbContext = builder =>
-                        builder.UseSqlServer(connectionString,
+                        builder.UseSqlServer(conIdentityServer4,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                 })
                 // this adds the operational data from DB (codes, tokens, consents)
                 .AddOperationalStore(options =>
                 {
+                    var connectionStringService = services.BuildServiceProvider().GetRequiredService<IConnectionStringService>();
+                    var conIdentityServer4 = connectionStringService.GetConnectionString("IdentityServer4");
                     options.ConfigureDbContext = builder =>
-                        builder.UseSqlServer(connectionString,
+                        builder.UseSqlServer(conIdentityServer4,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
 
                     // this enables automatic token cleanup. this is optional.
