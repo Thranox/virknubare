@@ -38,7 +38,7 @@ namespace IDP
                 try
                 {
                     var userIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<UserIdentityDbContext>();
-                    userIdentityDbContext.Database.EnsureCreated();
+                    //userIdentityDbContext.Database.EnsureCreated();
                     //userIdentityDbContext.Database.Migrate();
                 }
                 catch (Exception e)
@@ -51,7 +51,7 @@ namespace IDP
                 {
                     Log.Logger.Information("Creating/Migrating PersistedGrantDbContext");
                     var persistedGrantDbContext = serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-                    persistedGrantDbContext.Database.EnsureCreated();
+                    //persistedGrantDbContext.Database.EnsureCreated();
                     //persistedGrantDbContext.Database.Migrate();
                 }
                 catch (Exception e)
@@ -65,8 +65,8 @@ namespace IDP
                 {
                     Log.Logger.Information("Creating/Migrating ConfigurationDbContext");
                     context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-                    context.Database.EnsureCreated();
-                    context.Database.Migrate();
+                    //context.Database.EnsureCreated();
+                    //context.Database.Migrate();
                 }
                 catch (Exception e)
                 {
