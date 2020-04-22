@@ -30,13 +30,13 @@ namespace IDP
             Environment = environment;
             _configuration = configuration;
         }
+
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 try
                 {
-                    Log.Logger.Information("Creating/Migrating UserIdentityDbContext");
                     var userIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<UserIdentityDbContext>();
                     userIdentityDbContext.Database.EnsureCreated();
                     //userIdentityDbContext.Database.Migrate();
@@ -105,6 +105,9 @@ namespace IDP
         public void ConfigureServices(IServiceCollection services)
         {
             Log.Logger.Information("ConfigureServices()");
+
+            services.AddTransient<IConnectionStringService, ConnectionStringService>();
+
             // Basic webapp with pages
             services.AddMvc();
             services.AddControllersWithViews();
@@ -113,9 +116,9 @@ namespace IDP
             // ASP.NET Core Identity
             services.AddDbContext<UserIdentityDbContext>(options =>
             {
-                var connectionString1 = _configuration.GetConnectionString("AspNetCoreIdentity");
-                Log.Logger.Information("AspNetCoreIdentity CS = {connectionstring}" , connectionString1);
-                options.UseSqlServer(connectionString1);
+                var connectionStringService =services.BuildServiceProvider().GetRequiredService<IConnectionStringService>();
+                var conUserIdentityDbContext = connectionStringService.GetConnectionString("AspNetCoreIdentity");
+                options.UseSqlServer(conUserIdentityDbContext);
             });
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
