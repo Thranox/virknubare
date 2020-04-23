@@ -173,7 +173,7 @@ namespace IDP
                 {
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
-                    policy.WithOrigins("https://localhost:44324");
+                    policy.WithOrigins(_configuration.GetValue<string>("AllowedCorsOrigins").Split("|") );
                     policy.AllowCredentials();
                 });
             });

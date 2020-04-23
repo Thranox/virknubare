@@ -161,7 +161,7 @@ namespace Web
 
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseSwagger();
             app.UseSwaggerUI(
