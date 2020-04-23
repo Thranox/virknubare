@@ -117,7 +117,15 @@ namespace IDP
                 var conUserIdentityDbContext = connectionStringService.GetConnectionString("AspNetCoreIdentity");
                 options.UseSqlServer(conUserIdentityDbContext);
             });
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 5;
+                })
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders()
                 .AddUserManager<UserManager<ApplicationUser>>()

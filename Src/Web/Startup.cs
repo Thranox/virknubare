@@ -40,7 +40,7 @@ namespace Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration1)
+        public void ConfigureServices(IServiceCollection services)
         {
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
@@ -50,7 +50,7 @@ namespace Web
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = configuration1.GetValue<string>("IDP_URL");
+                    options.Authority = Configuration.GetValue<string>("IDP_URL");
                     options.ApiName = "teapi";
                     options.RequireHttpsMetadata = false;
                 });
