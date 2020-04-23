@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using IdentityServer4;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace IDP
 {
@@ -37,7 +38,6 @@ namespace IDP
         private readonly IEventService _events;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             IIdentityServerInteractionService interaction,
@@ -45,8 +45,7 @@ namespace IDP
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ILogger<AccountController> logger
+            SignInManager<ApplicationUser> signInManager
             )
         {
             _interaction = interaction;
@@ -55,7 +54,6 @@ namespace IDP
             _events = events;
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         /// <summary>
@@ -83,7 +81,7 @@ namespace IDP
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
-            _logger.LogDebug("Handling call-back in Account.Login()");
+            Log.Logger.Debug("Handling call-back in Account.Login()");
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 

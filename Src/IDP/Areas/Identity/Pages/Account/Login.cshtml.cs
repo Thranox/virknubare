@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace IDP.Areas.Identity.Pages.Account
 {
@@ -73,6 +74,7 @@ namespace IDP.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            Log.Logger.Debug("LoginModel.OnPostAsync: " + returnUrl);
             returnUrl = returnUrl ?? Url.Content("~/");
 
             if (ModelState.IsValid)
