@@ -24,7 +24,7 @@ namespace IDP
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    SetupConfig(args, config, hostingContext);
+                    StartupHelper.SetupConfig(args, config, hostingContext.HostingEnvironment.EnvironmentName);
                     Log.Logger =StartupHelper.CreateLogger(config);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -32,26 +32,6 @@ namespace IDP
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
                 });
-        }
-
-        public static void SetupConfig(string[] args, IConfigurationBuilder config, HostBuilderContext hostingContext)
-        {
-            config.Sources.Clear();
-
-            var env = hostingContext.HostingEnvironment;
-            config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-            config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
-            config.AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
-            config.AddJsonFile($"appsettings.{env.EnvironmentName}.{Environment.MachineName}.json", optional: true,
-                reloadOnChange: true);
-
-            config.AddEnvironmentVariables();
-
-
-            if (args != null)
-            {
-                config.AddCommandLine(args);
-            }
         }
     }
 }

@@ -37,5 +37,24 @@ namespace SharedWouldBeNugets
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
                 .CreateLogger();
         }
+
+        public static void SetupConfig(string[] args, IConfigurationBuilder config, string environmentName)
+        {
+            config.Sources.Clear();
+
+            config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            config.AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
+            config.AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
+            config.AddJsonFile($"appsettings.{environmentName}.{Environment.MachineName}.json", optional: true,
+                reloadOnChange: true);
+
+            config.AddEnvironmentVariables();
+
+
+            if (args != null)
+            {
+                config.AddCommandLine(args);
+            }
+        }
     }
 }
