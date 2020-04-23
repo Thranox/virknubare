@@ -38,8 +38,8 @@ namespace IDP
                 try
                 {
                     var userIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<UserIdentityDbContext>();
-                    //userIdentityDbContext.Database.EnsureCreated();
-                    //userIdentityDbContext.Database.Migrate();
+                    userIdentityDbContext.Database.EnsureCreated();
+                    userIdentityDbContext.Database.Migrate();
                 }
                 catch (Exception e)
                 {
