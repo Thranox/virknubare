@@ -21,20 +21,20 @@ namespace IDP.Services
         public string GetConnectionString(string connectionStringName)
         {
             var connectionString = _configuration.GetConnectionString(connectionStringName);
-            Log.Logger.Information("Read cs from config: {ConnectionString}", connectionString);
+            Log.Logger.Debug("Read cs from config: {ConnectionString}", connectionString);
 
             if (connectionString.Contains(EnvironmentPlaceholder))
             {
                 connectionString = connectionString
                     .Replace(EnvironmentPlaceholder, _hostBuilderContext.HostingEnvironment.EnvironmentName);
-                Log.Logger.Information("Updated config by environment: {ConnectionString}", connectionString);
+                Log.Logger.Debug("Updated config by environment: {ConnectionString}", connectionString);
             }
 
             if (connectionString.Contains(MachineNamePlaceholder))
             {
                 connectionString = connectionString
                     .Replace(MachineNamePlaceholder, Environment.MachineName);
-                Log.Logger.Information("Updated config by machine name: {ConnectionString}", connectionString);
+                Log.Logger.Debug("Updated config by machine name: {ConnectionString}", connectionString);
             }
 
             return connectionString;

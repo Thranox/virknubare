@@ -11,6 +11,7 @@ namespace IDP
 {
     [AllowAnonymous]
     [SecurityHeaders]
+    [Route("Health")]
     public class HealthController : Controller
     {
         private readonly ILogger<HealthController> _logger;
