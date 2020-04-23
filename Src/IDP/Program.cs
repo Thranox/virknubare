@@ -8,6 +8,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.Humio;
 using Serilog.Sinks.SystemConsole.Themes;
+using SharedWouldBeNugets;
 
 namespace IDP
 {
@@ -24,7 +25,7 @@ namespace IDP
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     SetupConfig(args, config, hostingContext);
-                    Log.Logger = CreateLogger(config);
+                    Log.Logger =StartupHelper.CreateLogger(config);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -51,33 +52,6 @@ namespace IDP
             {
                 config.AddCommandLine(args);
             }
-        }
-
-        public static Logger CreateLogger(IConfigurationBuilder config)
-        {
-            return new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-                .WriteTo.HumioSink(new HumioSinkConfiguration
-                {
-                    BatchSizeLimit = 50,
-                    Period = TimeSpan.FromSeconds(5),
-                    Tags = new KeyValuePair<string, string>[]{
-                        new KeyValuePair<string, string>("source", "ApplicationLog"),
-                        new KeyValuePair<string, string>("environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
-                    },
-                    IngestToken = Environment.GetEnvironmentVariable("HUMIO_KEY") 
-                })
-                .Enrich.WithMachineName()
-                //.Enrich.WithProperty("ReleaseNumber", settings.ReleaseNumber)
-                .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
-                .Enrich.WithProperty("ComponentName", "IDP")
-                .Enrich.FromLogContext()
-                .ReadFrom.Configuration(config.Build())
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
-                .CreateLogger();
         }
     }
 }
