@@ -29,7 +29,7 @@ namespace IDP
         [HttpGet("ShallowCheck")]
         public async Task<IActionResult> ShallowCheck()
         {
-            _logger.LogInformation("Health Shallow Check!");
+            _logger.LogInformation("Health ShallowCheck!");
 
             return await Task.FromResult(Ok("Health Shallow Check -- ok"));
         }
@@ -37,7 +37,7 @@ namespace IDP
         [HttpGet("DeepCheck")]
         public async Task<IActionResult> DeepCheck()
         {
-            _logger.LogInformation("Health Shallow Check!");
+            _logger.LogInformation("Health DeepCheck!");
 
             try
             {
