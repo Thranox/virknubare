@@ -167,13 +167,20 @@ namespace IDP
                 // not recommended for production - you need to store your key material somewhere secure
                 .AddDeveloperSigningCredential();
 
+            var origins = _configuration.GetValue<string>("AllowedCorsOrigins").Split("|");
+            foreach (var origin in origins)
+            {
+                Log.Logger.Information("Allowing CORS Origin: {Origin}", origin );
+            }
+
             services.AddCors(setup =>
             {
                 setup.AddDefaultPolicy(policy =>
                 {
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
-                    policy.WithOrigins(_configuration.GetValue<string>("AllowedCorsOrigins").Split("|") );
+                    policy.AllowAnyOrigin();
+                    //policy.WithOrigins(origins );
                     policy.AllowCredentials();
                 });
             });
