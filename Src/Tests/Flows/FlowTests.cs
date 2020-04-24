@@ -7,6 +7,7 @@ using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using SharedWouldBeNugets;
 using Tests.TestHelpers;
 using Web;
 

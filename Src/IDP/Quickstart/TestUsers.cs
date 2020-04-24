@@ -7,6 +7,7 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Test;
+using SharedWouldBeNugets;
 
 namespace IDP
 {
@@ -16,7 +17,8 @@ namespace IDP
         {
             new TestUser
             {
-                SubjectId = "818727", Username = "alice", Password = "alice",
+                SubjectId =TestData.DummyPolSubAlice, 
+                Username = "alice", Password = "alice",
                 Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Alice Smith"),
@@ -33,7 +35,8 @@ namespace IDP
             },
             new TestUser
             {
-                SubjectId = "88421113", Username = "bob", Password = "bob",
+                SubjectId = TestData.DummySekSubBob, 
+                Username = "bob", Password = "bob",
                 Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Bob Smith"),
@@ -51,7 +54,8 @@ namespace IDP
             },
             new TestUser
             {
-                SubjectId = "88421114", Username = "charlie", Password = "charlie",
+                SubjectId = TestData.DummyLedSubCharlie,
+                Username = "charlie", Password = "charlie",
                 Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Charlie Brown"),

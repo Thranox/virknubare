@@ -7,6 +7,7 @@ using Domain;
 using Domain.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using SharedWouldBeNugets;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices
@@ -22,7 +23,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<IGetFlowStepService>();
 
                 // Act
-                var actual = await sut.GetAsync(TestData.DummyPolSub);
+                var actual = await sut.GetAsync(TestData.DummyPolSubAlice);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -64,7 +65,7 @@ namespace Tests.ApplicationServices
         //    {
         //        var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
         //        // Act
-        //        var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSub);
+        //        var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Globals.DummyPolSubAlice);
 
         //        // Assert
         //        Assert.That(actual, Is.Not.Null);

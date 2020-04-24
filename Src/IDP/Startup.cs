@@ -5,8 +5,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
 using IDP.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +33,7 @@ namespace IDP
             _configuration = configuration;
         }
 
-        private void InitializeDatabase(IApplicationBuilder app)
+        private void InitializeDatabases(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
@@ -39,6 +41,32 @@ namespace IDP
                 {
                     var userIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<UserIdentityDbContext>();
                     userIdentityDbContext.Database.Migrate();
+
+                    // Seed with test users
+                    foreach (var testUser in TestUsers.Users)
+                    {
+                        if (!userIdentityDbContext.Users.Any(x => x.Id == testUser.SubjectId))
+                        {
+                            var email = testUser.Claims.Single(x=>x.Type== JwtClaimTypes.Email).Value;
+
+                            var password = new PasswordHasher<ApplicationUser>();
+                            var applicationUser = new ApplicationUser()
+                            {
+                                SubjectId = testUser.SubjectId,
+                                Email = email,
+                                NormalizedEmail = email.ToUpper(),
+                                UserName = email,
+                                NormalizedUserName = email.ToUpper(),
+                                EmailConfirmed = true,
+                                SecurityStamp = Guid.NewGuid().ToString("D")
+                            };
+                            var hashed = password.HashPassword(applicationUser, testUser.Password);
+                            applicationUser.PasswordHash = hashed;
+                            userIdentityDbContext.Users.Add(applicationUser);
+                        }
+                    }
+
+                    userIdentityDbContext.SaveChanges();
                 }
                 catch (Exception e)
                 {
@@ -180,7 +208,6 @@ namespace IDP
                 {
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
-                    policy.AllowAnyOrigin();
                     policy.WithOrigins(origins );
                     policy.AllowCredentials();
                 });
@@ -191,7 +218,7 @@ namespace IDP
         {
             Log.Logger.Information("Configure()");
 
-            InitializeDatabase(app);
+            InitializeDatabases(app);
 
             if (Environment.IsDevelopment())
             {
