@@ -200,6 +200,10 @@ namespace IDP
             app.UseStaticFiles();
             app.UseRouting();
 
+            // With endpoint routing, the CORS middleware must be configured to execute between the calls to UseRouting and UseEndpoints.
+            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
+            app.UseCors();
+
             app.UseIdentityServer();
 
             app.UseAuthorization();
