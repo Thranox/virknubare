@@ -167,12 +167,13 @@ namespace IDP
                 // not recommended for production - you need to store your key material somewhere secure
                 .AddDeveloperSigningCredential();
 
+            // Note: The specified URL must not contain a trailing slash (/). If the URL terminates with /, the comparison returns false and no header is returned.
+            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
             var origins = _configuration.GetValue<string>("AllowedCorsOrigins").Split("|");
             foreach (var origin in origins)
             {
                 Log.Logger.Information("Allowing CORS Origin: {Origin}", origin );
             }
-
             services.AddCors(setup =>
             {
                 setup.AddDefaultPolicy(policy =>
@@ -180,7 +181,7 @@ namespace IDP
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
                     policy.AllowAnyOrigin();
-                    //policy.WithOrigins(origins );
+                    policy.WithOrigins(origins );
                     policy.AllowCredentials();
                 });
             });
