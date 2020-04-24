@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
+using SharedWouldBeNugets;
 
 namespace Infrastructure.Data
 {
@@ -64,11 +65,11 @@ namespace Infrastructure.Data
                 return;
 
             var customerEntity = new CustomerEntity(TestData.DummyCustomerName);
-            var userEntityPol = new UserEntity("dummy pol Alice", TestData.DummyPolSub);
+            var userEntityPol = new UserEntity("dummy pol Alice", TestData.DummyPolSubAlice);
             customerEntity.Users.Add(userEntityPol);
-            var userEntitySek = new UserEntity("dummy sek Bob", TestData.DummyPolSek);
+            var userEntitySek = new UserEntity("dummy sek Bob", TestData.DummySekSubBob);
             customerEntity.Users.Add(userEntitySek);
-            var userEntityLed = new UserEntity("dummy led Charlie", TestData.DummyPolLed);
+            var userEntityLed = new UserEntity("dummy led Charlie", TestData.DummyLedSubCharlie);
             customerEntity.Users.Add(userEntityLed);
 
             var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);

@@ -45,7 +45,7 @@ namespace IDP
                     // Seed with test users
                     foreach (var testUser in TestUsers.Users)
                     {
-                        if (!userIdentityDbContext.Users.Any(x => x.Id == testUser.SubjectId))
+                        if (!userIdentityDbContext.Users.Any(x => x.SubjectId == testUser.SubjectId))
                         {
                             var email = testUser.Claims.Single(x=>x.Type== JwtClaimTypes.Email).Value;
 
@@ -167,7 +167,7 @@ namespace IDP
             // configure identity server with in-memory stores, keys, clients and scopes
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
-                .AddTestUsers(TestUsers.Users)
+                //.AddTestUsers(TestUsers.Users)
                 // this adds the config data from DB (clients, resources)
                 .AddConfigurationStore(options =>
                 {

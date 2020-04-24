@@ -1,41 +1,59 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
+using Serilog;
 
 namespace IDP.Services
 {
     public class CustomProfileService : IProfileService
     {
+        private readonly UserIdentityDbContext _userIdentityDbContext;
+
+        public CustomProfileService(UserIdentityDbContext userIdentityDbContext)
+        {
+            _userIdentityDbContext = userIdentityDbContext;
+        }
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            var sub = context.Subject.GetSubjectId();
-            var user = TestUsers.Users.SingleOrDefault(x => x.SubjectId == sub);
-            var principal = new ClaimsPrincipal(
-                new ClaimsIdentity[]
-                {
-                    new ClaimsIdentity(user.Claims.ToArray())
-                });
+            try
+            {
+                var sub = context.Subject.GetSubjectId();
+                Log.Logger.Debug("Getting profile claims for {sub}" + sub);
+                var user = _userIdentityDbContext.Users.SingleOrDefault(x => x.SubjectId == sub);
+                if (user == null)
+                    throw new InvalidOperationException("User not found by sub: "+ sub);
 
-            var claims = principal.Claims.ToList();
-            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
+                var claims = new List<Claim>();
+                claims.Add(new Claim(ClaimTypes.Name, user.UserName)); // TODO: Register first and last name
+                claims.Add(new Claim(ClaimTypes.Email, user.Email.ToLower()));
 
-            //if (user.Email == "admin@globomantics.com")
-            //{
-            //    claims.Add(new Claim(JwtClaimTypes.Role, "Admin"));
-            //}
-            context.IssuedClaims = claims;
+                claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
+                context.IssuedClaims = claims;
+
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e, "During GetProfileDataAsync()");
+                throw;
+            }
             await Task.CompletedTask;
         }
 
         public async Task IsActiveAsync(IsActiveContext context)
         {
             var sub = context.Subject.GetSubjectId();
-            var user = TestUsers.Users.SingleOrDefault(x=>x.SubjectId==sub);
-            context.IsActive = user != null;
+            var user = _userIdentityDbContext.Users.SingleOrDefault(x => x.SubjectId == sub);
+            
+            if (user == null)
+                throw new InvalidOperationException("User not found by sub: " + sub);
+
+            context.IsActive = user.EmailConfirmed && (user.LockoutEnd == null || user.LockoutEnd < DateTime.UtcNow);
             await Task.CompletedTask;
         }
     }
