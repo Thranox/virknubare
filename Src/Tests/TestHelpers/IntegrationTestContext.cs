@@ -27,7 +27,6 @@ namespace Tests.TestHelpers
 
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
-            Startup.AddToServiceCollection(serviceCollection, configurationBuilder.Build());
 
             serviceCollection.AddScoped(x => Serilog.Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());

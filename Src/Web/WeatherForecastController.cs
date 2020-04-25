@@ -8,7 +8,7 @@ using Serilog;
 namespace Web
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("WeatherForecast1")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

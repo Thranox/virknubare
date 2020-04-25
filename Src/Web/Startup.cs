@@ -1,15 +1,15 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using API.Shared;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
-using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
 using Domain.SharedKernel;
-using IdentityServer4.AccessTokenValidation;
 using IDP.Services;
 using Infrastructure.Data;
+using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -23,106 +23,39 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Web.ActionFilters;
+using Web.MapperProfiles;
 
 namespace Web
 {
     public class Startup
     {
-        private static readonly string _politikerafregningApi = "Politikerafregning API";
-        private static readonly string _version = "v1";
-        public IWebHostEnvironment Environment { get; }
+        private readonly IWebHostEnvironment _environment;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            Configuration = configuration;
-            Environment = environment;
+            _configuration = configuration;
+            _environment = environment;
         }
 
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ILogger>(Log.Logger);
-
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = Configuration.GetValue<string>("IDP_URL");
-                    options.ApiName = "teapi";
-                    options.RequireHttpsMetadata = false;
-                });
-
-            services.AddControllersWithViews(
-                options =>
-                {
-                    // Include handling of Domain Exceptions
-                    options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
-                    // Log all entries and exits of controller methods.
-                    options.Filters.Add(new MethodLoggingActionFilter(Log.Logger));
-                    // Find user for request
-
-                    if (Configuration.GetValue<bool>("UseAuthentication"))
-                    {
-                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
-                    }
-                });
+            services.AddPolApi(_configuration, true);
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
 
             services.AddDbContext<PolDbContext>(options =>
                 {
-                    var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
+                    var connectionStringService = new ConnectionStringService(_configuration, _environment.EnvironmentName);
                     var connectionString = connectionStringService.GetConnectionString("PolConnection");
                     options.UseSqlServer(connectionString);
                 });
 
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc(_version, new OpenApiInfo {Title = _politikerafregningApi, Version = _version});
-            });
-
-            AddToServiceCollection(services,Configuration);
-
             services.AddMvc();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-        }
-
-        public static void AddToServiceCollection(IServiceCollection services, IConfiguration configuration)
-        {
-            // Infrastructure
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<IRepository, EfRepository>();
-            services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            // Application services
-            services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
-            services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
-            services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
-            services.AddScoped<IGetFlowStepService, GetFlowStepService>();
-            services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
-
-            //if (configuration.GetValue<bool>("UseAuthentication"))
-            //{
-            //    services.AddScoped<ISubManagementService, SubManagementService>();
-            //}
-            //else
-            //{
-            //    services.AddScoped<ISubManagementService, FakeSubManagementService>();
-            //}
-            Assembly
-                .GetAssembly(typeof(IProcessFlowStep))
-                .GetTypesAssignableFrom<IProcessFlowStep>()
-                .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
-
-            // Domain event handlers
-            services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -130,7 +63,7 @@ namespace Web
             IConfiguration configuration)
         {
             logger.Information("------------------------------------------------------------");
-            logger.Information("Starting Politikerafregning Web API...");
+            logger.Information("Starting Politikerafregning Web...");
             if (env.IsDevelopment())
             {
                 logger.Information("In Development environment");
@@ -161,7 +94,7 @@ namespace Web
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", _politikerafregningApi + " " + _version));
+                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", CommonApi.Title + " " +CommonApi.Version));
 
             app.UseStaticFiles();
             if (!env.IsDevelopment()) app.UseSpaStaticFiles();
