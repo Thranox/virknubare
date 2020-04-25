@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using API.Shared;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -28,6 +29,8 @@ namespace Tests.TestHelpers
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
 
+            ServicesConfiguration.MapServices(serviceCollection, false);
+            
             serviceCollection.AddScoped(x => Serilog.Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
 

@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\API.Shared\API.Shared.csproj" />
     <ProjectReference Include="..\SharedWouldBeNugets\SharedWouldBeNugets.csproj" />
   </ItemGroup>
 

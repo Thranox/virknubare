@@ -62,6 +62,16 @@ namespace API.Shared
                 x.SwaggerDoc(CommonApi.Version, new OpenApiInfo { Title = CommonApi.Title, Version = CommonApi.Version });
             });
 
+            MapServices(services, enforceAuthenticated);
+
+            services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+        }
+
+        public static void MapServices(IServiceCollection services, bool enforceAuthenticated)
+        {
             services.AddAutoMapper(typeof(EntityDtoProfile));
 
             // Infrastructure
@@ -93,11 +103,6 @@ namespace API.Shared
 
             // Domain event handlers
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
-
-            services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
-
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
         }
     }
 }
