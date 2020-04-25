@@ -37,11 +37,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ILogger>(Log.Logger);
-
-            var assembly = typeof(TravelExpenseController).Assembly;
-            services.AddControllersWithViews()
-                .AddApplicationPart(assembly);
+            services.AddPolApi(_configuration, true);
 
             services.AddDbContext<PolDbContext>(options =>
             {
@@ -49,14 +45,6 @@ namespace API
                 var connectionString = connectionStringService.GetConnectionString("PolConnection");
                 options.UseSqlServer(connectionString);
             });
-
-            services.AddMvc(options =>
-                {
-                    options.EnableEndpointRouting = false;
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
-            //services.AddTransient<IProfileService, MyProfileService>();
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

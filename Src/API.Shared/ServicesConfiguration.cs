@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Interfaces;
 using Application.Services;
@@ -36,8 +38,8 @@ namespace API.Shared
                     options.RequireHttpsMetadata = false;
                 });
 
-            services.AddControllersWithViews(
-                options =>
+            var assembly = typeof(TravelExpenseController).Assembly;
+            services.AddControllersWithViews(options =>
                 {
                     // Include handling of Domain Exceptions
                     options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
@@ -52,7 +54,8 @@ namespace API.Shared
                             .Build();
                         options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
                     }
-                });
+                })
+                .AddApplicationPart(assembly);
 
             services.AddSwaggerGen(x =>
             {
@@ -90,6 +93,11 @@ namespace API.Shared
 
             // Domain event handlers
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
+
+            services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
         }
     }
 }
