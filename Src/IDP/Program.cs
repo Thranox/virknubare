@@ -39,9 +39,6 @@ namespace IdentityServerAspNetIdentit
 
             try
             {
-                var seed = args.Contains("/seed");
-                if (seed) args = args.Except(new[] {"/seed"}).ToArray();
-
                 var host = CreateHostBuilder(args).Build();
 
                 Log.Information("Seeding database...");

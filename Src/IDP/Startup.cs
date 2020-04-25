@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace IdentityServerAspNetIdentit
 {
@@ -103,8 +104,11 @@ namespace IdentityServerAspNetIdentit
 
         public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
         {
-            applicationDbContext.Database.Migrate();
-
+            //Log.Information("Seeding database...");
+            //var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            //SeedData.EnsureSeedData(connectionString);
+            //Log.Information("Done seeding database.");
+            
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
