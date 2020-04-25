@@ -104,11 +104,11 @@ namespace IdentityServerAspNetIdentit
 
         public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
         {
-            //Log.Information("Seeding database...");
-            //var connectionString = Configuration.GetConnectionString("DefaultConnection");
-            //SeedData.EnsureSeedData(connectionString);
-            //Log.Information("Done seeding database.");
-            
+            Log.Information("Ensuring database is migrated and seeded...");
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            SeedData.EnsureSeedData(connectionString);
+            Log.Information("Done ensuring database is migrated and seeded.");
+
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
