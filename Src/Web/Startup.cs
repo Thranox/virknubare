@@ -8,6 +8,7 @@ using CleanArchitecture.Infrastructure.DomainEvents;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using IdentityServer4.AccessTokenValidation;
+using IDP.Services;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Web.ActionFilters;
 using Web.Services;
@@ -31,10 +31,12 @@ namespace Web
     {
         private static readonly string _politikerafregningApi = "Politikerafregning API";
         private static readonly string _version = "v1";
+        public IWebHostEnvironment Environment { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -75,11 +77,9 @@ namespace Web
 
             services.AddDbContext<PolDbContext>(options =>
                 {
-                    var connectionString = Configuration.GetConnectionString("PolDb");
-                    options
-                        .UseMySql(connectionString, mySqlOptions => mySqlOptions
-                            .ServerVersion(new Version(10, 4, 12, 0), ServerType.MySql)
-                        );
+                    var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
+                    var connectionString = connectionStringService.GetConnectionString("PolConnection");
+                    options.UseSqlServer(connectionString);
                 });
 
             services.AddSwaggerGen(x =>
