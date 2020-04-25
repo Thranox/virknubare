@@ -1,4 +1,4 @@
-// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -8,50 +8,43 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
-using IdentityServer4.Test;
+using IdentityServerAspNetIdentit.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4;
-using Microsoft.AspNetCore.Identity;
 
-namespace IDP
+namespace IdentityServer4.Quickstart.UI
 {
-    /// <summary>
-    /// This sample controller implements a typical login/logout/provision workflow for local and external accounts.
-    /// The login service encapsulates the interactions with the user data store. This data store is in-memory only and cannot be used for production!
-    /// The interaction service provides a way for the UI to communicate with identityserver for validation and context retrieval
-    /// </summary>
     [SecurityHeaders]
     [AllowAnonymous]
     public class AccountController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager
-            )
+            IEventService events)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         /// <summary>
@@ -111,41 +104,20 @@ namespace IDP
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, false);
-
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    var user = _userManager.Users.SingleOrDefault(x=>x.Email==model.Username);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.SubjectId, user.UserName, clientId: context?.ClientId));
-
-                    // only set explicit expiration here if user chooses "remember me". 
-                    // otherwise we rely upon expiration configured in cookie middleware.
-                    AuthenticationProperties props = null;
-                    if (AccountOptions.AllowRememberLogin && model.RememberLogin)
-                    {
-                        props = new AuthenticationProperties
-                        {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)
-                        };
-                    };
-
-                    // issue authentication cookie with subject ID and username
-                    var isuser = new IdentityServerUser(user.SubjectId)
-                    {
-                        DisplayName = user.UserName
-                    };
-
-                    await HttpContext.SignInAsync(isuser, props);
+                    var user = await _userManager.FindByNameAsync(model.Username);
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.ClientId));
 
                     if (context != null)
                     {
-                        //if (await _clientStore.IsPkceClientAsync(context.ClientId))
-                        //{
-                        //    // if the client is PKCE then we assume it's native, so this change in how to
-                        //    // return the response is for better UX for the end user.
-                        //    return this.LoadingPage("Redirect", model.ReturnUrl);
-                        //}
+                        if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                        {
+                            // if the client is PKCE then we assume it's native, so this change in how to
+                            // return the response is for better UX for the end user.
+                            return this.LoadingPage("Redirect", model.ReturnUrl);
+                        }
 
                         // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                         return Redirect(model.ReturnUrl);
@@ -209,7 +181,7 @@ namespace IDP
             if (User?.Identity.IsAuthenticated == true)
             {
                 // delete local authentication cookie
-                await HttpContext.SignOutAsync();
+                await _signInManager.SignOutAsync();
 
                 // raise the logout event
                 await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));

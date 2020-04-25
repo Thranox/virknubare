@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Domain;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using SharedWouldBeNugets;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices
@@ -19,7 +20,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<ICreateSubmissionService>();
 
                 // Act
-                var actual = await sut.CreateAsync(TestData.DummyPolSub);
+                var actual = await sut.CreateAsync(TestData.DummyPolSubAlice);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

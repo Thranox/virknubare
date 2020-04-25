@@ -1,7 +1,7 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using SharedWouldBeNugets;
 
 namespace Web
 {
@@ -15,26 +15,16 @@ namespace Web
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, config ) =>
+                .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.Sources.Clear();
-
-                    var env = hostingContext.HostingEnvironment;
-
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json",
-                            optional: true, reloadOnChange: true);
-
-                    config.AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
-                    
-                    config.AddEnvironmentVariables();
-
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
+                    StartupHelper.SetupConfig(args, config, hostingContext.HostingEnvironment.EnvironmentName);
+                    Log.Logger = StartupHelper.CreateLogger(config, "Web");
                 })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseSerilog();
+                });
         }
     }
 }

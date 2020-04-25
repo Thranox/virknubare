@@ -328,3 +328,4 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+Src/IDP/appsettings.Development.JUULSERVER2019A.json

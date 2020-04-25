@@ -42,15 +42,12 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .CreateLogger();
-            services.AddSingleton<ILogger>(logger);
+            services.AddSingleton<ILogger>(Log.Logger);
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = "https://localhost:44305";
+                    options.Authority = Configuration.GetValue<string>("IDP_URL");
                     options.ApiName = "teapi";
                     options.RequireHttpsMetadata = false;
                 });
@@ -59,9 +56,9 @@ namespace Web
                 options =>
                 {
                     // Include handling of Domain Exceptions
-                    options.Filters.Add(new HttpResponseExceptionFilter(logger));
+                    options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
                     // Log all entries and exits of controller methods.
-                    options.Filters.Add(new MethodLoggingActionFilter(logger));
+                    options.Filters.Add(new MethodLoggingActionFilter(Log.Logger));
                     // Find user for request
 
                     if (Configuration.GetValue<bool>("UseAuthentication"))
@@ -144,8 +141,8 @@ namespace Web
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
+            app.UseHsts();
 
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
@@ -189,7 +186,6 @@ namespace Web
 
                 if (env.IsDevelopment()) spa.UseAngularCliServer("start");
             });
-
 
             logger.Information("TravelExpense Web started. Version=" + configuration.GetValue<string>("Version"));
             logger.Information("------------------------------------------------------------");

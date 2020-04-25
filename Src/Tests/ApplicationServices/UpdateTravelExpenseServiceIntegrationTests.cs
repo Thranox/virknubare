@@ -9,6 +9,7 @@ using Domain.Entities;
 using Domain.Specifications;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using SharedWouldBeNugets;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices
@@ -32,7 +33,7 @@ namespace Tests.ApplicationServices
                     var sut = testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>();
 
                     // Act
-                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto, TestData.DummyPolSub);
+                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto, TestData.DummyPolSubAlice);
 
                     // Assert
                     Assert.That(actual, Is.Not.Null);

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using SharedWouldBeNugets;
 using Tests.TestHelpers;
 using Web.Controllers;
 using Web.Services;
@@ -65,7 +66,7 @@ namespace Tests.Web.Controllers
         private static FlowStepController GetSut(IntegrationTestContext testContext)
         {
             var subManagementService = new Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSub);
+            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
 
             return new FlowStepController(subManagementService.Object,
                 testContext.ServiceProvider.GetService<IGetFlowStepService>());
