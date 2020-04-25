@@ -42,10 +42,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .CreateLogger();
-            services.AddSingleton<ILogger>(logger);
+            services.AddSingleton<ILogger>(Log.Logger);
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -59,9 +56,9 @@ namespace Web
                 options =>
                 {
                     // Include handling of Domain Exceptions
-                    options.Filters.Add(new HttpResponseExceptionFilter(logger));
+                    options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
                     // Log all entries and exits of controller methods.
-                    options.Filters.Add(new MethodLoggingActionFilter(logger));
+                    options.Filters.Add(new MethodLoggingActionFilter(Log.Logger));
                     // Find user for request
 
                     if (Configuration.GetValue<bool>("UseAuthentication"))
@@ -189,7 +186,6 @@ namespace Web
 
                 if (env.IsDevelopment()) spa.UseAngularCliServer("start");
             });
-
 
             logger.Information("TravelExpense Web started. Version=" + configuration.GetValue<string>("Version"));
             logger.Information("------------------------------------------------------------");
