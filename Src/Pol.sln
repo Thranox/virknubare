@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedWouldBeNugets", "SharedWouldBeNugets\SharedWouldBeNugets.csproj", "{FD0B482C-78FB-4564-8003-A752BB12350F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Shared", "API.Shared\API.Shared.csproj", "{7BCE0089-CB83-421F-8FA6-4B699C808F62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Shared", "API.Shared\API.Shared.csproj", "{7BCE0089-CB83-421F-8FA6-4B699C808F62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIOPEN", "APIOPEN\APIOPEN.csproj", "{3C43C1DC-B52B-4AA0-B283-A4E70FE42719}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{7BCE0089-CB83-421F-8FA6-4B699C808F62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BCE0089-CB83-421F-8FA6-4B699C808F62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BCE0089-CB83-421F-8FA6-4B699C808F62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C43C1DC-B52B-4AA0-B283-A4E70FE42719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C43C1DC-B52B-4AA0-B283-A4E70FE42719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C43C1DC-B52B-4AA0-B283-A4E70FE42719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C43C1DC-B52B-4AA0-B283-A4E70FE42719}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
