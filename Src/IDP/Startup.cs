@@ -5,6 +5,7 @@
 using IdentityServer4.Services;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
+using IDP.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -54,7 +55,12 @@ namespace IdentityServerAspNetIdentit
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            {
+                var connectionStringService = new ConnectionStringService(Configuration,Environment.EnvironmentName);
+
+                var connectionString =connectionStringService.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString);
+            });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -105,7 +111,8 @@ namespace IdentityServerAspNetIdentit
         public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
         {
             Log.Information("Ensuring database is migrated and seeded...");
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
+            var connectionString = connectionStringService.GetConnectionString("DefaultConnection");
             SeedData.EnsureSeedData(connectionString);
             Log.Information("Done ensuring database is migrated and seeded.");
 
