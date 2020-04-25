@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace SharedWouldBeNugets
 {
@@ -12,8 +9,10 @@ namespace SharedWouldBeNugets
         public static string GetBuildVersionInfoString(Assembly assembly)
         {
             var assemblyFullName = assembly.FullName.Split(",").First();
-            var versionTime = File.GetLastWriteTime(assembly.Location);
-            return assemblyFullName + " " +versionTime;
+            var versionTime = File.GetLastWriteTime(assembly.Location) +
+                              " // " +
+                              File.GetCreationTimeUtc(assembly.Location);
+            return assemblyFullName + " " + versionTime;
         }
     }
 }
