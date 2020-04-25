@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 
-namespace Web.Services
+namespace API.Shared.Services
 {
     public class FakeSubManagementService : ISubManagementService
     {

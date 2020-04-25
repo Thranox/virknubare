@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Web.Services;
 
-namespace Web.Controllers
+namespace API.Shared.Controllers
 {
     [ApiController]
     [Route("travelexpenses")]

@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using API.Shared.Controllers;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoFixture;
@@ -16,8 +18,6 @@ using Moq;
 using NUnit.Framework;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
-using Web.Controllers;
-using Web.Services;
 
 namespace Tests.Web.Controllers
 {
