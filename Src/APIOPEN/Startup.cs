@@ -44,7 +44,7 @@ namespace APIOPEN
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, PolDbContext polDbContext)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning APIOPEN...");
@@ -53,6 +53,9 @@ namespace APIOPEN
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            polDbContext.Database.Migrate();
+            polDbContext.Seed();
 
             app.UseHttpsRedirection();
 
