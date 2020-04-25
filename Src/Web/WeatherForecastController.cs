@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using API;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
-namespace API.Shared.Controllers
+namespace Web
 {
     [ApiController]
     [Route("[controller]")]

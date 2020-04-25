@@ -23,7 +23,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Web.ActionFilters;
-using Web.Services;
 
 namespace Web
 {
@@ -109,14 +108,14 @@ namespace Web
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
 
-            if (configuration.GetValue<bool>("UseAuthentication"))
-            {
-                services.AddScoped<ISubManagementService, SubManagementService>();
-            }
-            else
-            {
-                services.AddScoped<ISubManagementService, FakeSubManagementService>();
-            }
+            //if (configuration.GetValue<bool>("UseAuthentication"))
+            //{
+            //    services.AddScoped<ISubManagementService, SubManagementService>();
+            //}
+            //else
+            //{
+            //    services.AddScoped<ISubManagementService, FakeSubManagementService>();
+            //}
             Assembly
                 .GetAssembly(typeof(IProcessFlowStep))
                 .GetTypesAssignableFrom<IProcessFlowStep>()

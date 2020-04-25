@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Claims;
-using Domain.Entities;
 
-namespace Web.Services
+namespace API.Shared.Services
 {
     public class SubManagementService : ISubManagementService
     {

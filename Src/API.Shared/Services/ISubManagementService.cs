@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Web.Services
+namespace API.Shared.Services
 {
     public interface ISubManagementService
     {
