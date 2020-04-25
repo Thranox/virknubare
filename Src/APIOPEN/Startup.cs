@@ -47,7 +47,7 @@ namespace APIOPEN
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger)
         {
             logger.Information("------------------------------------------------------------");
-            logger.Information("Starting Politikerafregning API...");
+            logger.Information("Starting Politikerafregning APIOPEN...");
 
             if (env.IsDevelopment())
             {
@@ -58,7 +58,7 @@ namespace APIOPEN
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
+                c => c.SwaggerEndpoint("v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
 
             app.UseRouting();
 
@@ -69,7 +69,7 @@ namespace APIOPEN
                 endpoints.MapControllers();
             });
 
-            logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version"));
+            logger.Information("TravelExpense APIOPEN started. Version=" + _configuration.GetValue<string>("Version"));
             logger.Information("------------------------------------------------------------");
         }
     }
