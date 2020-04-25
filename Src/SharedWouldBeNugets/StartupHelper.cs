@@ -11,9 +11,9 @@ namespace SharedWouldBeNugets
 {
     public static class StartupHelper
     {
-        public static Logger CreateLogger(IConfigurationBuilder config)
+        public static Logger CreateLogger(IConfigurationBuilder config, string componentName)
         {
-            return new LoggerConfiguration()
+            var loggerConfiguration = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
@@ -31,11 +31,15 @@ namespace SharedWouldBeNugets
                 .Enrich.WithMachineName()
                 //.Enrich.WithProperty("ReleaseNumber", settings.ReleaseNumber)
                 .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
-                .Enrich.WithProperty("ComponentName", "IDP")
+                .Enrich.WithProperty("SuiteName", "Pol")
+                .Enrich.WithProperty("ComponentName", componentName)
                 .Enrich.FromLogContext()
                 .ReadFrom.Configuration(config.Build())
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
-                .CreateLogger();
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate);
+            var logger = loggerConfiguration.CreateLogger();
+            logger.Information("---------------------------");
+            logger.Information("Application started");
+            return logger;
         }
 
         public static void SetupConfig(string[] args, IConfigurationBuilder config, string environmentName)

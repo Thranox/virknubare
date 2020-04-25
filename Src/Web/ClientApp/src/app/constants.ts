@@ -7,6 +7,7 @@ export class Constants {
   //public static stsAuthority = 'https://localhost:44305/';
   //public static stsAuthority = 'http://localhost/IDP/';
   //public static stsAuthority = 'http://ajf-prod-02/IDP/';
-  public static stsAuthority = 'http://localhost:5000/';
+  //public static stsAuthority = 'http://localhost:5000/';
+  public static stsAuthority = 'https://localhost:5001/';
   public static clientId = 'polangularclient';
 }
