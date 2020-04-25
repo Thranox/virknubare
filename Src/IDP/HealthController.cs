@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,21 +9,14 @@ using Serilog;
 namespace IDP
 {
     [AllowAnonymous]
-    [SecurityHeaders]
     [Route("Health")]
     public class HealthController : Controller
     {
         private readonly ILogger<HealthController> _logger;
-        private readonly UserIdentityDbContext _userIdentityDbContext;
-        private readonly PersistedGrantDbContext _persistedGrantDbContext;
-        private readonly ConfigurationDbContext _configurationDbContext;
 
-        public HealthController(ILogger<HealthController> logger, UserIdentityDbContext userIdentityDbContext, PersistedGrantDbContext persistedGrantDbContext, ConfigurationDbContext configurationDbContext)
+        public HealthController(ILogger<HealthController> logger)
         {
             _logger = logger;
-            _userIdentityDbContext = userIdentityDbContext;
-            _persistedGrantDbContext = persistedGrantDbContext;
-            _configurationDbContext = configurationDbContext;
         }
 
         [HttpGet("ShallowCheck")]
@@ -40,38 +32,38 @@ namespace IDP
         {
             _logger.LogInformation("Health DeepCheck!");
 
-            try
-            {
-                Log.Logger.Information("Migrating UserIdentityDbContext");
-                _userIdentityDbContext.Database.Migrate();
-            }
-            catch (Exception e)
-            {
-                Log.Logger.Error(e, "During Migrating UserIdentityDbContext");
-                throw;
-            }
+            //try
+            //{
+            //    Log.Logger.Information("Migrating UserIdentityDbContext");
+            //    _userIdentityDbContext.Database.Migrate();
+            //}
+            //catch (Exception e)
+            //{
+            //    Log.Logger.Error(e, "During Migrating UserIdentityDbContext");
+            //    throw;
+            //}
 
-            try
-            {
-                Log.Logger.Information("Migrating PersistedGrantDbContext");
-                _persistedGrantDbContext.Database.Migrate();
-            }
-            catch (Exception e)
-            {
-                Log.Logger.Error(e, "During Migrating PersistedGrantDbContext");
-                throw;
-            }
+            //try
+            //{
+            //    Log.Logger.Information("Migrating PersistedGrantDbContext");
+            //    _persistedGrantDbContext.Database.Migrate();
+            //}
+            //catch (Exception e)
+            //{
+            //    Log.Logger.Error(e, "During Migrating PersistedGrantDbContext");
+            //    throw;
+            //}
 
-            try
-            {
-                Log.Logger.Information("Migrating ConfigurationDbContext");
-                _configurationDbContext.Database.Migrate();
-            }
-            catch (Exception e)
-            {
-                Log.Logger.Error(e, "During Migrating ConfigurationDbContext");
-                throw;
-            }
+            //try
+            //{
+            //    Log.Logger.Information("Migrating ConfigurationDbContext");
+            //    _configurationDbContext.Database.Migrate();
+            //}
+            //catch (Exception e)
+            //{
+            //    Log.Logger.Error(e, "During Migrating ConfigurationDbContext");
+            //    throw;
+            //}
 
             return await Task.FromResult(Ok());
         }

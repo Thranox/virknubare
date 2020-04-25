@@ -2,247 +2,131 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
-using System.Linq;
-using System.Reflection;
-using IdentityModel;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
-using IdentityServer4.Models;
-using IDP.Services;
+using IdentityServer4.Services;
+using IdentityServerAspNetIdentit.Data;
+using IdentityServerAspNetIdentit.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Serilog;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace IDP
+namespace IdentityServerAspNetIdentit
 {
     public class Startup
     {
-        private readonly IConfiguration _configuration;
         public IWebHostEnvironment Environment { get; }
+        public IConfiguration Configuration { get; }
 
         public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
-        private void InitializeDatabases(IApplicationBuilder app)
-        {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                try
-                {
-                    var userIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<UserIdentityDbContext>();
-                    userIdentityDbContext.Database.Migrate();
-
-                    // Seed with test users
-                    foreach (var testUser in TestUsers.Users)
-                    {
-                        if (!userIdentityDbContext.Users.Any(x => x.SubjectId == testUser.SubjectId))
-                        {
-                            var email = testUser.Claims.Single(x=>x.Type== JwtClaimTypes.Email).Value;
-
-                            var password = new PasswordHasher<ApplicationUser>();
-                            var applicationUser = new ApplicationUser()
-                            {
-                                SubjectId = testUser.SubjectId,
-                                Email = email,
-                                NormalizedEmail = email.ToUpper(),
-                                UserName = email,
-                                NormalizedUserName = email.ToUpper(),
-                                EmailConfirmed = true,
-                                SecurityStamp = Guid.NewGuid().ToString("D")
-                            };
-                            var hashed = password.HashPassword(applicationUser, testUser.Password);
-                            applicationUser.PasswordHash = hashed;
-                            userIdentityDbContext.Users.Add(applicationUser);
-                        }
-                    }
-
-                    userIdentityDbContext.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    Log.Logger.Error(e, "During Creating/Migrating UserIdentityDbContext");
-                    throw;
-                }
-
-                try
-                {
-                    Log.Logger.Information("Creating/Migrating PersistedGrantDbContext");
-                    var persistedGrantDbContext = serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-                    persistedGrantDbContext.Database.Migrate();
-                }
-                catch (Exception e)
-                {
-                    Log.Logger.Error(e, "During Creating/Migrating PersistedGrantDbContext");
-                    throw;
-                }
-
-                ConfigurationDbContext context;
-                try
-                {
-                    Log.Logger.Information("Creating/Migrating ConfigurationDbContext");
-                    context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-                    context.Database.Migrate();
-                }
-                catch (Exception e)
-                {
-                    Log.Logger.Error(e, "During Creating/Migrating ConfigurationDbContext");
-                    throw;
-                }
-
-                if (!context.Clients.Any())
-                {
-                    foreach (var client in Config.Clients)
-                    {
-                        context.Clients.Add(client.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
-
-                if (!context.IdentityResources.Any())
-                {
-                    foreach (var resource in Config.Ids)
-                    {
-                        context.IdentityResources.Add(resource.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
-
-                if (!context.ApiResources.Any())
-                {
-                    foreach (var resource in Config.Apis)
-                    {
-                        context.ApiResources.Add(resource.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
-            }
-        }
         public void ConfigureServices(IServiceCollection services)
         {
-            Log.Logger.Information("ConfigureServices()");
-
-            services.AddTransient<IConnectionStringService, ConnectionStringService>();
-
-            // Basic webapp with pages
-            services.AddMvc();
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-
-            // ASP.NET Core Identity
-            services.AddDbContext<UserIdentityDbContext>(options =>
+            services.Configure<CookiePolicyOptions>(options =>
             {
-                var connectionStringService =services.BuildServiceProvider().GetRequiredService<IConnectionStringService>();
-                var conUserIdentityDbContext = connectionStringService.GetConnectionString("AspNetCoreIdentity");
-                options.UseSqlServer(conUserIdentityDbContext);
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddDefaultIdentity<ApplicationUser>(options =>
+
+            services.AddControllersWithViews();
+
+            // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
+            services.Configure<IISOptions>(iis =>
+            {
+                iis.AuthenticationDisplayName = "Windows";
+                iis.AutomaticAuthentication = false;
+            });
+
+            // configures IIS in-proc settings
+            services.Configure<IISServerOptions>(iis =>
+            {
+                iis.AuthenticationDisplayName = "Windows";
+                iis.AutomaticAuthentication = false;
+            });
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            var builder = services.AddIdentityServer(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = true;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequiredLength = 5;
+                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseFailureEvents = true;
+                    options.Events.RaiseSuccessEvents = true;
+                    options.UserInteraction.LoginUrl = "/Account/Login";
+                    options.UserInteraction.LogoutUrl = "/Account/Logout";
                 })
-                .AddEntityFrameworkStores<UserIdentityDbContext>()
-                .AddDefaultTokenProviders()
-                .AddUserManager<UserManager<ApplicationUser>>()
-                .AddSignInManager<SignInManager<ApplicationUser>>();
-
-            services.AddTransient<IEmailSender, EmailSenderService>();
-
-            // IdentityServer4
-            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-
-            // configure identity server with in-memory stores, keys, clients and scopes
-            services.AddIdentityServer()
-                .AddDeveloperSigningCredential()
-                //.AddTestUsers(TestUsers.Users)
-                // this adds the config data from DB (clients, resources)
-                .AddConfigurationStore(options =>
-                {
-                    var connectionStringService = services.BuildServiceProvider().GetRequiredService<IConnectionStringService>();
-                    var conIdentityServer4 = connectionStringService.GetConnectionString("IdentityServer4");
-                    
-                    options.ConfigureDbContext = builder =>
-                        builder.UseSqlServer(conIdentityServer4,
-                            sql => sql.MigrationsAssembly(migrationsAssembly));
-                })
-                // this adds the operational data from DB (codes, tokens, consents)
-                .AddOperationalStore(options =>
-                {
-                    var connectionStringService = services.BuildServiceProvider().GetRequiredService<IConnectionStringService>();
-                    var conIdentityServer4 = connectionStringService.GetConnectionString("IdentityServer4");
-                    options.ConfigureDbContext = builder =>
-                        builder.UseSqlServer(conIdentityServer4,
-                            sql => sql.MigrationsAssembly(migrationsAssembly));
-
-                    // this enables automatic token cleanup. this is optional.
-                    //options.EnableTokenCleanup = true;
-                    //options.TokenCleanupInterval = 30;
-                })
+                .AddInMemoryIdentityResources(Config.Ids)
+                .AddInMemoryApiResources(Config.Apis)
+                .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
                 // not recommended for production - you need to store your key material somewhere secure
                 .AddDeveloperSigningCredential();
 
-            // Note: The specified URL must not contain a trailing slash (/). If the URL terminates with /, the comparison returns false and no header is returned.
-            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
-            var origins = _configuration.GetValue<string>("AllowedCorsOrigins").Split("|");
-            foreach (var origin in origins)
-            {
-                Log.Logger.Information("Allowing CORS Origin: {Origin}", origin );
-            }
-            services.AddCors(setup =>
-            {
-                setup.AddDefaultPolicy(policy =>
+            services.AddAuthentication(IdentityConstants.ApplicationScheme)
+                .AddGoogle(options =>
                 {
-                    policy.AllowAnyHeader();
-                    policy.AllowAnyMethod();
-                    policy.WithOrigins(origins );
-                    policy.AllowCredentials();
+                    // register your IdentityServer with Google at https://console.developers.google.com
+                    // enable the Google+ API
+                    // set the redirect URI to http://localhost:5000/signin-google
+                    options.ClientId = "copy client ID from Google here";
+                    options.ClientSecret = "copy client secret from Google here";
                 });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    corsPolicyBuilder => corsPolicyBuilder
+                        .WithOrigins("http://localhost:5000")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
+            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
+            {
+                AllowAll = true
+            };
+            services.AddSingleton<ICorsPolicyService>(cors);
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
         {
-            Log.Logger.Information("Configure()");
-
-            InitializeDatabases(app);
+            applicationDbContext.Database.Migrate();
 
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
+            else
+            {
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
+
             app.UseRouting();
-
-            // With endpoint routing, the CORS middleware must be configured to execute between the calls to UseRouting and UseEndpoints.
-            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
-            app.UseCors();
-
+            
             app.UseIdentityServer();
-
+            app.UseCors("CorsPolicy");
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                //endpoints.MapControllers();
-                endpoints.MapRazorPages();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }

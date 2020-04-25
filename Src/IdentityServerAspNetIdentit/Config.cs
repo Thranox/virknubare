@@ -7,7 +7,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace IdentityServerAspNetIdentit
+namespace IDP
 {
     public static class Config
     {
@@ -40,9 +40,9 @@ namespace IdentityServerAspNetIdentit
             }){}
         };
 
-        public static IEnumerable<Client> Clients =>
-                new[]
-                {
+    public static IEnumerable<Client> Clients =>
+            new[]
+            {
                 new Client
                 {
                     AlwaysIncludeUserClaimsInIdToken = true,
@@ -58,13 +58,14 @@ namespace IdentityServerAspNetIdentit
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "roles",
+                        "roles", 
                         "teapi"
                     },
+                    ClientSecrets ={new Secret("secret".Sha256())},
                     AllowedCorsOrigins = new List<string> {"https://localhost:44324"},
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 15*60*60 // 15 hrs
                 }
-                };
+            };
     }
 }

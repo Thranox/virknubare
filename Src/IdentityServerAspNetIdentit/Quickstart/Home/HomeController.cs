@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Quickstart.UI
+namespace IDP
 {
     [SecurityHeaders]
     [AllowAnonymous]
@@ -29,14 +29,14 @@ namespace IdentityServer4.Quickstart.UI
 
         public IActionResult Index()
         {
-            if (_environment.IsDevelopment())
-            {
+            //if (_environment.IsDevelopment())
+            //{
                 // only show in development
                 return View();
-            }
+            //}
 
-            _logger.LogInformation("Homepage is disabled in production. Returning 404.");
-            return NotFound();
+            //_logger.LogInformation("Homepage is disabled in production. Returning 404.");
+            //return NotFound();
         }
 
         /// <summary>
