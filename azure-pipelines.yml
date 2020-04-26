@@ -56,7 +56,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: '**/POLAPI.csproj'
+    projects: '**/PolAPI.csproj'
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
 
