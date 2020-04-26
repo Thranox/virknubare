@@ -51,6 +51,15 @@ namespace PolAPI
             polDbContext.Database.Migrate();
             polDbContext.Seed();
 
+            app.UseCors(options =>
+            {
+                options
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins("https://localhost:44324")
+                    .AllowCredentials();
+            });
+
             app.UseHttpsRedirection();
 
             app.UseSwagger();
