@@ -25,6 +25,12 @@ namespace API.Shared.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<WeatherForecast>> Get()
         {
+            _logger.Information(
+                User.Identity.IsAuthenticated ? 
+                    "User Is Authenticated" : 
+                    "User Is Not Authenticated"
+                );
+
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

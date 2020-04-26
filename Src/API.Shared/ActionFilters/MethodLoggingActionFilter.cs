@@ -7,25 +7,34 @@ namespace API.Shared.ActionFilters
 {
     public class MethodLoggingActionFilter : IActionFilter
     {
-        private ILogger _loggerForContext;
+        private readonly ILogger _logger;
 
         public MethodLoggingActionFilter(ILogger logger)
         {
-            _loggerForContext = logger.ForContext(new TransactionIdEnricher(Guid.NewGuid()));
+            _logger = logger;
         }
 
         public int Order { get; set; } = int.MaxValue - 20;
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _loggerForContext.Information("{MethodName} -- Entry", context.ActionDescriptor.DisplayName);
-            _loggerForContext.Information("{MethodName} -- Parameter(s): {MethodParameters}",
+            // Create transaction id and create a new logger that will log enriched with that TransactionId
+            var transactionId = Guid.NewGuid();
+            var loggerForContext = _logger.ForContext(new TransactionIdEnricher(transactionId));
+
+            loggerForContext.Information("{MethodName} -- Entry", context.ActionDescriptor.DisplayName);
+            loggerForContext.Information("{MethodName} -- Parameter(s): {MethodParameters}",
                 context.ActionDescriptor.DisplayName, JsonConvert.SerializeObject(context.ActionArguments));
+            
+            context.HttpContext.Items.Add("LoggerForContext",loggerForContext);
         }
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            _loggerForContext.Information("{MethodName} -- Exit", context.ActionDescriptor.DisplayName);
+            var logger = context.HttpContext.Items["LoggerForContext"] as ILogger;
+            if (logger == null)
+                logger = _logger;
+            logger.Information("{MethodName} -- Exit", context.ActionDescriptor.DisplayName);
         }
     }
 }
