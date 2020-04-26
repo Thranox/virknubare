@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Interfaces;
@@ -19,7 +20,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
-using Web.ActionFilters;
 using Web.MapperProfiles;
 
 namespace API.Shared

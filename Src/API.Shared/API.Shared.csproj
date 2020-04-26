@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ActionFilters\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
