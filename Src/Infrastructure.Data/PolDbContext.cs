@@ -21,7 +21,6 @@ namespace Infrastructure.Data
         {
         }
 
-        public DbSet<TravelExpenseEntity> TravelExpenses { get; set; }
         public DbSet<CustomerEntity> CustomerEntities { get; set; }
 
         public override int SaveChanges()
@@ -57,6 +56,14 @@ namespace Infrastructure.Data
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.FlowStepUserPermissions)
                 .HasForeignKey(bc => bc.UserId);
+
+            modelBuilder.Entity<CustomerEntity>().ToTable("Customers");
+            modelBuilder.Entity<UserEntity>().ToTable("Users");
+            modelBuilder.Entity<FlowStepEntity>().ToTable("FlowSteps");
+            modelBuilder.Entity<FlowStepUserPermissionEntity>().ToTable("FlowStepUserPermissions");
+            modelBuilder.Entity<TravelExpenseEntity>().ToTable("TravelExpenses");
+
+
         }
 
         public void Seed()

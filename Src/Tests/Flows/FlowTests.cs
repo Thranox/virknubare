@@ -40,7 +40,7 @@ namespace Tests.Flows
                         .List(new CustomerByName(TestData.DummyCustomerName))
                         .Single();
 
-                    var newTe = polDbContext.TravelExpenses.First();
+                    var newTe = customer.TravelExpenses.First();
 
                     // Act & Assert
                     do

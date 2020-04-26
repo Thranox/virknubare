@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Flows\" />
+  </ItemGroup>
+
 </Project>
