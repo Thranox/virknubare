@@ -11,15 +11,20 @@ export class FetchDataComponent {
 
   constructor(http: HttpClient, authService: AuthService, @Inject('BASE_URL') baseUrl: string) {
     authService.getAccessToken().then(token => {
-      //baseUrl = 'https://localhost:44324/'; // Api via WebApps API
-      baseUrl = 'https://localhost:44348/'; //PolAPI
-      console.info(token);
-      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { headers: headers }).subscribe(result => {
-        this.forecasts = result;
-      }, error => console.error(error));
+      if (token === null) {
+        console.info('No token, not logged in:' + token);
+        this.forecasts = null;
+      } else {
+        //baseUrl = 'https://localhost:44324/'; // Api via WebApp's own API
+        baseUrl = 'https://localhost:44348/'; //PolAPI
+        console.info('Calling with token:' + token);
+        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+        http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { headers: headers }).subscribe(result => {
+            this.forecasts = result;
+          },
+          error => console.error(error));
+      }
   });
-
   }
 }
 

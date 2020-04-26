@@ -25,7 +25,7 @@ namespace PolAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false);
+            services.AddPolApi(_configuration, true);
             services.AddControllers();
 
             services.AddDbContext<PolDbContext>(options =>
@@ -59,7 +59,7 @@ namespace PolAPI
                     .WithOrigins("https://localhost:44324")
                     .AllowCredentials();
             });
-
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             app.UseSwagger();
