@@ -1,6 +1,6 @@
 using System;
 
-namespace APIOPEN
+namespace PolAPI
 {
     public class WeatherForecast
     {

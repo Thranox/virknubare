@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using SharedWouldBeNugets;
 
-namespace API
+namespace PolAPI
 {
     public class Program
     {

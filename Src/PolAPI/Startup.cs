@@ -9,19 +9,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace APIOPEN
+namespace PolAPI
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _environment;
-
-        private readonly IConfiguration _configuration;
-
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _configuration = configuration;
             _environment = environment;
         }
+
+        private IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,16 +34,19 @@ namespace APIOPEN
                 var connectionString = connectionStringService.GetConnectionString("PolConnection");
                 options.UseSqlServer(connectionString);
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            PolDbContext polDbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, PolDbContext polDbContext)
         {
             logger.Information("------------------------------------------------------------");
-            logger.Information("Starting Politikerafregning APIOPEN...");
+            logger.Information("Starting Politikerafregning API...");
 
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             polDbContext.Database.Migrate();
             polDbContext.Seed();
@@ -59,9 +61,12 @@ namespace APIOPEN
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
-            logger.Information("TravelExpense APIOPEN started. Version=" + _configuration.GetValue<string>("Version"));
+            logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version"));
             logger.Information("------------------------------------------------------------");
         }
     }
