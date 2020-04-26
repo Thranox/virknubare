@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Web
+namespace SharedWouldBeNugets
 {
     public static class Extensions
     {

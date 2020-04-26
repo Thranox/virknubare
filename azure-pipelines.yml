@@ -48,7 +48,15 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: '**/API.csproj'
+    projects: '**/APIOPEN.csproj'
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: '**/PolAPI.csproj'
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
 

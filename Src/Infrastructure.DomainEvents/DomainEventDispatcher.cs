@@ -4,7 +4,7 @@ using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CleanArchitecture.Infrastructure.DomainEvents
+namespace Infrastructure.DomainEvents
 {
     // https://gist.github.com/jbogard/54d6569e883f63afebc7
     // http://lostechies.com/jimmybogard/2014/05/13/a-better-domain-events-pattern/

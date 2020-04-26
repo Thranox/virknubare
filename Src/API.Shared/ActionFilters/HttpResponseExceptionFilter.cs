@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Serilog;
 
-namespace Web.ActionFilters
+namespace API.Shared.ActionFilters
 {
     public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
     {
