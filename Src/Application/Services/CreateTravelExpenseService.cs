@@ -21,7 +21,8 @@ namespace Application.Services
             string sub)
         {
             var creatingUser = _unitOfWork.Repository.List(new UserBySubSpecification(sub)).FirstOrDefault();
-            var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description, creatingUser);
+            var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
+            var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description, creatingUser,owningCustomer);
 
             _unitOfWork
                 .Repository

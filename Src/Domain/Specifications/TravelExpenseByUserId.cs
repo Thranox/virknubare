@@ -5,11 +5,11 @@ using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class TravelExpenseById : ISpecification<TravelExpenseEntity>
+    public class TravelExpenseByUserId : ISpecification<TravelExpenseEntity>
     {
-        public TravelExpenseById(Guid id)
+        public TravelExpenseByUserId(Guid id)
         {
-            Criteria = e => e.Id == id;
+            Criteria = e => e.OwnedByUser.Id == id;
         }
 
         public Expression<Func<TravelExpenseEntity, bool>> Criteria { get; }

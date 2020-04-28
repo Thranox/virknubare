@@ -62,6 +62,16 @@ namespace Infrastructure.Data
                 //}
             }
 
+            // -----------------------------------
+            // Dummy TravelExpenses
+            var polTravelExpenses = _unitOfWork.Repository.List(new TravelExpenseByUserId(userEntityPol.Id));
+            if (!polTravelExpenses.Any())
+            {
+                _unitOfWork.Repository.Add(new TravelExpenseEntity("Description1", userEntityPol, customer));
+                _unitOfWork.Repository.Add(new TravelExpenseEntity("Description2", userEntityPol, customer));
+                _unitOfWork.Repository.Add(new TravelExpenseEntity("Description3", userEntityPol, customer));
+            }
+
             _unitOfWork.Commit();
         }
 

@@ -1,4 +1,5 @@
-﻿using Domain.Events;
+﻿using System;
+using Domain.Events;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.SharedKernel;
@@ -11,16 +12,18 @@ namespace Domain.Entities
         {
         }
 
-        public TravelExpenseEntity(string description, UserEntity userEntity) : this()
+        public TravelExpenseEntity(string description, UserEntity user, CustomerEntity customer) : this()
         {
             Description = description;
             Stage = TravelExpenseStage.Initial;
-            OwnedByUserEntity = userEntity;
+            OwnedByUser = user ?? throw new ArgumentNullException(nameof(user));
+            Customer = customer ?? throw new ArgumentNullException(nameof(customer));
         }
 
         public TravelExpenseStage Stage { get; private set; }
 
-        public UserEntity OwnedByUserEntity { get; private set; }
+        public UserEntity OwnedByUser { get; private set; }
+        public CustomerEntity Customer { get; private set; }
 
         public string Description { get; private set; }
         public bool IsCertified { get; private set; }

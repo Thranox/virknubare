@@ -49,7 +49,7 @@ namespace Application.Services
             var travelExpenseEntities = customer
                 .TravelExpenses
                 .Where(x =>
-                    travelExpenseStages.Contains(x.Stage) || x.OwnedByUserEntity == userEntity
+                    travelExpenseStages.Contains(x.Stage) || x.OwnedByUser == userEntity
                 );
 
             return await Task.FromResult(new TravelExpenseGetResponse
@@ -88,7 +88,7 @@ namespace Application.Services
             // Get travel expense filtered for visibility
             var travelExpenseEntity =
                 travelExpenseEntities1.SingleOrDefault(x =>
-                    travelExpenseStages.Contains(x.Stage) || x.OwnedByUserEntity == userEntity
+                    travelExpenseStages.Contains(x.Stage) || x.OwnedByUser == userEntity
                 );
 
             // If not allowed for user (but it existed) we respond Access Denied

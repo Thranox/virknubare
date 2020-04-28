@@ -30,7 +30,7 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInInvalidStage_ThrowsBusinessRuleViolationException(TravelExpenseStage travelExpenseStage)
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""));
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), null);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(travelExpenseStage);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
@@ -45,7 +45,7 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsReportedDone()
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""));
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), null);
             var sut = GetSut();
 
             // Act
