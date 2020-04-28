@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Web;
 using Web.MapperProfiles;
+using IDbSeeder = Infrastructure.Data.IDbSeeder;
 
 namespace Tests.TestHelpers
 {
@@ -45,9 +46,10 @@ namespace Tests.TestHelpers
 
         private void SeedDb()
         {
+            var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
+            dbSeeder.Seed();
             using (var dbContext = new PolDbContext(DbContextOptions))
             {
-                dbContext.Seed();
                 var travelExpenseEntities = dbContext.CustomerEntities.First().TravelExpenses.ToList();
                 TravelExpenseEntity1 = travelExpenseEntities[0];
                 TravelExpenseEntity2 = travelExpenseEntities[1];

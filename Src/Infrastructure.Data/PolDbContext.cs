@@ -66,51 +66,51 @@ namespace Infrastructure.Data
 
         }
 
-        public void Seed()
-        {
-            if (CustomerEntities.Any(x => x.Name == TestData.DummyCustomerName))
-                return;
+        //public void Seed()
+        //{
+        //    if (CustomerEntities.Any(x => x.Name == TestData.DummyCustomerName))
+        //        return;
 
-            var customerEntity = new CustomerEntity(TestData.DummyCustomerName);
-            var userEntityPol = new UserEntity("dummy pol Alice", TestData.DummyPolSubAlice);
-            customerEntity.Users.Add(userEntityPol);
-            var userEntitySek = new UserEntity("dummy sek Bob", TestData.DummySekSubBob);
-            customerEntity.Users.Add(userEntitySek);
-            var userEntityLed = new UserEntity("dummy led Charlie", TestData.DummyLedSubCharlie);
-            customerEntity.Users.Add(userEntityLed);
+        //    var customerEntity = new CustomerEntity(TestData.DummyCustomerName);
+        //    var userEntityPol = new UserEntity("dummy pol Alice", TestData.DummyPolSubAlice);
+        //    customerEntity.Users.Add(userEntityPol);
+        //    var userEntitySek = new UserEntity("dummy sek Bob", TestData.DummySekSubBob);
+        //    customerEntity.Users.Add(userEntitySek);
+        //    var userEntityLed = new UserEntity("dummy led Charlie", TestData.DummyLedSubCharlie);
+        //    customerEntity.Users.Add(userEntityLed);
 
-            var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);
-            flowStepEntity1.FlowStepUserPermissions.Add(
-                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity1, User = userEntityPol}
-            );
-            customerEntity.FlowSteps.Add(flowStepEntity1);
+        //    var flowStepEntity1 = new FlowStepEntity(Globals.InitialReporteddone, TravelExpenseStage.Initial);
+        //    flowStepEntity1.FlowStepUserPermissions.Add(
+        //        new FlowStepUserPermissionEntity {FlowStep = flowStepEntity1, User = userEntityPol}
+        //    );
+        //    customerEntity.FlowSteps.Add(flowStepEntity1);
 
-            var flowStepEntity2 = new FlowStepEntity(Globals.ReporteddoneCertified, TravelExpenseStage.ReportedDone);
-            flowStepEntity2.FlowStepUserPermissions.Add(
-                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity2, User = userEntitySek}
-            );
-            customerEntity.FlowSteps.Add(flowStepEntity2);
+        //    var flowStepEntity2 = new FlowStepEntity(Globals.ReporteddoneCertified, TravelExpenseStage.ReportedDone);
+        //    flowStepEntity2.FlowStepUserPermissions.Add(
+        //        new FlowStepUserPermissionEntity {FlowStep = flowStepEntity2, User = userEntitySek}
+        //    );
+        //    customerEntity.FlowSteps.Add(flowStepEntity2);
 
-            var flowStepEntity3 = new FlowStepEntity(Globals.CertifiedAssignedForPayment, TravelExpenseStage.Certified);
-            flowStepEntity3.FlowStepUserPermissions.Add(
-                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity3, User = userEntityLed}
-            );
-            customerEntity.FlowSteps.Add(flowStepEntity3);
+        //    var flowStepEntity3 = new FlowStepEntity(Globals.CertifiedAssignedForPayment, TravelExpenseStage.Certified);
+        //    flowStepEntity3.FlowStepUserPermissions.Add(
+        //        new FlowStepUserPermissionEntity {FlowStep = flowStepEntity3, User = userEntityLed}
+        //    );
+        //    customerEntity.FlowSteps.Add(flowStepEntity3);
 
-            var flowStepEntity4 =
-                new FlowStepEntity(Globals.AssignedForPaymentFinal, TravelExpenseStage.AssignedForPayment);
-            flowStepEntity4.FlowStepUserPermissions.Add(
-                new FlowStepUserPermissionEntity {FlowStep = flowStepEntity4, User = userEntityLed}
-            );
-            customerEntity.FlowSteps.Add(flowStepEntity4);
+        //    var flowStepEntity4 =
+        //        new FlowStepEntity(Globals.AssignedForPaymentFinal, TravelExpenseStage.AssignedForPayment);
+        //    flowStepEntity4.FlowStepUserPermissions.Add(
+        //        new FlowStepUserPermissionEntity {FlowStep = flowStepEntity4, User = userEntityLed}
+        //    );
+        //    customerEntity.FlowSteps.Add(flowStepEntity4);
 
-            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description1", userEntityPol));
-            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description2", userEntityPol));
-            customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description3", userEntityPol));
+        //    customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description1", userEntityPol));
+        //    customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description2", userEntityPol));
+        //    customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description3", userEntityPol));
 
-            CustomerEntities.Add(customerEntity);
+        //    CustomerEntities.Add(customerEntity);
 
-            SaveChanges();
-        }
+        //    SaveChanges();
+        //}
     }
 }

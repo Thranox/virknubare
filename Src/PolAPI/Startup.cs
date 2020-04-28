@@ -38,7 +38,7 @@ namespace PolAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, PolDbContext polDbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, PolDbContext polDbContext, IDbSeeder dbSeeder)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning API...");
@@ -48,8 +48,7 @@ namespace PolAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            polDbContext.Database.Migrate();
-            polDbContext.Seed();
+            dbSeeder.Seed();
 
             app.UseCors(options =>
             {

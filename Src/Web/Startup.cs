@@ -41,7 +41,7 @@ namespace Web
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            IConfiguration configuration)
+            IConfiguration configuration, IDbSeeder dbSeeder)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning Web...");
@@ -57,14 +57,7 @@ namespace Web
 
             app.UseHsts();
 
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                // Migrate database as needed.
-                var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
-                //context.Database.ExecuteSqlRaw("drop table __efmigrationshistory; \r\ndrop table flowstepuserpermissionentity; \r\ndrop table flowstepentity; \r\ndrop table travelexpenses; \r\ndrop table userentity; \r\ndrop table customerentities; ");
-                context.Database.Migrate();
-                if (!env.IsProduction()) context.Seed();
-            }
+            dbSeeder.Seed();
 
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();
