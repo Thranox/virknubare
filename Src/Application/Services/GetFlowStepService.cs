@@ -37,14 +37,13 @@ namespace Application.Services
                 throw new ItemNotFoundException(sub, "UserEntity");
 
 
-            throw new NotImplementedException();
-            //var flowStepEntities = _unitOfWork.Repository.List(new AllFlowStepsByCustomerId(userEntity.Customer.Id));
+            var flowStepEntities = _unitOfWork.Repository.List(new AllFlowStepsByUserId(userEntity.Id));
 
-            //return await Task.FromResult(new FlowStepGetResponse
-            //{
-            //    Result = flowStepEntities
-            //        .Select(x => _mapper.Map<FlowStepDto>(x))
-            //});
+            return await Task.FromResult(new FlowStepGetResponse
+            {
+                Result = flowStepEntities
+                    .Select(x => _mapper.Map<FlowStepDto>(x))
+            });
         }
     }
 }

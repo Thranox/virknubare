@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class AllFlowStepsByCustomerId: ISpecification<FlowStepEntity>
+    public class AllFlowStepsByUserId: ISpecification<FlowStepEntity>
     {
-        public AllFlowStepsByCustomerId(Guid customerId)
+        public AllFlowStepsByUserId(Guid userId)
         {
-            Criteria = e => true;
+            Criteria = e => e.FlowStepUserPermissions.Any(x=>x.UserId==userId);
         }
 
         public Expression<Func<FlowStepEntity, bool>> Criteria { get; }

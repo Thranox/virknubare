@@ -6,14 +6,14 @@ namespace Domain.Entities
     {
         public StageEntity()
         {
-            Value = (int)TravelExpenseStage.Initial;
+            Value = TravelExpenseStage.Initial;
         }
 
-        public StageEntity(in int value) : this()
+        public StageEntity(TravelExpenseStage value) : this()
         {
             Value = value;
         }
 
-        public int Value { get; set; }
+        public TravelExpenseStage Value { get; set; }
     }
 }

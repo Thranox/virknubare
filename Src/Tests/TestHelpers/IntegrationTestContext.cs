@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using API.Shared;
+using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -11,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedWouldBeNugets;
 using Web;
-using Web.MapperProfiles;
 using IDbSeeder = Infrastructure.Data.IDbSeeder;
 
 namespace Tests.TestHelpers

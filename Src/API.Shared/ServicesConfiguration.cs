@@ -4,6 +4,7 @@ using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Interfaces;
+using Application.MapperProfiles;
 using Application.Services;
 using AutoMapper;
 using Domain.Events;
@@ -21,7 +22,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
-using Web.MapperProfiles;
 
 namespace API.Shared
 {

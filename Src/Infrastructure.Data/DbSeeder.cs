@@ -58,8 +58,7 @@ namespace Infrastructure.Data
                 if (travelExpenseStage != TravelExpenseStage.Final)
                 {
                     var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
-                    var flowStepUserPermissionEntity = new FlowStepUserPermissionEntity(flowStepEntity, userEntityPol);
-                    _unitOfWork.Repository.Add(flowStepUserPermissionEntity);
+                    GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol); 
                 }
             }
 
@@ -75,7 +74,22 @@ namespace Infrastructure.Data
 
             _unitOfWork.Commit();
         }
-        
+
+        private object GetOrCreateFlowStepUserPermission(FlowStepEntity flowStepEntity, UserEntity userEntity)
+        {
+            var flowStepUserPermissionEntity = _unitOfWork
+                .Repository
+                .List(new FlowStepUserPermissionByFlowStepAndUser(flowStepEntity, userEntity))
+                .SingleOrDefault();
+            if (flowStepUserPermissionEntity == null)
+            {
+                flowStepUserPermissionEntity=new FlowStepUserPermissionEntity(flowStepEntity, userEntity);
+                _unitOfWork.Repository.Add(flowStepUserPermissionEntity);
+            }
+
+            return flowStepUserPermissionEntity;
+        }
+
         private UserEntity GetOrCreateTestUser(CustomerEntity customer, string sub, string userName, UserStatus userStatus)
         {
             var user =_unitOfWork
@@ -95,11 +109,10 @@ namespace Infrastructure.Data
         
         private StageEntity GetOrCreateStage(TravelExpenseStage travelExpenseStage)
         {
-            var value = (int)travelExpenseStage;
-            var stageEntity =_unitOfWork.Repository.List(new StageBySub(value)).SingleOrDefault();
+            var stageEntity =_unitOfWork.Repository.List(new StageByValue(travelExpenseStage)).SingleOrDefault();
             if (stageEntity == null)
             {
-                stageEntity = new StageEntity(value);
+                stageEntity = new StageEntity(travelExpenseStage);
                 _unitOfWork.Repository.Add(stageEntity);
             }
 

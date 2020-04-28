@@ -9,7 +9,7 @@ namespace Domain.Specifications
     {
         public FlowStepByCustomerAndStage(Guid customerId, TravelExpenseStage stageValue)
         {
-            Criteria = e => e.Customer.Id == customerId && e.From.Value==(int)stageValue;
+            Criteria = e => e.Customer.Id == customerId && e.From.Value==stageValue;
         }
 
         public Expression<Func<FlowStepEntity, bool>> Criteria { get; }

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoMapper;
+using Domain;
+using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
@@ -36,31 +39,30 @@ namespace Application.Services
             if (userEntity == null)
                 throw new ItemNotFoundException(sub, "UserEntity");
 
+            // Users can access own travelexpenses plus those owned by others but in a state accessible for user.
+            var ownTravelExpenses = _unitOfWork.Repository.List(new TravelExpenseByUserId(userEntity.Id));
+
+
             // Get the stages for which the user may manipulate travel expenses
             var travelExpenseStages =
-                userEntity.FlowStepUserPermissions.Select(x => x.FlowStep.From).Distinct().ToList();
+                userEntity.FlowStepUserPermissions.Select(x => x.FlowStep.From.Value).Distinct().ToList();
 
+            var customersVisibleByUser = userEntity.CustomerUserPermissions
+                .Where(x =>x.UserStatus == UserStatus.Registered || x.UserStatus == UserStatus.UserAdministrator)
+                .Select(x=>x.CustomerId);
 
-            throw new NotImplementedException();
+            var travelExpenseEntities = _unitOfWork.Repository.List(new TravelExpenseByCustomerList(customersVisibleByUser)).Where(x=>travelExpenseStages.Contains( x.Stage));
 
-            //var customer = userEntity.Customer;
-
-            //_logger.Debug("During GetAsync -- travelExpenseStages={travelExpenseStages}", travelExpenseStages);
-
+            var rees = ownTravelExpenses.Concat(travelExpenseEntities).Distinct();
             //// The user may see the travel expense if
             //// 1) owned by the user or if
             //// 2) user may manipulate travel expense stage
-            //var travelExpenseEntities = customer
-            //    .TravelExpenses
-            //    .Where(x =>
-            //        travelExpenseStages.Contains(x.Stage) || x.OwnedByUser == userEntity
-            //    );
 
-            //return await Task.FromResult(new TravelExpenseGetResponse
-            //{
-            //    Result = travelExpenseEntities
-            //        .Select(x => _mapper.Map<TravelExpenseDto>(x))
-            //});
+            return await Task.FromResult(new TravelExpenseGetResponse
+            {
+                Result = rees
+                    .Select(x => _mapper.Map<TravelExpenseDto>(x))
+            });
         }
 
         public async Task<TravelExpenseGetByIdResponse> GetByIdAsync(Guid id, string sub)
@@ -73,44 +75,30 @@ namespace Application.Services
                 .SingleOrDefault();
 
             if (userEntity == null)
-                throw new ItemNotFoundException(sub, "UserEntity");
+                throw new ItemNotFoundException(sub,nameof(UserEntity));
 
             // Get the stages for which the user may manipulate travel expenses
             var travelExpenseStages =
                 userEntity.FlowStepUserPermissions.Select(x => x.FlowStep.From).Distinct().ToList();
 
+            var travelExpenseEntity = _unitOfWork.Repository.List(new TravelExpenseById(id)).SingleOrDefault();
 
+            if(travelExpenseEntity==null)
+                throw new ItemNotFoundException(id.ToString(), nameof(TravelExpenseEntity));
 
+            var travelExpensesTheUserCanSee = await this.GetAsync(sub);
 
-            throw new NotImplementedException();
+            var travelExpenseDto = travelExpensesTheUserCanSee.Result.SingleOrDefault(x => x.Id == id);
 
-            //var customer = userEntity.Customer;
+            if (travelExpenseDto == null)
+                throw new ItemNotAllowedException(id.ToString(), nameof(TravelExpenseEntity));
 
-            //// Get the travel expenses with the requested id
-            //var travelExpenseEntities1 = customer
-            //    .TravelExpenses
-            //    .Where(x => x.Id == id).ToList();
-
-            //// Respond "not found" if there is no such travel expense
-            //if (!travelExpenseEntities1.Any())
-            //    throw new ItemNotFoundException(id.ToString(), "TravelExpense");
-
-            //// Get travel expense filtered for visibility
-            //var travelExpenseEntity =
-            //    travelExpenseEntities1.SingleOrDefault(x =>
-            //        travelExpenseStages.Contains(x.Stage) || x.OwnedByUser == userEntity
-            //    );
-
-            //// If not allowed for user (but it existed) we respond Access Denied
-            //if (travelExpenseEntity == null)
-            //    throw new ItemNotAllowedException(id.ToString(), "TravelExpense");
-
-
-            //return await Task.FromResult(
-            //    new TravelExpenseGetByIdResponse
-            //    {
-            //        Result = _mapper.Map<TravelExpenseDto>(travelExpenseEntity)
-            //    });
+            return await Task.FromResult(
+                new TravelExpenseGetByIdResponse
+                {
+                    Result = travelExpenseDto
+                });
         }
     }
+
 }

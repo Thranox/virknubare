@@ -82,7 +82,7 @@ namespace Tests.ApplicationServices
                 // Act & Assert
                 var itemNotAllowedException = Assert.ThrowsAsync<ItemNotAllowedException>(()=> sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, TestData.DummySekSubBob));
                 Assert.That(itemNotAllowedException.Id, Is.EqualTo(testContext.TravelExpenseEntity1.Id.ToString()));
-                Assert.That(itemNotAllowedException.Item, Is.EqualTo("TravelExpense"));
+                Assert.That(itemNotAllowedException.Item, Is.EqualTo("TravelExpenseEntity"));
             }
         }
     }
