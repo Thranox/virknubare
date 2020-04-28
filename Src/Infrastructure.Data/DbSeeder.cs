@@ -65,7 +65,7 @@ namespace Infrastructure.Data
                         GetOrCreateFlowStepUserPermission(flowStepEntity, userEntitySek);
                     }
 
-                    if (travelExpenseStage == TravelExpenseStage.AssignedForPayment)
+                    if (travelExpenseStage == TravelExpenseStage.Certified)
                     {
                         GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityLed);
                     }

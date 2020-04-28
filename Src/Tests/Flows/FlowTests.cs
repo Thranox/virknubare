@@ -13,6 +13,7 @@ using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
@@ -36,24 +37,83 @@ namespace Tests.Flows
                     .Sub= TestData.DummyPolSubAlice;
 
 
+                // ** Create TravelExpense
                 var actionResultTePost = await travelExpenseController.Post(
                     new TravelExpenseCreateDto()
                         {Description = testContext.Fixture.Create<string>(), CustomerId = customerId});
 
                 var travelExpenseId = ((actionResultTePost.Result as CreatedResult).Value as TravelExpenseCreateResponse).Id;
 
-                // Set the calling user to be Bob
-                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub = TestData.DummySekSubBob;
-                
-                
+                Console.WriteLine("-----");
+
+                Console.WriteLine("After posting:");
+                Console.WriteLine(JsonConvert.SerializeObject(
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
+
+                // ** Report TravelExpense Done
                 var actionResulltFsGet = await flowStepController.Get();
                 var okObjectResult = actionResulltFsGet.Result as OkObjectResult;
                 var flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
 
                 Assert.That(flowStepGetResponse.Result.Any());
+                var firstFlowStep = flowStepGetResponse.Result.First();
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
 
-                //TODO Assert.Fail();
+                Console.WriteLine("After Reporting done:");
+                Console.WriteLine(JsonConvert.SerializeObject(
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
+
+
+
+                // ** Certify TravelExpense
+
+
+
+                // Set the calling user to be Bob
+                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                    .Sub = TestData.DummySekSubBob;
+
+
+                actionResulltFsGet = await flowStepController.Get();
+                okObjectResult = actionResulltFsGet.Result as OkObjectResult;
+                flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
+
+                Assert.That(flowStepGetResponse.Result.Any());
+
+                firstFlowStep = flowStepGetResponse.Result.First();
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+
+                Console.WriteLine("After certifying");
+                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                    .Sub = TestData.DummyPolSubAlice;
+                Console.WriteLine(JsonConvert.SerializeObject(
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
+
+
+
+                // ** Assign TravelExpense for payment
+
+
+
+                // Set the calling user to be Charlie
+                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                    .Sub = TestData.DummyLedSubCharlie;
+
+
+                actionResulltFsGet = await flowStepController.Get();
+                okObjectResult = actionResulltFsGet.Result as OkObjectResult;
+                flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
+
+                Assert.That(flowStepGetResponse.Result.Any());
+
+                firstFlowStep = flowStepGetResponse.Result.First();
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+
+                Console.WriteLine("After Assigning Payment");
+                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                    .Sub = TestData.DummyPolSubAlice;
+                Console.WriteLine(JsonConvert.SerializeObject(
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
             }
         }
 

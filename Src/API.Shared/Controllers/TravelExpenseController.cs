@@ -43,7 +43,7 @@ namespace API.Shared.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> GetById(Guid id)
+        public async Task<ActionResult<TravelExpenseGetByIdResponse>> GetById(Guid id)
         {
             var sub = _subManagementService.GetSub(User);
             var travelExpenseDto = await _getTravelExpenseService.GetByIdAsync(id, sub);
