@@ -72,5 +72,14 @@ namespace Tests.TestHelpers
             var context = new PolDbContext(DbContextOptions);
             return new UnitOfWork(new EfRepository(context));
         }
+
+        public Guid GetDummyCustomerId()
+        {
+            return CreateUnitOfWork().
+                Repository.
+                List(new CustomerByName(TestData.DummyCustomerName)).
+                Single().
+                Id;
+        }
     }
 }

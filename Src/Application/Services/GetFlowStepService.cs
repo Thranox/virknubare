@@ -29,7 +29,7 @@ namespace Application.Services
             // Get user by sub
             var userEntities = _unitOfWork
                 .Repository
-                .List(new UserBySubSpecification(sub));
+                .List(new UserBySub(sub));
             var userEntity = userEntities
                 .SingleOrDefault();
 

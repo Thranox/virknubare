@@ -22,7 +22,8 @@ namespace Tests.ApplicationServices
             using (var testContext = new IntegrationTestContext())
             {
                 var newDescription = testContext.Fixture.Create<string>();
-                var travelExpenseCreateDto = new TravelExpenseCreateDto { Description = newDescription };
+                var customerId = testContext.GetDummyCustomerId();
+                var travelExpenseCreateDto = new TravelExpenseCreateDto { Description = newDescription, CustomerId = customerId};
                 var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
                 // Act

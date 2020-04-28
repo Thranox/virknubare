@@ -5,9 +5,9 @@ using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class StageBySubSpecification : ISpecification<StageEntity>
+    public class StageBySub : ISpecification<StageEntity>
     {
-        public StageBySubSpecification(int value)
+        public StageBySub(int value)
         {
             Criteria = e => e.Value == value;
 

@@ -55,11 +55,12 @@ namespace Infrastructure.Data
             foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
             {
                 var stageEntity = GetOrCreateStage(travelExpenseStage);
-                //if (travelExpenseStage != TravelExpenseStage.Final)
-                //{
-                //    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
-                //    flowStepEntity.AddUserPermission(userEntityPol);
-                //}
+                if (travelExpenseStage != TravelExpenseStage.Final)
+                {
+                    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
+                    var flowStepUserPermissionEntity = new FlowStepUserPermissionEntity(flowStepEntity, userEntityPol);
+                    _unitOfWork.Repository.Add(flowStepUserPermissionEntity);
+                }
             }
 
             // -----------------------------------
@@ -74,13 +75,12 @@ namespace Infrastructure.Data
 
             _unitOfWork.Commit();
         }
-
-
+        
         private UserEntity GetOrCreateTestUser(CustomerEntity customer, string sub, string userName, UserStatus userStatus)
         {
             var user =_unitOfWork
                 .Repository
-                .List(new UserBySubSpecification(sub)) 
+                .List(new UserBySub(sub)) 
                 .SingleOrDefault();
 
             if (user == null)
@@ -92,12 +92,11 @@ namespace Infrastructure.Data
 
             return user;
         }
-
-
+        
         private StageEntity GetOrCreateStage(TravelExpenseStage travelExpenseStage)
         {
             var value = (int)travelExpenseStage;
-            var stageEntity =_unitOfWork.Repository.List(new StageBySubSpecification(value)).SingleOrDefault();
+            var stageEntity =_unitOfWork.Repository.List(new StageBySub(value)).SingleOrDefault();
             if (stageEntity == null)
             {
                 stageEntity = new StageEntity(value);
@@ -106,6 +105,19 @@ namespace Infrastructure.Data
 
             return stageEntity;
         }
+        
+        private FlowStepEntity GetOrCreateFlowStep(CustomerEntity customer, StageEntity stage)
+        {
+            var flowStepEntity =_unitOfWork.Repository.List(new FlowStepByCustomerAndStage(customer.Id, (TravelExpenseStage) stage.Value)).SingleOrDefault();
+            if (flowStepEntity == null)
+            {
+                var key = _dictionary[(TravelExpenseStage)stage.Value];
+                flowStepEntity = new FlowStepEntity(key, stage, customer);
+                _unitOfWork.Repository.Add(flowStepEntity);
+            }
 
+            return flowStepEntity;
+        }
     }
+
 }

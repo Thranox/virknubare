@@ -20,7 +20,7 @@ namespace Application.Services
         public async Task<TravelExpenseCreateResponse> CreateAsync(TravelExpenseCreateDto travelExpenseCreateDto,
             string sub)
         {
-            var creatingUser = _unitOfWork.Repository.List(new UserBySubSpecification(sub)).FirstOrDefault();
+            var creatingUser = _unitOfWork.Repository.List(new UserBySub(sub)).FirstOrDefault();
             var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
             var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description, creatingUser,owningCustomer);
 

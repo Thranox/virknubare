@@ -42,17 +42,19 @@ namespace Tests.Flows
 
                     var newTe = customer.TravelExpenses.First();
 
-                    // Act & Assert
-                    do
-                    {
-                        Console.WriteLine("Stage: " + newTe.Stage);
-                        var nextFlowSteps = customer.FlowSteps.First(x => x.From == newTe.Stage);
+                    throw new NotImplementedException();
 
-                        var processFlowStep = processFlowSteps
-                            .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
-                        Assert.That(processFlowStep, Is.Not.Null);
-                        newTe.ApplyProcessStep( processFlowStep);
-                    } while (newTe.Stage != TravelExpenseStage.Final);
+                    // Act & Assert
+                    //do
+                    //{
+                    //    Console.WriteLine("Stage: " + newTe.Stage);
+                    //    var nextFlowSteps = customer.FlowSteps.First(x => x.From == newTe.Stage);
+
+                    //    var processFlowStep = processFlowSteps
+                    //        .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
+                    //    Assert.That(processFlowStep, Is.Not.Null);
+                    //    newTe.ApplyProcessStep( processFlowStep);
+                    //} while (newTe.Stage != TravelExpenseStage.Final);
                 }
             }
         }
