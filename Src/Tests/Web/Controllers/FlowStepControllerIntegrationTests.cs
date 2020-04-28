@@ -76,6 +76,7 @@ namespace Tests.Web.Controllers
                 Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
+                        CustomerName = customer.Name,
                         FromStageId = stageEntityInitial.Id,
                         FromStageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
                         Key = Globals.InitialReporteddone,
@@ -84,6 +85,7 @@ namespace Tests.Web.Controllers
                 Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
+                        CustomerName = customer.Name,
                         FromStageId = stageEntityReportedDone.Id,
                         FromStageText = Globals.StageNamesDanish[TravelExpenseStage.ReportedDone],
                         Key = Globals.ReporteddoneCertified,
@@ -92,6 +94,7 @@ namespace Tests.Web.Controllers
                 Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
+                        CustomerName = customer.Name,
                         FromStageId = stageEntityCertified.Id,
                         FromStageText = Globals.StageNamesDanish[TravelExpenseStage.Certified],
                         Key = Globals.CertifiedAssignedForPayment,
@@ -100,6 +103,7 @@ namespace Tests.Web.Controllers
                 Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
+                        CustomerName = customer.Name,
                         FromStageId = stageEntityAssignedForPayment.Id,
                         FromStageText = Globals.StageNamesDanish[TravelExpenseStage.AssignedForPayment],
                         Key = Globals.AssignedForPaymentFinal,

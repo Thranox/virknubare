@@ -6,12 +6,12 @@ using Domain.Interfaces;
 namespace Domain.Specifications
 {
     public class FlowStepByKey : ISpecification<FlowStepEntity>
+{
+    public FlowStepByKey(string key)
     {
-        public FlowStepByKey(string key)
-        {
-            Criteria = e => e.Key == key;
-        }
-
-        public Expression<Func<FlowStepEntity, bool>> Criteria { get; }
+        Criteria = e => e.Key == key;
     }
+
+    public Expression<Func<FlowStepEntity, bool>> Criteria { get; }
+}
 }

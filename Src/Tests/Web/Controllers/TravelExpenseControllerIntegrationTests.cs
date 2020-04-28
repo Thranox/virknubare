@@ -345,7 +345,17 @@ namespace Tests.Web.Controllers
                 ActionResult<TravelExpenseCreateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
 
-                var travelExpenseCreateDto = new TravelExpenseCreateDto {Description = newDescription};
+                var customerId = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .Single()
+                    .Id;
+                var travelExpenseCreateDto = new TravelExpenseCreateDto
+                {
+                    Description = newDescription,
+                    CustomerId = customerId
+                };
                 var sut = GetSut(testContext);
 
                 // Act

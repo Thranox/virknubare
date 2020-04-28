@@ -30,7 +30,7 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInInvalidStage_ThrowsBusinessRuleViolationException(TravelExpenseStage travelExpenseStage)
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""),null);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""));
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(travelExpenseStage);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
@@ -45,7 +45,7 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsCertified()
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), null);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""));
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(TravelExpenseStage.ReportedDone);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
@@ -63,30 +63,4 @@ namespace Tests.Domain.Services
             return new ProcessFlowStepReportedDoneCertified();
         }
     }
-}//using Domain;
- //using Domain.Entities;
- //using Domain.Exceptions;
- //using Domain.Interfaces;
- //using Domain.SharedKernel;
-
-//namespace Tests.Domain.Services
-//{
-//    public class ProcessFlowStepReportedDoneCertified : IProcessFlowStep
-//    {
-//        public bool CanHandle(string key)
-//        {
-//            return key == Globals.ReporteddoneCertified;
-//        }
-
-//        public TravelExpenseStage GetResultingStage(TravelExpenseEntity travelExpenseEntity)
-//        {
-//            //BR: Can't be certified if not reported done:
-//            if (travelExpenseEntity.Stage!=TravelExpenseStage.ReportedDone)
-//                throw new BusinessRuleViolationException(travelExpenseEntity.Id, "Rejseafregning kan ikke attesteres da den ikke er færdigmeldt.");
-
-//            travelExpenseEntity.Events.Add(new TravelExpenseUpdatedDomainEvent());
-
-//            return TravelExpenseStage.Certified;
-//        }
-//    }
-//}
+}

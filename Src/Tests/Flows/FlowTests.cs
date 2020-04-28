@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
-using Web;
 
 namespace Tests.Flows
 {
@@ -35,26 +34,35 @@ namespace Tests.Flows
 
                 using (var polDbContext = new PolDbContext(testContext.DbContextOptions))
                 {
-                    var repository=new EfRepository(polDbContext);
+                    var repository = new EfRepository(polDbContext);
                     var customer = repository
                         .List(new CustomerByName(TestData.DummyCustomerName))
                         .Single();
 
                     var newTe = customer.TravelExpenses.First();
 
-                    throw new NotImplementedException();
+                    var iterations = 0;
 
                     // Act & Assert
-                    //do
-                    //{
-                    //    Console.WriteLine("Stage: " + newTe.Stage);
-                    //    var nextFlowSteps = customer.FlowSteps.First(x => x.From == newTe.Stage);
+                    do
+                    {
+                        iterations++;
+                        Console.WriteLine("Stage: " + newTe.Stage);
 
-                    //    var processFlowStep = processFlowSteps
-                    //        .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
-                    //    Assert.That(processFlowStep, Is.Not.Null);
-                    //    newTe.ApplyProcessStep( processFlowStep);
-                    //} while (newTe.Stage != TravelExpenseStage.Final);
+                        var nextFlowSteps = testContext.CreateUnitOfWork().Repository
+                            .List(new FlowStepByCustomer(newTe.Stage, customer.Id))
+                            .First();
+
+                        var processFlowStep = processFlowSteps
+                            .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
+
+                        Assert.That(processFlowStep, Is.Not.Null);
+
+                        newTe.ApplyProcessStep(processFlowStep);
+
+                        if (iterations > 10)
+                            throw new InvalidOperationException();
+                    } while (newTe.Stage != TravelExpenseStage.Final);
                 }
             }
         }
