@@ -50,16 +50,17 @@ namespace Infrastructure.Data
             var userEntityLed = GetOrCreateTestUser(customer, TestData.DummyLedSubCharlie, "dummy led Charlie", UserStatus.Registered);
 
 
-            // Stages (Not Dummy!)
-            //foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
-            //{
-            //    var stageEntity = GetOrCreateStage(travelExpenseStage);
-            //    if (travelExpenseStage != TravelExpenseStage.Final)
-            //    {
-            //        var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
-            //        flowStepEntity.AddUserPermission(userEntityPol);
-            //    }
-            //}
+            // -----------------------------------
+            // Stages(Not Dummy!)
+            foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
+            {
+                var stageEntity = GetOrCreateStage(travelExpenseStage);
+                //if (travelExpenseStage != TravelExpenseStage.Final)
+                //{
+                //    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
+                //    flowStepEntity.AddUserPermission(userEntityPol);
+                //}
+            }
 
             _unitOfWork.Commit();
         }
@@ -81,5 +82,20 @@ namespace Infrastructure.Data
 
             return user;
         }
+
+
+        private StageEntity GetOrCreateStage(TravelExpenseStage travelExpenseStage)
+        {
+            var value = (int)travelExpenseStage;
+            var stageEntity =_unitOfWork.Repository.List(new StageBySubSpecification(value)).SingleOrDefault();
+            if (stageEntity == null)
+            {
+                stageEntity = new StageEntity(value);
+                _unitOfWork.Repository.Add(stageEntity);
+            }
+
+            return stageEntity;
+        }
+
     }
 }

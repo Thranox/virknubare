@@ -21,7 +21,8 @@ namespace Infrastructure.Data
         {
         }
 
-        public DbSet<CustomerEntity> CustomerEntities { get; set; }
+        public DbSet<CustomerEntity> Customers { get; set; }
+        public DbSet<StageEntity> Stages { get; set; }
 
         public override int SaveChanges()
         {
@@ -62,13 +63,14 @@ namespace Infrastructure.Data
             modelBuilder.Entity<FlowStepEntity>().ToTable("FlowSteps");
             modelBuilder.Entity<FlowStepUserPermissionEntity>().ToTable("FlowStepUserPermissions");
             modelBuilder.Entity<TravelExpenseEntity>().ToTable("TravelExpenses");
+            modelBuilder.Entity<CustomerUserPermissionEntity>().ToTable("CustomerUserPermissions");
 
 
         }
 
         //public void Seed()
         //{
-        //    if (CustomerEntities.Any(x => x.Name == TestData.DummyCustomerName))
+        //    if (Customers.Any(x => x.Name == TestData.DummyCustomerName))
         //        return;
 
         //    var customerEntity = new CustomerEntity(TestData.DummyCustomerName);
@@ -108,7 +110,7 @@ namespace Infrastructure.Data
         //    customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description2", userEntityPol));
         //    customerEntity.TravelExpenses.Add(new TravelExpenseEntity("Description3", userEntityPol));
 
-        //    CustomerEntities.Add(customerEntity);
+        //    Customers.Add(customerEntity);
 
         //    SaveChanges();
         //}

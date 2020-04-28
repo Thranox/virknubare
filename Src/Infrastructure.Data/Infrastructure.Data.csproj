@@ -19,4 +19,8 @@
     <ProjectReference Include="..\SharedWouldBeNugets\SharedWouldBeNugets.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

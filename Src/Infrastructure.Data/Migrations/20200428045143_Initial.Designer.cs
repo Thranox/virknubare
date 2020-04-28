@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(PolDbContext))]
-    [Migration("20200425105647_Initial")]
+    [Migration("20200428045143_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,31 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CustomerEntities");
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CustomerUserPermissionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CustomerUserPermissionEntity");
                 });
 
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
@@ -54,7 +78,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CustomerEntityId");
 
-                    b.ToTable("FlowStepEntity");
+                    b.ToTable("FlowSteps");
                 });
 
             modelBuilder.Entity("Domain.Entities.FlowStepUserPermissionEntity", b =>
@@ -72,7 +96,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FlowStepUserPermissionEntity");
+                    b.ToTable("FlowStepUserPermissions");
                 });
 
             modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>
@@ -130,7 +154,22 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("UserEntity");
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CustomerUserPermissionEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.CustomerEntity", "Customer")
+                        .WithMany("CustomerUserPermissions")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
@@ -169,7 +208,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.UserEntity", b =>
                 {
                     b.HasOne("Domain.Entities.CustomerEntity", "Customer")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("CustomerId");
                 });
 #pragma warning restore 612, 618

@@ -33,6 +33,30 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CustomerUserPermissionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CustomerUserPermissionEntity");
+                });
+
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,6 +155,21 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CustomerUserPermissionEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.CustomerEntity", "Customer")
+                        .WithMany("CustomerUserPermissions")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
                 {
                     b.HasOne("Domain.Entities.CustomerEntity", null)
@@ -167,7 +206,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.UserEntity", b =>
                 {
                     b.HasOne("Domain.Entities.CustomerEntity", "Customer")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("CustomerId");
                 });
 #pragma warning restore 612, 618
