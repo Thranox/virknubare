@@ -52,8 +52,9 @@ namespace Infrastructure.Data
                     .Set<UserEntity>()
                     .Include(g => g.FlowStepUserPermissions)
                     .ThenInclude(gg => gg.FlowStep)
-                    .Include(g => g.Customer)
-                    .ThenInclude(gg=>gg.TravelExpenses);
+                    //.Include(g => g.Customer)
+                    //.ThenInclude(gg=>gg.TravelExpenses)
+                    ;
                 if (spec != null)
                 {
                     var castedSpec = spec as ISpecification<UserEntity>;
