@@ -34,11 +34,9 @@ namespace Infrastructure.Data
             {
                 IQueryable<CustomerEntity> includableQueryable = _dbContext
                     .Set<CustomerEntity>()
-                    .Include(g => g.FlowSteps)
-                    .ThenInclude(gg => gg.FlowStepUserPermissions)
+                    .Include(g => g.FlowSteps).ThenInclude(gg => gg.FlowStepUserPermissions)
                     .Include(g => g.TravelExpenses)
-                    .Include(g => g.Users)
-                    .ThenInclude(gg => gg.FlowStepUserPermissions);
+                    .Include(g => g.CustomerUserPermissions).ThenInclude(gg => gg.User);
 
                 if (spec != null)
                 {

@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Events;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 

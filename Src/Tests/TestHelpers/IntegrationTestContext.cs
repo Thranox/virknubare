@@ -4,10 +4,12 @@ using API.Shared;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharedWouldBeNugets;
 using Web;
 using Web.MapperProfiles;
 using IDbSeeder = Infrastructure.Data.IDbSeeder;
@@ -48,14 +50,20 @@ namespace Tests.TestHelpers
         {
             var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
             dbSeeder.Seed();
-            using (var dbContext = new PolDbContext(DbContextOptions))
+
+            using (var unitOfWork=ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
             {
-                var travelExpenseEntities = dbContext.CustomerEntities.First().TravelExpenses.ToList();
+                var customer = unitOfWork
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .SingleOrDefault();
+
+                var travelExpenseEntities = customer.TravelExpenses.ToList();
                 TravelExpenseEntity1 = travelExpenseEntities[0];
                 TravelExpenseEntity2 = travelExpenseEntities[1];
                 TravelExpenseEntity3 = travelExpenseEntities[2];
 
-                dbContext.SaveChanges();
+                unitOfWork.Commit();
             }
         }
 

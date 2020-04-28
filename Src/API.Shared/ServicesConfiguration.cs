@@ -6,6 +6,7 @@ using API.Shared.Services;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
+using Domain.Events;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using IdentityServer4.AccessTokenValidation;
@@ -78,6 +79,7 @@ namespace API.Shared
             services.AddScoped<IRepository, EfRepository>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IDbSeeder, DbSeeder>();
 
             // Application services
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
@@ -87,6 +89,9 @@ namespace API.Shared
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
 
+            services.AddScoped<ICreateCustomerService, CreateCustomerService>();
+            services.AddScoped<ICreateUserService, CreateUserService>();
+            
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
