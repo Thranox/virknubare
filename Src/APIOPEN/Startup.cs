@@ -14,8 +14,8 @@ namespace APIOPEN
     public class Startup
     {
         private readonly IWebHostEnvironment _environment;
-
         private readonly IConfiguration _configuration;
+        private const string Title = CommonApi.Title + "(OPEN) ";
 
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
@@ -26,7 +26,7 @@ namespace APIOPEN
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false);
+            services.AddPolApi(_configuration, false, Title);
             services.AddControllers();
 
             services.AddDbContext<PolDbContext>(options =>
@@ -52,7 +52,7 @@ namespace APIOPEN
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
+                c => c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version));
 
             app.UseRouting();
 

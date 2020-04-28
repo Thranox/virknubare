@@ -14,6 +14,7 @@ namespace Web
 {
     public class Startup
     {
+        private const string Title = CommonApi.Title + "(Through WEB)";
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
 
@@ -26,7 +27,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, true);
+            services.AddPolApi(_configuration, true, Title);
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
@@ -65,7 +66,7 @@ namespace Web
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
+                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", Title + " " + CommonApi.Version));
 
             app.UseStaticFiles();
             if (!env.IsDevelopment()) app.UseSpaStaticFiles();

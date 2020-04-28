@@ -21,12 +21,12 @@ namespace API.Shared.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FlowStepDto>>> Get()
+        public async Task<ActionResult<FlowStepGetResponse>> Get()
         {
             var sub = _subManagementService.GetSub(User);
-            var travelExpenseDtos = await _getFlowStepService.GetAsync(sub);
+            var flowStepGetResponse = await _getFlowStepService.GetAsync(sub);
 
-            return Ok(travelExpenseDtos);
+            return Ok(flowStepGetResponse);
         }
     }
 }

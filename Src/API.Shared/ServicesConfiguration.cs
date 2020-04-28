@@ -27,7 +27,7 @@ namespace API.Shared
 {
     public static class ServicesConfiguration
     {
-        public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated)
+        public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle)
         {
             services.AddSingleton<ILogger>(Log.Logger);
 
@@ -60,10 +60,10 @@ namespace API.Shared
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc(CommonApi.Version, new OpenApiInfo { Title = CommonApi.Title, Version = CommonApi.Version });
+                x.SwaggerDoc(CommonApi.Version, new OpenApiInfo { Title = apiTitle, Version = CommonApi.Version });
             });
 
-            MapServices(services, enforceAuthenticated);
+            MapServices(services, enforceAuthenticated, configuration);
 
             services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
 
@@ -71,7 +71,7 @@ namespace API.Shared
 
         }
 
-        public static void MapServices(IServiceCollection services, bool enforceAuthenticated)
+        public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(EntityDtoProfile));
 
@@ -98,7 +98,7 @@ namespace API.Shared
             }
             else
             {
-                services.AddScoped<ISubManagementService, FakeSubManagementService>();
+                services.AddScoped<ISubManagementService>(x=>new FakeSubManagementService(configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")) );
             }
 
             Assembly

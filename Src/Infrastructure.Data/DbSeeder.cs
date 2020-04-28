@@ -58,7 +58,17 @@ namespace Infrastructure.Data
                 if (travelExpenseStage != TravelExpenseStage.Final)
                 {
                     var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
-                    GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol); 
+                    GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol);
+
+                    if (travelExpenseStage == TravelExpenseStage.ReportedDone)
+                    {
+                        GetOrCreateFlowStepUserPermission(flowStepEntity, userEntitySek);
+                    }
+
+                    if (travelExpenseStage == TravelExpenseStage.AssignedForPayment)
+                    {
+                        GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityLed);
+                    }
                 }
             }
 

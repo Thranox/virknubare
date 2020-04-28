@@ -52,6 +52,7 @@ namespace Infrastructure.Data
                     .Set<UserEntity>()
                     .Include(g => g.FlowStepUserPermissions)
                     .ThenInclude(gg => gg.FlowStep)
+                    .ThenInclude(ggg=>ggg.From)
                     //.Include(g => g.Customer)
                     //.ThenInclude(gg=>gg.TravelExpenses)
                     ;

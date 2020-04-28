@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using API.Shared;
+using API.Shared.Controllers;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
@@ -11,8 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedWouldBeNugets;
-using Web;
-using IDbSeeder = Infrastructure.Data.IDbSeeder;
 
 namespace Tests.TestHelpers
 {
@@ -32,10 +31,13 @@ namespace Tests.TestHelpers
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
 
-            ServicesConfiguration.MapServices(serviceCollection, false);
+            ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
             
             serviceCollection.AddScoped(x => Serilog.Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
+            serviceCollection.AddScoped<TravelExpenseController>();
+            serviceCollection.AddScoped<FlowStepController>();
+
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
