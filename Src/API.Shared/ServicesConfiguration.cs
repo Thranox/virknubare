@@ -36,6 +36,8 @@ namespace API.Shared
                     options.Authority = configuration.GetValue<string>("IDP_URL");
                     options.ApiName = "teapi";
                     options.RequireHttpsMetadata = false;
+
+                    Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
                 });
 
             var assembly = typeof(TravelExpenseController).Assembly;
