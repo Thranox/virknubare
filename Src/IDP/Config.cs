@@ -61,7 +61,12 @@ namespace IdentityServerAspNetIdentit
                         "roles",
                         "teapi"
                     },
-                    AllowedCorsOrigins = new List<string> {"https://localhost:44324"},
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "https://localhost:44324",
+                        "http://localhost:44324",
+                        "http://localhost:4200"
+                    },
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 15*60*60 // 15 hrs
                 }
