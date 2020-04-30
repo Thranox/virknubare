@@ -2,6 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System.IO;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using IdentityServer4;
+using IdentityServer4.Configuration;
 using IdentityServer4.Services;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
@@ -15,11 +20,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Serilog;
 using SharedWouldBeNugets;
+using IdentityServer4.Configuration;
 
 namespace IdentityServerAspNetIdentit
 {
+    internal class TemporaryRsaKey
+    {
+        public string KeyId { get; set; }
+        public RSAParameters Parameters { get; set; }
+    }
     public class Startup
     {
         public IWebHostEnvironment Environment { get; }
@@ -81,8 +93,7 @@ namespace IdentityServerAspNetIdentit
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
-                // not recommended for production - you need to store your key material somewhere secure
-                .AddDeveloperSigningCredential();
+                .AddDeveloperSigningCredential(false, Configuration.GetValue<string>("SigningKey"));// @"c:\keys\signing.rsa");
 
             services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddGoogle(options =>
