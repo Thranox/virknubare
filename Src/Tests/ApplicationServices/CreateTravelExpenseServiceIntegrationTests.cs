@@ -39,8 +39,7 @@ namespace Tests.ApplicationServices
                         .Repository.List(new TravelExpenseById(actual.Id))
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
-                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
-                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
+                    Assert.That(travelExpenseEntity.Stage, Is.EqualTo(TravelExpenseStage.Initial));
                 }
 
             }

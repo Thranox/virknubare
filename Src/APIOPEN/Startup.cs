@@ -46,6 +46,7 @@ namespace APIOPEN
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
+            polDbContext.Database.Migrate();
             dbSeeder.Seed();
 
             app.UseHttpsRedirection();

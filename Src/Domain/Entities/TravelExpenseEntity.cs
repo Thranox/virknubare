@@ -26,9 +26,6 @@ namespace Domain.Entities
         public CustomerEntity Customer { get; private set; }
 
         public string Description { get; private set; }
-        public bool IsCertified { get; private set; }
-        public bool IsReportedDone { get; private set; }
-        public bool IsAssignedPayment { get; private set; }
 
         public void Update(string description)
         {
