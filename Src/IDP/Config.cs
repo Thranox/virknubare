@@ -52,8 +52,18 @@ namespace IdentityServerAspNetIdentit
                     RequirePkce = true,
                     RequireClientSecret = false,
                     RequireConsent = false,
-                    RedirectUris = new List<string>{"https://localhost:44324/signin-redirect-callback"},
-                    PostLogoutRedirectUris = new List<string>(){"https://localhost:44324/signout-redirect-callback"},
+                    RedirectUris = new List<string>
+                    {
+                        "https://localhost:44324/signin-redirect-callback",
+                            "http://localhost:44324/signin-redirect-callback",
+                            "http://localhost:4200/signin-redirect-callback"
+                    },
+                    PostLogoutRedirectUris = new List<string>()
+                    {
+                        "https://localhost:44324/signout-redirect-callback",
+                            "http://localhost:44324/signout-redirect-callback",
+                            "http://localhost:4200/signout-redirect-callback"
+                    },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
