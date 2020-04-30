@@ -12,15 +12,15 @@ namespace Domain.Entities
         {
         }
 
-        public TravelExpenseEntity(string description, UserEntity user, CustomerEntity customer) : this()
+        public TravelExpenseEntity(string description, UserEntity user, CustomerEntity customer, StageEntity stage) : this()
         {
             Description = description;
-            Stage = TravelExpenseStage.Initial;
+            Stage = stage;
             OwnedByUser = user ?? throw new ArgumentNullException(nameof(user));
             Customer = customer ?? throw new ArgumentNullException(nameof(customer));
         }
 
-        public TravelExpenseStage Stage { get; private set; }
+        public StageEntity Stage { get; private set; }
 
         public UserEntity OwnedByUser { get; private set; }
         public CustomerEntity Customer { get; private set; }
@@ -30,7 +30,7 @@ namespace Domain.Entities
         public void Update(string description)
         {
             //BR: Can't be updated if reported done:
-            if (Stage!=TravelExpenseStage.Initial)
+            if (Stage.Value!=TravelExpenseStage.Initial)
                 throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke ændres når den er færdigmeldt.");
 
             Description = description;

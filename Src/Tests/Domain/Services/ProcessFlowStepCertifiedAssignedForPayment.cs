@@ -30,9 +30,10 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInInvalidStage_ThrowsBusinessRuleViolationException(TravelExpenseStage travelExpenseStage)
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""));
+            var stageEntity = new StageEntity(travelExpenseStage);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
-            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(travelExpenseStage);
+            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
             var sut = GetSut();
 
@@ -45,9 +46,10 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsAssignedForPayment()
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""));
+            var stageEntity = new StageEntity(TravelExpenseStage.Initial);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
-            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(TravelExpenseStage.Certified);
+            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
             var sut = GetSut();
 
@@ -60,7 +62,7 @@ namespace Tests.Domain.Services
 
         private static ProcessFlowStepCertifiedAssignedForPayment GetSut()
         {
-            return new ProcessFlowStepCertifiedAssignedForPayment();
+            return new ProcessFlowStepCertifiedAssignedForPayment(new Mock<IStageService>().Object);
         }
     }
 }

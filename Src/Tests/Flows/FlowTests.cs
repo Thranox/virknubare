@@ -152,7 +152,7 @@ namespace Tests.Flows
                         Console.WriteLine("Stage: " + newTe.Stage);
 
                         var nextFlowSteps = testContext.CreateUnitOfWork().Repository
-                            .List(new FlowStepByCustomer(newTe.Stage, customer.Id))
+                            .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
                             .First();
 
                         var processFlowStep = processFlowSteps
@@ -164,7 +164,7 @@ namespace Tests.Flows
 
                         if (iterations > 10)
                             throw new InvalidOperationException();
-                    } while (newTe.Stage != TravelExpenseStage.Final);
+                    } while (newTe.Stage.Value != TravelExpenseStage.Final);
                 }
             }
         }

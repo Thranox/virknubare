@@ -30,9 +30,10 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInInvalidStage_ThrowsBusinessRuleViolationException(TravelExpenseStage travelExpenseStage)
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""));
+            var stageEntity = new StageEntity(travelExpenseStage);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""), stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
-            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(travelExpenseStage);
+            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
             var sut = GetSut();
 
@@ -45,7 +46,8 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsReportedDone()
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""));
+            var stageEntity = new StageEntity(TravelExpenseStage.Initial);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var sut = GetSut();
 
             // Act
@@ -57,7 +59,7 @@ namespace Tests.Domain.Services
 
         private static ProcessFlowStepInitialReportedDone GetSut()
         {
-            return new ProcessFlowStepInitialReportedDone();
+            return new ProcessFlowStepInitialReportedDone(new Mock<IStageService>().Object);
         }
     }
 }

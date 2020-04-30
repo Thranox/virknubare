@@ -2,26 +2,33 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Exceptions;
 using Domain.Interfaces;
-using Domain.SharedKernel;
 
 namespace Domain.Services
 {
     public class ProcessFlowStepAssignedForPaymentFinal : IProcessFlowStep
     {
+        private readonly IStageService _stageService;
+
+        public ProcessFlowStepAssignedForPaymentFinal(IStageService stageService)
+        {
+            _stageService = stageService;
+        }
+
         public bool CanHandle(string key)
         {
             return key == Globals.AssignedForPaymentFinal;
         }
 
-        public TravelExpenseStage GetResultingStage(TravelExpenseEntity travelExpenseEntity)
+        public StageEntity GetResultingStage(TravelExpenseEntity travelExpenseEntity)
         {
             //BR: Can't be assigned payment if not certified:
-            if (travelExpenseEntity.Stage!=TravelExpenseStage.AssignedForPayment)
-                throw new BusinessRuleViolationException(travelExpenseEntity.Id, "Rejseafregning kan ikke færdiggøres da den ikke er henvist til betaling.");
+            if (travelExpenseEntity.Stage.Value != TravelExpenseStage.AssignedForPayment)
+                throw new BusinessRuleViolationException(travelExpenseEntity.Id,
+                    "Rejseafregning kan ikke færdiggøres da den ikke er henvist til betaling.");
 
             travelExpenseEntity.Events.Add(new TravelExpenseUpdatedDomainEvent());
 
-            return TravelExpenseStage.Final;
+            return _stageService.GetStage(TravelExpenseStage.Final);
         }
     }
 }

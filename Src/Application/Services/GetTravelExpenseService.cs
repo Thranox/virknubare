@@ -51,7 +51,7 @@ namespace Application.Services
                 .Where(x =>x.UserStatus == UserStatus.Registered || x.UserStatus == UserStatus.UserAdministrator)
                 .Select(x=>x.CustomerId);
 
-            var travelExpenseEntities = _unitOfWork.Repository.List(new TravelExpenseByCustomerList(customersVisibleByUser)).Where(x=>travelExpenseStages.Contains( x.Stage));
+            var travelExpenseEntities = _unitOfWork.Repository.List(new TravelExpenseByCustomerList(customersVisibleByUser)).Where(x=>travelExpenseStages.Contains( x.Stage.Value));
 
             var rees = ownTravelExpenses.Concat(travelExpenseEntities).Distinct();
             //// The user may see the travel expense if

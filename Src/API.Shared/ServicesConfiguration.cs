@@ -3,6 +3,7 @@ using System.Reflection;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application;
 using Application.Interfaces;
 using Application.MapperProfiles;
 using Application.Services;
@@ -91,7 +92,8 @@ namespace API.Shared
 
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();
-            
+            services.AddScoped<ITravelExpenseFactory, TravelExpenseFactory>();
+
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();

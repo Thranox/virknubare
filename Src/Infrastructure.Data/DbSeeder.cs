@@ -13,11 +13,13 @@ namespace Infrastructure.Data
     public class DbSeeder : IDbSeeder
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITravelExpenseFactory _travelExpenseFactory;
         private readonly Dictionary<TravelExpenseStage, string> _dictionary;
 
-        public DbSeeder(IUnitOfWork unitOfWork)
+        public DbSeeder(IUnitOfWork unitOfWork, ITravelExpenseFactory travelExpenseFactory)
         {
             _unitOfWork = unitOfWork;
+            _travelExpenseFactory = travelExpenseFactory;
             _dictionary = new Dictionary<TravelExpenseStage, string>()
             {
                 {TravelExpenseStage.Initial, Globals.InitialReporteddone
@@ -77,9 +79,9 @@ namespace Infrastructure.Data
             var polTravelExpenses = _unitOfWork.Repository.List(new TravelExpenseByUserId(userEntityPol.Id));
             if (!polTravelExpenses.Any())
             {
-                _unitOfWork.Repository.Add(new TravelExpenseEntity("Description1", userEntityPol, customer));
-                _unitOfWork.Repository.Add(new TravelExpenseEntity("Description2", userEntityPol, customer));
-                _unitOfWork.Repository.Add(new TravelExpenseEntity("Description3", userEntityPol, customer));
+                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description1", userEntityPol, customer));
+                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description2", userEntityPol, customer));
+                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description3", userEntityPol, customer));
             }
 
             _unitOfWork.Commit();
