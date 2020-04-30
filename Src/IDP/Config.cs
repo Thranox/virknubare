@@ -48,6 +48,7 @@ namespace IdentityServerAspNetIdentit
                     AlwaysIncludeUserClaimsInIdToken = true,
                     ClientName = "Politikerafregning (Angular)",
                     ClientId = "polangularclient",
+                    ClientSecrets = new List<Secret> {new Secret("secret".Sha256())},
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false,

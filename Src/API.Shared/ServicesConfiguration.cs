@@ -39,6 +39,7 @@ namespace API.Shared
                     options.Authority = configuration.GetValue<string>("IDP_URL");
                     options.ApiName = "teapi";
                     options.RequireHttpsMetadata = false;
+                    options.ApiSecret = "secret";
 
 
                     Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
