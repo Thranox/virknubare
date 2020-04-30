@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace IdentityServerAspNetIdentit
 {
@@ -68,7 +69,7 @@ namespace IdentityServerAspNetIdentit
 
             var builder = services.AddIdentityServer(options =>
                 {
-                    options.IssuerUri = "https://improvento.dk/";
+                    options.IssuerUri = ImproventoGlobals.IssUri;
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
