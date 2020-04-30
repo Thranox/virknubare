@@ -68,6 +68,7 @@ namespace IdentityServerAspNetIdentit
 
             var builder = services.AddIdentityServer(options =>
                 {
+                    options.IssuerUri = "https://improvento.dk/";
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
