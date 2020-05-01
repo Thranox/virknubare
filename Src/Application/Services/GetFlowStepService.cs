@@ -29,14 +29,15 @@ namespace Application.Services
             // Get user by sub
             var userEntities = _unitOfWork
                 .Repository
-                .List(new UserBySubSpecification(sub));
+                .List(new UserBySub(sub));
             var userEntity = userEntities
                 .SingleOrDefault();
 
             if (userEntity == null)
                 throw new ItemNotFoundException(sub, "UserEntity");
 
-            var flowStepEntities = _unitOfWork.Repository.List(new AllFlowStepsByCustomerId(userEntity.Customer.Id));
+
+            var flowStepEntities = _unitOfWork.Repository.List(new AllFlowStepsByUserId(userEntity.Id));
 
             return await Task.FromResult(new FlowStepGetResponse
             {

@@ -1,3 +1,4 @@
+using System;
 using API.Shared;
 using IDP.Services;
 using Infrastructure.Data;
@@ -8,55 +9,52 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace PolAPI
 {
     public class Startup
     {
+        private const string Title = CommonApi.Title;
+        private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _configuration = configuration;
             _environment = environment;
         }
 
-        private IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, true);
-            services.AddControllers();
-
-            services.AddDbContext<PolDbContext>(options =>
-            {
-                var connectionStringService = new ConnectionStringService(_configuration, _environment.EnvironmentName);
-                var connectionString = connectionStringService.GetConnectionString("PolConnection");
-                options.UseSqlServer(connectionString);
-            });
-
+            services.AddPolApi(_configuration, true, Title);
+            services.AddPolDatabase(_configuration, _environment.EnvironmentName);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, PolDbContext polDbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
+            PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning API...");
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+
+            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-
-            polDbContext.Database.Migrate();
-            polDbContext.Seed();
-
+                logger.Information("Starting Db Migration and Seeding...");
+                polDbContext.Database.Migrate();
+                dbSeeder.Seed();
+                logger.Information("Done Db Migration and Seeding...");
+            });
+           
             app.UseCors(options =>
             {
                 options
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("https://localhost:44324", "http://localhost:50627", "http://localhost:4200")
+                    .WithOrigins(ImproventoGlobals.AllowedCorsOrigins)
                     .AllowCredentials();
             });
             app.UseAuthentication();
@@ -64,16 +62,13 @@ namespace PolAPI
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
+                c => c.SwaggerEndpoint("v1/swagger.json", Title + " " + CommonApi.Version));
 
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version"));
             logger.Information("------------------------------------------------------------");

@@ -11,17 +11,20 @@ namespace Application.Services
     public class CreateTravelExpenseService : ICreateTravelExpenseService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITravelExpenseFactory _travelExpenseFactory;
 
-        public CreateTravelExpenseService(IUnitOfWork unitOfWork)
+        public CreateTravelExpenseService(IUnitOfWork unitOfWork, ITravelExpenseFactory travelExpenseFactory)
         {
             _unitOfWork = unitOfWork;
+            _travelExpenseFactory = travelExpenseFactory;
         }
 
         public async Task<TravelExpenseCreateResponse> CreateAsync(TravelExpenseCreateDto travelExpenseCreateDto,
             string sub)
         {
-            var creatingUser = _unitOfWork.Repository.List(new UserBySubSpecification(sub)).FirstOrDefault();
-            var travelExpenseEntity = new TravelExpenseEntity(travelExpenseCreateDto.Description, creatingUser);
+            var creatingUser = _unitOfWork.Repository.List(new UserBySub(sub)).FirstOrDefault();
+            var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
+            var travelExpenseEntity =_travelExpenseFactory.Create(travelExpenseCreateDto.Description, creatingUser,owningCustomer);
 
             _unitOfWork
                 .Repository

@@ -9,11 +9,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace Web
 {
     public class Startup
     {
+        private const string Title = CommonApi.Title + "(Through WEB)";
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
 
@@ -26,22 +28,16 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, true);
+            services.AddPolApi(_configuration, false, Title);
+            services.AddPolDatabase(_configuration, _environment.EnvironmentName);
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
-
-            services.AddDbContext<PolDbContext>(options =>
-            {
-                var connectionStringService = new ConnectionStringService(_configuration, _environment.EnvironmentName);
-                var connectionString = connectionStringService.GetConnectionString("PolConnection");
-                options.UseSqlServer(connectionString);
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            IConfiguration configuration)
+            IConfiguration configuration, IDbSeeder dbSeeder, PolDbContext polDbContext, IPolicyService policyService)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning Web...");
@@ -57,14 +53,22 @@ namespace Web
 
             app.UseHsts();
 
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
             {
-                // Migrate database as needed.
-                var context = serviceScope.ServiceProvider.GetRequiredService<PolDbContext>();
-                //context.Database.ExecuteSqlRaw("drop table __efmigrationshistory; \r\ndrop table flowstepuserpermissionentity; \r\ndrop table flowstepentity; \r\ndrop table travelexpenses; \r\ndrop table userentity; \r\ndrop table customerentities; ");
-                context.Database.Migrate();
-                if (!env.IsProduction()) context.Seed();
-            }
+                logger.Information("Starting Db Migration and Seeding...");
+                polDbContext.Database.Migrate();
+                dbSeeder.Seed();
+                logger.Information("Done Db Migration and Seeding...");
+            });
+
+            app.UseCors(options =>
+            {
+                options
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins(ImproventoGlobals.AllowedCorsOrigins)
+                    .AllowCredentials();
+            });
 
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();
@@ -72,7 +76,7 @@ namespace Web
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
+                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", Title + " " + CommonApi.Version));
 
             app.UseStaticFiles();
             if (!env.IsDevelopment()) app.UseSpaStaticFiles();

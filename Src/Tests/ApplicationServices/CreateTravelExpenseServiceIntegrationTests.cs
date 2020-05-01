@@ -22,7 +22,8 @@ namespace Tests.ApplicationServices
             using (var testContext = new IntegrationTestContext())
             {
                 var newDescription = testContext.Fixture.Create<string>();
-                var travelExpenseCreateDto = new TravelExpenseCreateDto { Description = newDescription };
+                var customerId = testContext.GetDummyCustomerId();
+                var travelExpenseCreateDto = new TravelExpenseCreateDto { Description = newDescription, CustomerId = customerId};
                 var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
                 // Act
@@ -38,8 +39,7 @@ namespace Tests.ApplicationServices
                         .Repository.List(new TravelExpenseById(actual.Id))
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
-                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
-                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
+                    Assert.That(travelExpenseEntity.Stage.Value, Is.EqualTo(TravelExpenseStage.Initial));
                 }
 
             }

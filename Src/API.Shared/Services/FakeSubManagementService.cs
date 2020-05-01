@@ -1,20 +1,19 @@
 ﻿using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Shared.Services
 {
     public class FakeSubManagementService : ISubManagementService
     {
-        private readonly IConfiguration _configuration;
-
-        public FakeSubManagementService(IConfiguration configuration)
+        public FakeSubManagementService(string sub)
         {
-            _configuration = configuration;
+            Sub = sub;
         }
 
         public string GetSub(ClaimsPrincipal claimsPrincipal)
         {
-            return _configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled");
+            return Sub;
         }
+
+        public string Sub { get; set; }
     }
 }

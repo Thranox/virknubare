@@ -1,37 +1,51 @@
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using System.Threading.Tasks;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Interfaces;
+using Application.MapperProfiles;
 using Application.Services;
 using AutoMapper;
+using Domain;
+using Domain.Events;
 using Domain.Interfaces;
-using Domain.SharedKernel;
+using Domain.Services;
 using IdentityServer4.AccessTokenValidation;
+using IDP.Services;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
-using Web.MapperProfiles;
 
 namespace API.Shared
 {
     public static class ServicesConfiguration
     {
-        public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated)
+        public static void AddPolDatabase(this IServiceCollection services, IConfiguration configuration,
+            string environmentName)
         {
-            services.AddSingleton<ILogger>(Log.Logger);
+            services.AddScoped<IPolicyService, PolicyService>();
+
+            services.AddDbContext<PolDbContext>(options =>
+            {
+                var connectionStringService = new ConnectionStringService(configuration, environmentName);
+                var connectionString = connectionStringService.GetConnectionString("PolConnection");
+                options.UseSqlServer(connectionString);
+            });
+
+        }
+        public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle)
+        {
+            services.AddSingleton(Log.Logger);
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -52,8 +66,8 @@ namespace API.Shared
                     options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
                     // Log all entries and exits of controller methods.
                     options.Filters.Add(new MethodLoggingActionFilter(Log.Logger));
-                    // Find user for request
 
+                    // If desired, be set up a global Authorize filter
                     if (enforceAuthenticated)
                     {
                         var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
@@ -66,17 +80,19 @@ namespace API.Shared
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc(CommonApi.Version, new OpenApiInfo { Title = CommonApi.Title, Version = CommonApi.Version });
+                x.SwaggerDoc(CommonApi.Version, new OpenApiInfo { Title = apiTitle, Version = CommonApi.Version });
             });
 
-            MapServices(services, enforceAuthenticated);
+            MapServices(services, enforceAuthenticated, configuration);
 
             services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddControllers();
         }
 
-        public static void MapServices(IServiceCollection services, bool enforceAuthenticated)
+        public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(EntityDtoProfile));
 
@@ -84,6 +100,7 @@ namespace API.Shared
             services.AddScoped<IRepository, EfRepository>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IDbSeeder, DbSeeder>();
 
             // Application services
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
@@ -93,13 +110,18 @@ namespace API.Shared
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
 
+            services.AddScoped<ICreateCustomerService, CreateCustomerService>();
+            services.AddScoped<ICreateUserService, CreateUserService>();
+            services.AddScoped<ITravelExpenseFactory, TravelExpenseFactory>();
+            services.AddScoped<IStageService, StageService>();
+
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
             }
             else
             {
-                services.AddScoped<ISubManagementService, FakeSubManagementService>();
+                services.AddScoped<ISubManagementService>(x=>new FakeSubManagementService(configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")) );
             }
 
             Assembly

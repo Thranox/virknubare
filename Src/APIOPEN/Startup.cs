@@ -8,14 +8,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace APIOPEN
 {
     public class Startup
     {
         private readonly IWebHostEnvironment _environment;
-
         private readonly IConfiguration _configuration;
+        private const string Title = CommonApi.Title + "(OPEN) ";
 
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
@@ -26,34 +27,41 @@ namespace APIOPEN
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false);
-            services.AddControllers();
-
-            services.AddDbContext<PolDbContext>(options =>
-            {
-                var connectionStringService = new ConnectionStringService(_configuration, _environment.EnvironmentName);
-                var connectionString = connectionStringService.GetConnectionString("PolConnection");
-                options.UseSqlServer(connectionString);
-            });
+            services.AddPolApi(_configuration, false, Title);
+            services.AddPolDatabase(_configuration, _environment.EnvironmentName);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            PolDbContext polDbContext)
+            PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning APIOPEN...");
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            polDbContext.Database.Migrate();
-            polDbContext.Seed();
+            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
+            {
+                logger.Information("Starting Db Migration and Seeding...");
+                polDbContext.Database.Migrate();
+                dbSeeder.Seed();
+                logger.Information("Done Db Migration and Seeding...");
+            });
+
+            app.UseCors(options =>
+            {
+                options
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins(ImproventoGlobals.AllowedCorsOrigins)
+                    .AllowCredentials();
+            });
 
             app.UseHttpsRedirection();
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("v1/swagger.json", CommonApi.Title + " " + CommonApi.Version));
+                c => c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version));
 
             app.UseRouting();
 

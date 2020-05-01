@@ -5,9 +5,9 @@ using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class UserBySubSpecification : ISpecification<UserEntity>
+    public class UserBySub : ISpecification<UserEntity>
     {
-        public UserBySubSpecification(string sub)
+        public UserBySub(string sub)
         {
             Criteria = e => e.Subject == sub;
 

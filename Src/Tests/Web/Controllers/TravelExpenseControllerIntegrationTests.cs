@@ -42,26 +42,32 @@ namespace Tests.Web.Controllers
                 Assert.That(value, Is.Not.Null);
                 var v = value.Result.ToArray();
                 Assert.That(v.Length, Is.EqualTo(3));
+
+                var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
+
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity1.Description,
                         Id = testContext.TravelExpenseEntity1.Id,
-                        Stage = "Initial"
+                        StageId = stageEntities.Single(x=>x.Value==TravelExpenseStage.Initial).Id.ToString(),
+                        StageText =Globals.StageNamesDanish[TravelExpenseStage.Initial]
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity2.Description,
                         Id = testContext.TravelExpenseEntity2.Id,
-                        Stage = "Initial"
+                        StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity3.Description,
                         Id = testContext.TravelExpenseEntity3.Id,
-                        Stage = "Initial"
+                        StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
                     }));
             }
         }
@@ -345,7 +351,17 @@ namespace Tests.Web.Controllers
                 ActionResult<TravelExpenseCreateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
 
-                var travelExpenseCreateDto = new TravelExpenseCreateDto {Description = newDescription};
+                var customerId = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .Single()
+                    .Id;
+                var travelExpenseCreateDto = new TravelExpenseCreateDto
+                {
+                    Description = newDescription,
+                    CustomerId = customerId
+                };
                 var sut = GetSut(testContext);
 
                 // Act
@@ -365,8 +381,7 @@ namespace Tests.Web.Controllers
                         .Repository.List(new TravelExpenseById(value.Id))
                         .SingleOrDefault();
                     Assert.That(travelExpenseEntity, Is.Not.Null);
-                    Assert.That(travelExpenseEntity.IsReportedDone, Is.EqualTo(false));
-                    Assert.That(travelExpenseEntity.IsCertified, Is.EqualTo(false));
+                    Assert.That(travelExpenseEntity.Stage.Value, Is.EqualTo(TravelExpenseStage.Initial));
                 }
             }
         }
