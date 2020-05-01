@@ -57,13 +57,16 @@ namespace IdentityServerAspNetIdentit
                     {
                         "https://localhost:44324/signin-redirect-callback",
                         "http://localhost:44324/signin-redirect-callback",
-                        "http://localhost:4200/signin-redirect-callback"
+                        "http://localhost:4200/signin-redirect-callback",
+                        "http://localhost:50627/signin-redirect-callback"
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
                         "https://localhost:44324/signout-redirect-callback",
                         "http://localhost:44324/signout-redirect-callback",
-                        "http://localhost:4200/signout-redirect-callback"
+                        "http://localhost:4200/signout-redirect-callback",
+                        "http://localhost:50627/signout-redirect-callback"
+
                     },
                     AllowedScopes =
                     {
@@ -76,7 +79,8 @@ namespace IdentityServerAspNetIdentit
                     {
                         "https://localhost:44324",
                         "http://localhost:44324",
-                        "http://localhost:4200"
+                        "http://localhost:4200",
+                        "http://localhost:50627"
                     },
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 15 * 60 * 60 // 15 hrs

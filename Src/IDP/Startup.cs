@@ -2,11 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System.IO;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using IdentityServer4;
-using IdentityServer4.Configuration;
 using IdentityServer4.Services;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
@@ -23,7 +19,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using SharedWouldBeNugets;
-using IdentityServer4.Configuration;
+using IdentityServer4.Validation;
 
 namespace IdentityServerAspNetIdentit
 {
@@ -119,6 +115,7 @@ namespace IdentityServerAspNetIdentit
                 AllowAll = true
             };
             services.AddSingleton<ICorsPolicyService>(cors);
+            //services.AddScoped<ITokenValidator, MyTokenValidator>();
         }
 
         public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
@@ -154,4 +151,6 @@ namespace IdentityServerAspNetIdentit
             });
         }
     }
+
+    
 }

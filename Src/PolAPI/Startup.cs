@@ -56,7 +56,7 @@ namespace PolAPI
                 options
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("https://localhost:44324")
+                    .WithOrigins("https://localhost:44324", "http://localhost:50627", "http://localhost:4200")
                     .AllowCredentials();
             });
             app.UseAuthentication();

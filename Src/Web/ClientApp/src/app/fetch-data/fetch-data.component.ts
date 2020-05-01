@@ -17,6 +17,8 @@ export class FetchDataComponent {
       } else {
         //baseUrl = 'https://localhost:44324/'; // Api via WebApp's own API
         baseUrl = 'https://localhost:44348/'; //PolAPI
+        //baseUrl = 'https://andersathome.dk/polapi/'; //PolAPI
+        //baseUrl = 'https://ajf-prod-02/polapi/'; //PolAPI
         console.info('Calling with token:' + token);
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
         http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { headers: headers }).subscribe(result => {
