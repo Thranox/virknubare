@@ -10,6 +10,14 @@ namespace Tests.Domain.Services
 {
     public class ProcessFlowStepInitialReportedDoneTests
     {
+        private static Mock<IStageService> _stageServiceMock;
+
+        [SetUp]
+        public void Setup()
+        {
+            _stageServiceMock = new Mock<IStageService>();
+        }
+
         [Test]
         public void CanHandle_KeyForInitialReporteddone_ReturnsTrue()
         {
@@ -48,18 +56,22 @@ namespace Tests.Domain.Services
             // Arrange
             var stageEntity = new StageEntity(TravelExpenseStage.Initial);
             var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
+            var stageEntityreportedDone=new StageEntity(TravelExpenseStage.ReportedDone);
+            _stageServiceMock.Setup(x => x.GetStage(TravelExpenseStage.ReportedDone))
+                .Returns(stageEntityreportedDone);
+
             var sut = GetSut();
 
             // Act
             var actual = sut.GetResultingStage(travelExpenseEntity);
 
             // Assert
-            Assert.That(actual, Is.EqualTo(TravelExpenseStage.ReportedDone));
+            Assert.That(actual.Value, Is.EqualTo(TravelExpenseStage.ReportedDone));
         }
 
         private static ProcessFlowStepInitialReportedDone GetSut()
         {
-            return new ProcessFlowStepInitialReportedDone(new Mock<IStageService>().Object);
+            return new ProcessFlowStepInitialReportedDone(_stageServiceMock.Object);
         }
     }
 }

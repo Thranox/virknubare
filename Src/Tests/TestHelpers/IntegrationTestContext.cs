@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using API.Shared;
 using API.Shared.Controllers;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Services;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +40,7 @@ namespace Tests.TestHelpers
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
 
+            serviceCollection.AddScoped<IStageService, StageService>();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 

@@ -1,18 +1,16 @@
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using System.Threading.Tasks;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
-using Application;
 using Application.Interfaces;
 using Application.MapperProfiles;
 using Application.Services;
 using AutoMapper;
+using Domain;
 using Domain.Events;
 using Domain.Interfaces;
-using Domain.SharedKernel;
+using Domain.Services;
 using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
@@ -22,7 +20,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
@@ -33,7 +30,7 @@ namespace API.Shared
     {
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle)
         {
-            services.AddSingleton<ILogger>(Log.Logger);
+            services.AddSingleton(Log.Logger);
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -99,6 +96,7 @@ namespace API.Shared
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();
             services.AddScoped<ITravelExpenseFactory, TravelExpenseFactory>();
+            services.AddScoped<IStageService, StageService>();
 
             if (enforceAuthenticated)
             {

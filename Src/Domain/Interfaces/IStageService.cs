@@ -1,6 +1,6 @@
 using Domain.Entities;
 
-namespace Domain.Services
+namespace Domain.Interfaces
 {
     public interface IStageService
     {

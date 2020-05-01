@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 
-namespace Application
+namespace Domain
 {
     public class TravelExpenseFactory : ITravelExpenseFactory
     {

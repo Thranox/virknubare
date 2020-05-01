@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain;
+using Domain.Entities;
 using Domain.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -27,26 +28,33 @@ namespace Tests.ApplicationServices
                 Assert.That(actual, Is.Not.Null);
                 var v = actual.Result.ToArray();
                 Assert.That(v.Length, Is.EqualTo(3));
+
+                var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
+
+
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity1.Description,
                         Id = testContext.TravelExpenseEntity1.Id,
-                        Stage = "Initial"
+                        StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity2.Description,
                         Id = testContext.TravelExpenseEntity2.Id,
-                        Stage = "Initial"
+                        StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity3.Description,
                         Id = testContext.TravelExpenseEntity3.Id,
-                        Stage = "Initial"
+                        StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
                     }));
             }
         }
@@ -63,11 +71,15 @@ namespace Tests.ApplicationServices
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
+
+                var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
                 Assert.That(actual.Result, Is.EqualTo(new TravelExpenseDto
                 {
                     Description = testContext.TravelExpenseEntity1.Description,
                     Id = testContext.TravelExpenseEntity1.Id,
-                    Stage = "Initial"
+                    StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
+                    StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+
                 }));
             }
         }

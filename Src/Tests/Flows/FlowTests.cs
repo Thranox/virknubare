@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using API.Shared;
 using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Dtos;
 using AutoFixture;
 using Domain;
 using Domain.Interfaces;
+using Domain.Services;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -123,16 +125,7 @@ namespace Tests.Flows
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var buildServiceProvider = new ServiceCollection();
-
-                Assembly
-                    .GetAssembly(typeof(IProcessFlowStep))
-                    .GetTypesAssignableFrom<IProcessFlowStep>()
-                    .ForEach(t => { buildServiceProvider.AddScoped(typeof(IProcessFlowStep), t); });
-
-                var serviceProvider = buildServiceProvider.BuildServiceProvider();
-                var processFlowSteps = serviceProvider
-                    .GetServices<IProcessFlowStep>();
+                var processFlowSteps =testContext.ServiceProvider.GetServices<IProcessFlowStep>();
 
                 using (var polDbContext = new PolDbContext(testContext.DbContextOptions))
                 {

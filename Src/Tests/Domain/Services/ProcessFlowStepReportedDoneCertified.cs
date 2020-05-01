@@ -10,6 +10,14 @@ namespace Tests.Domain.Services
 {
     public class ProcessFlowStepReportedDoneCertifiedTests
     {
+        private static Mock<IStageService> _stageServiceMock;
+
+        [SetUp]
+        public void Setup()
+        {
+            _stageServiceMock = new Mock<IStageService>();
+        }
+
         [Test]
         public void CanHandle_KeyForReporteddoneCertified_ReturnsTrue()
         {
@@ -46,23 +54,27 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsCertified()
         {
             // Arrange
-            var stageEntity = new StageEntity(TravelExpenseStage.Initial);
+            var stageEntity = new StageEntity(TravelExpenseStage.ReportedDone);
             var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
+            var stageEntityCertified=new StageEntity(TravelExpenseStage.Certified);
+            _stageServiceMock.Setup(x => x.GetStage(TravelExpenseStage.Certified))
+                .Returns(stageEntityCertified);
+
             var sut = GetSut();
 
             // Act
             var actual = sut.GetResultingStage(travelExpenseEntity);
 
             // Assert
-            Assert.That(actual, Is.EqualTo(TravelExpenseStage.Certified));
+            Assert.That(actual.Value, Is.EqualTo(TravelExpenseStage.Certified));
         }
 
         private static ProcessFlowStepReportedDoneCertified GetSut()
         {
-            return new ProcessFlowStepReportedDoneCertified(new Mock<IStageService>().Object);
+            return new ProcessFlowStepReportedDoneCertified(_stageServiceMock.Object);
         }
     }
 }

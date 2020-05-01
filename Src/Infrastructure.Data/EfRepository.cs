@@ -35,7 +35,7 @@ namespace Infrastructure.Data
                 IQueryable<CustomerEntity> includableQueryable = _dbContext
                     .Set<CustomerEntity>()
                     .Include(g => g.FlowSteps).ThenInclude(gg => gg.FlowStepUserPermissions)
-                    .Include(g => g.TravelExpenses)
+                    .Include(g => g.TravelExpenses).ThenInclude(gg=>gg.Stage)
                     .Include(g => g.CustomerUserPermissions).ThenInclude(gg => gg.User);
 
                 if (spec != null)
@@ -45,7 +45,21 @@ namespace Infrastructure.Data
                 }
                 return includableQueryable.ToList() as List<T>;
             }
-            
+
+            if (typeof(T) == typeof(TravelExpenseEntity))
+            {
+                IQueryable<TravelExpenseEntity> includableQueryable = _dbContext
+                    .Set<TravelExpenseEntity>()
+                    .Include(g => g.Stage);
+
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<TravelExpenseEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+                return includableQueryable.ToList() as List<T>;
+            }
+
             if (typeof(T) == typeof(UserEntity))
             {
                 IQueryable<UserEntity> includableQueryable = _dbContext

@@ -33,6 +33,14 @@ namespace Infrastructure.Data
         public void Seed()
         {
             // -----------------------------------
+            // Stages(Not Dummy!)
+            foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
+            {
+                GetOrCreateStage(travelExpenseStage);
+            }
+            _unitOfWork.Commit();
+
+            // -----------------------------------
             // Dummy customer
             var customer =_unitOfWork.Repository.List(new CustomerByName(TestData.DummyCustomerName)).SingleOrDefault();
             if (customer == null)

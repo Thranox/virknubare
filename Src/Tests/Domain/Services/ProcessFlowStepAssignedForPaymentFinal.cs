@@ -10,6 +10,14 @@ namespace Tests.Domain.Services
 {
     public class ProcessFlowStepAssignedForPaymentFinalTests
     {
+        private static Mock<IStageService> _stageServiceMock ;
+
+        [SetUp]
+        public void Setup()
+        {
+            _stageServiceMock = new Mock<IStageService>();
+        }
+
         [Test]
         public void CanHandle_KeyForAssignedForPayment_ReturnsTrue()
         {
@@ -46,24 +54,27 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsFinal()
         {
             // Arrange
-            var stageEntity = new StageEntity(TravelExpenseStage.Initial);
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
+            var stageEntityAssignedForPayment = new StageEntity(TravelExpenseStage.AssignedForPayment);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntityAssignedForPayment);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity))
-                .Returns(stageEntity);
+                .Returns(stageEntityAssignedForPayment);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
+            var stageEntityFinal = new StageEntity(TravelExpenseStage.Final);
+            _stageServiceMock.Setup(x => x.GetStage(TravelExpenseStage.Final))
+                .Returns(stageEntityFinal);
             var sut = GetSut();
 
             // Act
             var actual = sut.GetResultingStage(travelExpenseEntity);
 
             // Assert
-            Assert.That(actual, Is.EqualTo(TravelExpenseStage.Final));
+            Assert.That(actual.Value, Is.EqualTo(TravelExpenseStage.Final));
         }
 
         private static ProcessFlowStepAssignedForPaymentFinal GetSut()
         {
-            return new ProcessFlowStepAssignedForPaymentFinal(new Mock<IStageService>().Object);
+            return new ProcessFlowStepAssignedForPaymentFinal(_stageServiceMock.Object);
         }
     }
 }
