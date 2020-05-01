@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace Web
 {
@@ -27,22 +28,16 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, true, Title);
+            services.AddPolApi(_configuration, false, Title);
+            services.AddPolDatabase(_configuration, _environment.EnvironmentName);
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
-
-            services.AddDbContext<PolDbContext>(options =>
-            {
-                var connectionStringService = new ConnectionStringService(_configuration, _environment.EnvironmentName);
-                var connectionString = connectionStringService.GetConnectionString("PolConnection");
-                options.UseSqlServer(connectionString);
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            IConfiguration configuration, IDbSeeder dbSeeder)
+            IConfiguration configuration, IDbSeeder dbSeeder, PolDbContext polDbContext, IPolicyService policyService)
         {
             logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning Web...");
@@ -58,7 +53,22 @@ namespace Web
 
             app.UseHsts();
 
-            dbSeeder.Seed();
+            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
+            {
+                logger.Information("Starting Db Migration and Seeding...");
+                polDbContext.Database.Migrate();
+                dbSeeder.Seed();
+                logger.Information("Done Db Migration and Seeding...");
+            });
+
+            app.UseCors(options =>
+            {
+                options
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins(ImproventoGlobals.AllowedCorsOrigins)
+                    .AllowCredentials();
+            });
 
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseAuthentication();

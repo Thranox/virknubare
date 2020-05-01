@@ -12,12 +12,14 @@ using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
 using IdentityServer4.AccessTokenValidation;
+using IDP.Services;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -28,6 +30,19 @@ namespace API.Shared
 {
     public static class ServicesConfiguration
     {
+        public static void AddPolDatabase(this IServiceCollection services, IConfiguration configuration,
+            string environmentName)
+        {
+            services.AddScoped<IPolicyService, PolicyService>();
+
+            services.AddDbContext<PolDbContext>(options =>
+            {
+                var connectionStringService = new ConnectionStringService(configuration, environmentName);
+                var connectionString = connectionStringService.GetConnectionString("PolConnection");
+                options.UseSqlServer(connectionString);
+            });
+
+        }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle)
         {
             services.AddSingleton(Log.Logger);
@@ -51,8 +66,8 @@ namespace API.Shared
                     options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
                     // Log all entries and exits of controller methods.
                     options.Filters.Add(new MethodLoggingActionFilter(Log.Logger));
-                    // Find user for request
 
+                    // If desired, be set up a global Authorize filter
                     if (enforceAuthenticated)
                     {
                         var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
@@ -73,6 +88,8 @@ namespace API.Shared
             services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddControllers();
         }
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
