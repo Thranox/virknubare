@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System.Security.Cryptography;
 using IdentityServer4.Services;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
@@ -15,10 +16,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Serilog;
+using SharedWouldBeNugets;
+using IdentityServer4.Validation;
 
 namespace IdentityServerAspNetIdentit
 {
+    internal class TemporaryRsaKey
+    {
+        public string KeyId { get; set; }
+        public RSAParameters Parameters { get; set; }
+    }
     public class Startup
     {
         public IWebHostEnvironment Environment { get; }
@@ -68,6 +77,7 @@ namespace IdentityServerAspNetIdentit
 
             var builder = services.AddIdentityServer(options =>
                 {
+                    options.IssuerUri = ImproventoGlobals.IssUri;
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
@@ -79,8 +89,7 @@ namespace IdentityServerAspNetIdentit
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
-                // not recommended for production - you need to store your key material somewhere secure
-                .AddDeveloperSigningCredential();
+                .AddDeveloperSigningCredential(false, Configuration.GetValue<string>("SigningKey"));// @"c:\keys\signing.rsa");
 
             services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddGoogle(options =>
@@ -106,6 +115,7 @@ namespace IdentityServerAspNetIdentit
                 AllowAll = true
             };
             services.AddSingleton<ICorsPolicyService>(cors);
+            //services.AddScoped<ITokenValidator, MyTokenValidator>();
         }
 
         public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
@@ -141,4 +151,6 @@ namespace IdentityServerAspNetIdentit
             });
         }
     }
+
+    
 }

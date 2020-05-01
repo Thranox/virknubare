@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Threading.Tasks;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -20,6 +22,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
@@ -38,8 +41,12 @@ namespace API.Shared
                     options.Authority = configuration.GetValue<string>("IDP_URL");
                     options.ApiName = "teapi";
                     options.RequireHttpsMetadata = false;
-                });
+                    options.ApiSecret = "secret";
 
+
+                    Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+                })
+                ;
             var assembly = typeof(TravelExpenseController).Assembly;
             services.AddControllersWithViews(options =>
                 {
@@ -69,7 +76,6 @@ namespace API.Shared
             services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
         }
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)

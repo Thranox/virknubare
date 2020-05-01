@@ -26,34 +26,48 @@ namespace IdentityServerAspNetIdentit
             };
 
         public static IEnumerable<ApiResource> Apis =>
-        new ApiResource[]
-        {
-            new ApiResource("teapi","Travel Expense API", new List<string>()
+            new[]
             {
-                JwtClaimTypes.Subject,
-                JwtClaimTypes.Name,
-                JwtClaimTypes.Email,
-                JwtClaimTypes.EmailVerified,
-                JwtClaimTypes.GivenName,
-                JwtClaimTypes.FamilyName,
-                JwtClaimTypes.Role
-            }){}
-        };
+                new ApiResource("teapi", "Travel Expense API", new List<string>
+                {
+                    JwtClaimTypes.Subject,
+                    JwtClaimTypes.Name,
+                    JwtClaimTypes.Email,
+                    JwtClaimTypes.EmailVerified,
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName,
+                    JwtClaimTypes.Role
+                })
+            };
 
         public static IEnumerable<Client> Clients =>
-                new[]
-                {
+            new[]
+            {
                 new Client
                 {
                     AlwaysIncludeUserClaimsInIdToken = true,
                     ClientName = "Politikerafregning (Angular)",
                     ClientId = "polangularclient",
+                    ClientSecrets = new List<Secret> {new Secret("secret".Sha256())},
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false,
                     RequireConsent = false,
-                    RedirectUris = new List<string>{"https://localhost:44324/signin-redirect-callback"},
-                    PostLogoutRedirectUris = new List<string>(){"https://localhost:44324/signout-redirect-callback"},
+                    RedirectUris = new List<string>
+                    {
+                        "https://localhost:44324/signin-redirect-callback",
+                        "http://localhost:44324/signin-redirect-callback",
+                        "http://localhost:4200/signin-redirect-callback",
+                        "http://localhost:50627/signin-redirect-callback"
+                    },
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        "https://localhost:44324/signout-redirect-callback",
+                        "http://localhost:44324/signout-redirect-callback",
+                        "http://localhost:4200/signout-redirect-callback",
+                        "http://localhost:50627/signout-redirect-callback"
+
+                    },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -61,10 +75,16 @@ namespace IdentityServerAspNetIdentit
                         "roles",
                         "teapi"
                     },
-                    AllowedCorsOrigins = new List<string> {"https://localhost:44324"},
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "https://localhost:44324",
+                        "http://localhost:44324",
+                        "http://localhost:4200",
+                        "http://localhost:50627"
+                    },
                     AccessTokenType = AccessTokenType.Jwt,
-                    AccessTokenLifetime = 15*60*60 // 15 hrs
+                    AccessTokenLifetime = 15 * 60 * 60 // 15 hrs
                 }
-                };
+            };
     }
 }
