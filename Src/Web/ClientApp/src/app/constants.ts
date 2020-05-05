@@ -2,8 +2,9 @@
 export class Constants {
   public static clientRoot = 'https://localhost:44324/';
 
-  //public static apiRoot = 'https://localhost:44324/';
-  public static apiRoot = 'https://localhost:44348/';
+  //public static apiRoot = 'https://localhost:44324/'; //PolApi via Web
+  //public static apiRoot = 'https://localhost:44348/'; //PolApi
+  public static apiRoot = 'https://dev.politikerafregning.dk/polapi/';
   //public static apiRoot = 'https://localhost:44396/';
   //public static apiRoot = 'https://andersathome.dk/polapi/';
   //public static apiRoot = 'https://ajf-prod-02/polapi/';
@@ -16,7 +17,7 @@ export class Constants {
   //public static stsAuthority = 'https://andersathome.dk/IDP/';
   //public static stsAuthority = 'http://localhost:5000/';
   public static stsAuthority = 'https://localhost:5001/';
-  //public static stsAuthority = 'http://dev.politikerafregning.dk/IDP/';
+  //public static stsAuthority = 'https://dev.politikerafregning.dk/IDP/';
 
   public static clientId = 'polangularclient';
 }
