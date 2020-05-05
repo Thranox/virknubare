@@ -11,7 +11,7 @@ namespace SharedWouldBeNugets
 {
     public static class StartupHelper
     {
-        public static Logger CreateLogger(IConfigurationBuilder config, string componentName)
+        public static Logger CreateLogger(IConfiguration config, string componentName)
         {
             var loggerConfiguration = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -33,11 +33,11 @@ namespace SharedWouldBeNugets
                 .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
                 .Enrich.WithProperty("SuiteName", "Pol")
                 .Enrich.WithProperty("ComponentName", componentName)
+                .Enrich.WithProperty("TransactionId", Guid.NewGuid())
                 .Enrich.FromLogContext()
-                .ReadFrom.Configuration(config.Build())
+                .ReadFrom.Configuration(config)
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate);
             var logger = loggerConfiguration.CreateLogger();
-            logger.Information("---------------------------");
             logger.Information("Application started");
             return logger;
         }

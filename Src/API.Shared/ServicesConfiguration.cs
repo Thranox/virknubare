@@ -43,9 +43,11 @@ namespace API.Shared
             });
 
         }
-        public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle)
+        public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
-            services.AddSingleton(Log.Logger);
+            services.AddScoped<HttpResponseExceptionFilter>();
+            services.AddScoped<MethodLoggingActionFilter>();
+            services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -63,9 +65,9 @@ namespace API.Shared
             services.AddControllersWithViews(options =>
                 {
                     // Include handling of Domain Exceptions
-                    options.Filters.Add(new HttpResponseExceptionFilter(Log.Logger));
+                    options.Filters.Add<HttpResponseExceptionFilter>();
                     // Log all entries and exits of controller methods.
-                    options.Filters.Add(new MethodLoggingActionFilter(Log.Logger));
+                    options.Filters.Add<MethodLoggingActionFilter>();
 
                     // If desired, be set up a global Authorize filter
                     if (enforceAuthenticated)
@@ -133,4 +135,5 @@ namespace API.Shared
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
     }
+
 }

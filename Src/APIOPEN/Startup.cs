@@ -27,7 +27,7 @@ namespace APIOPEN
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false, Title);
+            services.AddPolApi(_configuration, false, Title, "APIOPEN");
             services.AddPolDatabase(_configuration, _environment.EnvironmentName);
         }
 
@@ -35,7 +35,6 @@ namespace APIOPEN
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
             PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
         {
-            logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning APIOPEN...");
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
@@ -70,7 +69,6 @@ namespace APIOPEN
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             logger.Information("TravelExpense APIOPEN started. Version=" + _configuration.GetValue<string>("Version"));
-            logger.Information("------------------------------------------------------------");
         }
     }
 }

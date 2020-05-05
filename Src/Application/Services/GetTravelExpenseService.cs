@@ -29,6 +29,8 @@ namespace Application.Services
 
         public async Task<TravelExpenseGetResponse> GetAsync(string sub)
         {
+            _logger.Debug("Getting em all");
+
             // Get user by sub
             var userEntities = _unitOfWork
                 .Repository
