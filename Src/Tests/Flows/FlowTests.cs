@@ -125,40 +125,43 @@ namespace Tests.Flows
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var processFlowSteps =testContext.ServiceProvider.GetServices<IProcessFlowStep>();
+                var processFlowSteps =testContext
+                    .ServiceProvider
+                    .GetServices<IProcessFlowStep>()
+                    .ToArray();
 
-                using (var polDbContext = new PolDbContext(testContext.DbContextOptions))
+                var customer = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .Single();
+
+                var newTe = customer.TravelExpenses.First();
+
+                var iterations = 0;
+
+                // Act & Assert
+                do
                 {
-                    var repository = new EfRepository(polDbContext);
-                    var customer = repository
-                        .List(new CustomerByName(TestData.DummyCustomerName))
-                        .Single();
+                    iterations++;
+                    Console.WriteLine("Stage: " + newTe.Stage);
 
-                    var newTe = customer.TravelExpenses.First();
+                    var nextFlowSteps = testContext
+                        .CreateUnitOfWork()
+                        .Repository
+                        .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
+                        .First();
 
-                    var iterations = 0;
+                    var processFlowStep = processFlowSteps
+                        .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
 
-                    // Act & Assert
-                    do
-                    {
-                        iterations++;
-                        Console.WriteLine("Stage: " + newTe.Stage);
+                    Assert.That(processFlowStep, Is.Not.Null);
 
-                        var nextFlowSteps = testContext.CreateUnitOfWork().Repository
-                            .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
-                            .First();
+                    newTe.ApplyProcessStep(processFlowStep);
 
-                        var processFlowStep = processFlowSteps
-                            .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
-
-                        Assert.That(processFlowStep, Is.Not.Null);
-
-                        newTe.ApplyProcessStep(processFlowStep);
-
-                        if (iterations > 10)
-                            throw new InvalidOperationException();
-                    } while (newTe.Stage.Value != TravelExpenseStage.Final);
-                }
+                    if (iterations > 10)
+                        throw new InvalidOperationException();
+                } while (newTe.Stage.Value != TravelExpenseStage.Final);
             }
         }
     }
