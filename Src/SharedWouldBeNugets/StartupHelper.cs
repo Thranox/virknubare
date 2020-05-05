@@ -23,7 +23,7 @@ namespace SharedWouldBeNugets
                     BatchSizeLimit = 50,
                     Period = TimeSpan.FromSeconds(5),
                     Tags = new KeyValuePair<string, string>[]{
-                        new KeyValuePair<string, string>("source", "ApplicationLog"),
+                        new KeyValuePair<string, string>("source", "Politikerafregning"),
                         new KeyValuePair<string, string>("environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
                     },
                     IngestToken = Environment.GetEnvironmentVariable("HUMIO_KEY") 
