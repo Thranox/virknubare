@@ -28,7 +28,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false, Title);
+            services.AddPolApi(_configuration, false, Title, "Web");
             services.AddPolDatabase(_configuration, _environment.EnvironmentName);
 
             // In production, the Angular files will be served from this directory
@@ -39,7 +39,6 @@ namespace Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
             IConfiguration configuration, IDbSeeder dbSeeder, PolDbContext polDbContext, IPolicyService policyService)
         {
-            logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning Web...");
             if (env.IsDevelopment())
             {
@@ -102,7 +101,6 @@ namespace Web
             });
 
             logger.Information("TravelExpense Web started. Version=" + configuration.GetValue<string>("Version"));
-            logger.Information("------------------------------------------------------------");
         }
     }
 }

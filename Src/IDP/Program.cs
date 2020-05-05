@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using IDP;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using SharedWouldBeNugets;
@@ -18,7 +19,7 @@ namespace IdentityServerAspNetIdentit
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     StartupHelper.SetupConfig(args, config, hostingContext.HostingEnvironment.EnvironmentName);
-                    Log.Logger = StartupHelper.CreateLogger(config, "IDP");
+                    Log.Logger = StartupHelper.CreateLogger(config.Build(), "IDP");
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

@@ -18,7 +18,7 @@ namespace PolAPI
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     StartupHelper.SetupConfig(args, config, hostingContext.HostingEnvironment.EnvironmentName);
-                    Log.Logger = StartupHelper.CreateLogger(config, "API");
+                    
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
