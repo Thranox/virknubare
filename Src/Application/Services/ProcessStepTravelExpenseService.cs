@@ -7,6 +7,7 @@ using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
+using Domain.Specifications;
 
 namespace Application.Services
 {
@@ -24,6 +25,16 @@ namespace Application.Services
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
             TravelExpenseProcessStepDto travelExpenseProcessStepDto, string sub)
         {
+            // Get user by sub
+            var userEntities = _unitOfWork
+                .Repository
+                .List(new UserBySub(sub));
+            var userEntity = userEntities
+                .SingleOrDefault();
+
+            if (userEntity == null)
+                throw new ItemNotFoundException(sub, "UserEntity");
+
             var travelExpenseEntity = _unitOfWork
                 .Repository
                 .GetById<TravelExpenseEntity>(travelExpenseProcessStepDto.TravelExpenseId);
