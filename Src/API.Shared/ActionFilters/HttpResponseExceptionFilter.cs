@@ -23,11 +23,15 @@ namespace API.Shared.ActionFilters
         public void OnActionExecuted(ActionExecutedContext context)
         {
             var errorId = Guid.NewGuid();
-            if (context.Exception != null) _logger.Error(context.Exception, "Exception occured: {ErrorId}",errorId);
 
             if (context.Exception is ItemNotFoundException travelExpenseNotFoundByIdException)
             {
-                context.Result = new ObjectResult(new {travelExpenseNotFoundByIdException.Id})
+                context.Result = new ObjectResult(new
+                {
+                    travelExpenseNotFoundByIdException.Id,
+                    travelExpenseNotFoundByIdException.Item,
+                    travelExpenseNotFoundByIdException.Message
+                })
                 {
                     StatusCode = (int) HttpStatusCode.NotFound // 404
                 };
@@ -37,7 +41,11 @@ namespace API.Shared.ActionFilters
             if (context.Exception is BusinessRuleViolationException businessRuleViolationException)
             {
                 context.Result = new ObjectResult(new
-                    {Id = businessRuleViolationException.EntityId, businessRuleViolationException.Message})
+                {
+                    Id = businessRuleViolationException.EntityId,
+                    businessRuleViolationException.Message,
+                    businessRuleViolationException
+                })
                 {
                     StatusCode = (int) HttpStatusCode.UnprocessableEntity // 422
                 };
@@ -46,22 +54,27 @@ namespace API.Shared.ActionFilters
 
             if (context.Exception is ItemNotAllowedException itemNotAllowedException)
             {
-                context.Result = new ObjectResult(new { itemNotAllowedException.Id, itemNotAllowedException.Message })
+                context.Result = new ObjectResult(new
                 {
-                    StatusCode = (int)HttpStatusCode.Unauthorized // 401
+                    itemNotAllowedException.Id,
+                    itemNotAllowedException.Message,
+                    itemNotAllowedException.Item
+                })
+                {
+                    StatusCode = (int) HttpStatusCode.Unauthorized // 401
                 };
                 context.ExceptionHandled = true;
             }
 
-            if (context.Exception!=null && !context.ExceptionHandled )
+            if (context.Exception != null && !context.ExceptionHandled)
             {
                 context.Result = new ObjectResult(new
                 {
-                    Message ="Internal server error -- please see log and look for errorId="+errorId.ToString(),
+                    Message = "Internal server error -- please see log and look for errorId=" + errorId,
                     context.Exception
                 })
                 {
-                    StatusCode = (int)HttpStatusCode.InternalServerError // 500
+                    StatusCode = (int) HttpStatusCode.InternalServerError // 500
                 };
                 context.ExceptionHandled = true;
             }

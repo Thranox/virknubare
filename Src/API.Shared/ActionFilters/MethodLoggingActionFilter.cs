@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -18,14 +17,22 @@ namespace API.Shared.ActionFilters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _logger.Information("{MethodName} -- Entry", context.ActionDescriptor.DisplayName);
-            _logger.Information("{MethodName} -- Parameter(s): {MethodParameters}",
-                context.ActionDescriptor.DisplayName, JsonConvert.SerializeObject(context.ActionArguments));
+            _logger.Information("{MethodName} -- Entry -- Parameter(s): {MethodParameters}", 
+                context.ActionDescriptor.DisplayName, 
+                JsonConvert.SerializeObject(context.ActionArguments)
+                );
         }
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.Information("{MethodName} -- Exit", context.ActionDescriptor.DisplayName);
+            if (context.Exception == null)
+            {
+                _logger.Information("{MethodName} -- Exit", context.ActionDescriptor.DisplayName);
+            }
+            else
+            {
+                _logger.Error(context.Exception, "{MethodName} -- Exit with exception {Exception}", context.ActionDescriptor.DisplayName, context.Exception);
+            }
         }
     }
 }
