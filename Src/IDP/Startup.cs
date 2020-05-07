@@ -1,11 +1,7 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using IdentityServer4.Services;
+﻿using IdentityServer4.Services;
+using IdentityServerAspNetIdentit;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
-using IDP.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using SharedWouldBeNugets;
+using ILogger = Serilog.ILogger;
 
-namespace IdentityServerAspNetIdentit
+namespace IDP
 {
     public class Startup
     {
@@ -32,6 +29,7 @@ namespace IdentityServerAspNetIdentit
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ILogger>(s=>Log.Logger);
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
@@ -68,6 +66,7 @@ namespace IdentityServerAspNetIdentit
 
             var builder = services.AddIdentityServer(options =>
                 {
+                    options.IssuerUri = ImproventoGlobals.IssUri;
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
@@ -79,8 +78,7 @@ namespace IdentityServerAspNetIdentit
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
-                // not recommended for production - you need to store your key material somewhere secure
-                .AddDeveloperSigningCredential();
+                .AddDeveloperSigningCredential(false, Configuration.GetValue<string>("SigningKey"));// @"c:\keys\signing.rsa");
 
             services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddGoogle(options =>
@@ -101,15 +99,12 @@ namespace IdentityServerAspNetIdentit
                         .AllowAnyHeader()
                         .AllowCredentials());
             });
-            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
-            {
-                AllowAll = true
-            };
-            services.AddSingleton<ICorsPolicyService>(cors);
+            services.AddSingleton<ICorsPolicyService, DefaultCorsPolicyService>();
         }
 
-        public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
+        public void Configure(IApplicationBuilder app, ILogger logger, ICorsPolicyService corsPolicyService)
         {
+            (corsPolicyService as DefaultCorsPolicyService).AllowAll = true;
             Log.Information("Ensuring database is migrated and seeded...");
             var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
             var connectionString = connectionStringService.GetConnectionString("DefaultConnection");

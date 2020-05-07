@@ -6,7 +6,7 @@ namespace API.Shared
 {
     public static class CommonApi
     {
-        public static readonly string Title = "Politikerafregning API";
-        public static readonly string Version = "v1";
+        public const string Title = "Politikerafregning API";
+        public const string Version = "v1";
     }
 }

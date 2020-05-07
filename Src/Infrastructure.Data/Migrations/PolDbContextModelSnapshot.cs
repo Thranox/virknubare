@@ -33,24 +33,50 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CustomerUserPermissionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CustomerUserPermissions");
+                });
+
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CustomerEntityId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("From")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("FromId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Key")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerEntityId");
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("FromId");
 
                     b.ToTable("FlowSteps");
                 });
@@ -73,38 +99,45 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("FlowStepUserPermissions");
                 });
 
+            modelBuilder.Entity("Domain.Entities.StageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stages");
+                });
+
             modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CustomerEntityId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAssignedPayment")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCertified")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsReportedDone")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("OwnedByUserEntityId")
+                    b.Property<Guid?>("OwnedByUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Stage")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("StageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerEntityId");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("OwnedByUserEntityId");
+                    b.HasIndex("OwnedByUserId");
+
+                    b.HasIndex("StageId");
 
                     b.ToTable("TravelExpenses");
                 });
@@ -115,9 +148,6 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -126,16 +156,33 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CustomerUserPermissionEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.CustomerEntity", "Customer")
+                        .WithMany("CustomerUserPermissions")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.UserEntity", "User")
+                        .WithMany("CustomerUserPermissions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.FlowStepEntity", b =>
                 {
-                    b.HasOne("Domain.Entities.CustomerEntity", null)
+                    b.HasOne("Domain.Entities.CustomerEntity", "Customer")
                         .WithMany("FlowSteps")
-                        .HasForeignKey("CustomerEntityId");
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("Domain.Entities.StageEntity", "From")
+                        .WithMany()
+                        .HasForeignKey("FromId");
                 });
 
             modelBuilder.Entity("Domain.Entities.FlowStepUserPermissionEntity", b =>
@@ -155,20 +202,17 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>
                 {
-                    b.HasOne("Domain.Entities.CustomerEntity", null)
-                        .WithMany("TravelExpenses")
-                        .HasForeignKey("CustomerEntityId");
-
-                    b.HasOne("Domain.Entities.UserEntity", "OwnedByUserEntity")
-                        .WithMany()
-                        .HasForeignKey("OwnedByUserEntityId");
-                });
-
-            modelBuilder.Entity("Domain.Entities.UserEntity", b =>
-                {
                     b.HasOne("Domain.Entities.CustomerEntity", "Customer")
-                        .WithMany("Users")
+                        .WithMany("TravelExpenses")
                         .HasForeignKey("CustomerId");
+
+                    b.HasOne("Domain.Entities.UserEntity", "OwnedByUser")
+                        .WithMany()
+                        .HasForeignKey("OwnedByUserId");
+
+                    b.HasOne("Domain.Entities.StageEntity", "Stage")
+                        .WithMany()
+                        .HasForeignKey("StageId");
                 });
 #pragma warning restore 612, 618
         }

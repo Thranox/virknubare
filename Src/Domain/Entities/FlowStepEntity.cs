@@ -5,19 +5,27 @@ namespace Domain.Entities
 {
     public class FlowStepEntity : BaseEntity
     {
-        private FlowStepEntity()
+        public FlowStepEntity()
         {
             FlowStepUserPermissions = new List<FlowStepUserPermissionEntity>();
         }
 
-        public FlowStepEntity(string key, TravelExpenseStage from) : this()
+        public FlowStepEntity(string key, StageEntity from, CustomerEntity customer) : this(from,customer)
         {
             Key = key;
-            From = from;
         }
 
+        private FlowStepEntity(StageEntity @from, CustomerEntity customer)
+        {
+            From = from;
+            Customer = customer;
+        }
+
+        public StageEntity From { get; set; }
+        public CustomerEntity Customer { get; set; }
+
         public string Key { get; set; }
-        public TravelExpenseStage From { get; set; }
+        //public TravelExpenseStage From { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
     }
 }

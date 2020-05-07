@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
-using Domain;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
@@ -14,7 +13,7 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateTravelExpenseService(IServiceProvider serviceProvider, IUnitOfWork unitOfWork)
+        public UpdateTravelExpenseService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

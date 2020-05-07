@@ -10,6 +10,14 @@ namespace Tests.Domain.Services
 {
     public class ProcessFlowStepAssignedForPaymentFinalTests
     {
+        private static Mock<IStageService> _stageServiceMock ;
+
+        [SetUp]
+        public void Setup()
+        {
+            _stageServiceMock = new Mock<IStageService>();
+        }
+
         [Test]
         public void CanHandle_KeyForAssignedForPayment_ReturnsTrue()
         {
@@ -31,9 +39,10 @@ namespace Tests.Domain.Services
             TravelExpenseStage travelExpenseStage)
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""));
+            var stageEntity = new StageEntity(travelExpenseStage);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
-            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(travelExpenseStage);
+            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
             var sut = GetSut();
 
@@ -45,23 +54,27 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsFinal()
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""));
+            var stageEntityAssignedForPayment = new StageEntity(TravelExpenseStage.AssignedForPayment);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntityAssignedForPayment);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity))
-                .Returns(TravelExpenseStage.AssignedForPayment);
+                .Returns(stageEntityAssignedForPayment);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
+            var stageEntityFinal = new StageEntity(TravelExpenseStage.Final);
+            _stageServiceMock.Setup(x => x.GetStage(TravelExpenseStage.Final))
+                .Returns(stageEntityFinal);
             var sut = GetSut();
 
             // Act
             var actual = sut.GetResultingStage(travelExpenseEntity);
 
             // Assert
-            Assert.That(actual, Is.EqualTo(TravelExpenseStage.Final));
+            Assert.That(actual.Value, Is.EqualTo(TravelExpenseStage.Final));
         }
 
         private static ProcessFlowStepAssignedForPaymentFinal GetSut()
         {
-            return new ProcessFlowStepAssignedForPaymentFinal();
+            return new ProcessFlowStepAssignedForPaymentFinal(_stageServiceMock.Object);
         }
     }
 }

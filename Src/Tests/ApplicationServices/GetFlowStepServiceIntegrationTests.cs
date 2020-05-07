@@ -5,6 +5,7 @@ using Application.Interfaces;
 using Application.Services;
 using Domain;
 using Domain.Exceptions;
+using Domain.Specifications;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;
@@ -27,31 +28,79 @@ namespace Tests.ApplicationServices
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
-                var v = actual.Result.ToArray();
-                Assert.That(v.Length, Is.EqualTo(4));
-                Assert.That(v,
+                var resultArray = actual.Result.ToArray();
+                Assert.That(resultArray.Length, Is.EqualTo(4));
+                var customer = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .Single();
+
+                var stageEntityInitial = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new StageByValue(TravelExpenseStage.Initial))
+                    .Single();
+
+                var stageEntityReportedDone = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new StageByValue(TravelExpenseStage.ReportedDone))
+                    .Single();
+
+                var stageEntityCertified = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new StageByValue(TravelExpenseStage.Certified))
+                    .Single();
+
+                var stageEntityAssignedForPayment = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new StageByValue(TravelExpenseStage.AssignedForPayment))
+                    .Single();
+
+                var stageEntityFinal = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new StageByValue(TravelExpenseStage.Final))
+                    .Single();
+
+                Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
-                        From = TravelExpenseStage.Initial.ToString(),
-                        Key = Globals.InitialReporteddone
+                        FromStageId = stageEntityInitial.Id,
+                        FromStageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        Key = Globals.InitialReporteddone,
+                        CustomerName = customer.Name,
+                        CustomerId = customer.Id
                     }));
-                Assert.That(v,
+                Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
-                        From = TravelExpenseStage.ReportedDone.ToString(),
-                        Key = Globals.ReporteddoneCertified
+                        FromStageId = stageEntityReportedDone.Id,
+                        FromStageText = Globals.StageNamesDanish[TravelExpenseStage.ReportedDone],
+                        Key = Globals.ReporteddoneCertified,
+                        CustomerName = customer.Name,
+                        CustomerId = customer.Id,
                     }));
-                Assert.That(v,
+                Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
-                        From = TravelExpenseStage.Certified.ToString(),
-                        Key = Globals.CertifiedAssignedForPayment
+                        FromStageId = stageEntityCertified.Id,
+                        FromStageText = Globals.StageNamesDanish[TravelExpenseStage.Certified],
+                        Key = Globals.CertifiedAssignedForPayment,
+                        CustomerName = customer.Name,
+                        CustomerId = customer.Id,
                     }));
-                Assert.That(v,
+                Assert.That(resultArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
-                        From = TravelExpenseStage.AssignedForPayment.ToString(),
-                        Key = Globals.AssignedForPaymentFinal
+                        FromStageId = stageEntityAssignedForPayment.Id,
+                        FromStageText = Globals.StageNamesDanish[TravelExpenseStage.AssignedForPayment],
+                        Key = Globals.AssignedForPaymentFinal,
+                        CustomerName = customer.Name,
+                        CustomerId = customer.Id,
                     }));
             }
         }

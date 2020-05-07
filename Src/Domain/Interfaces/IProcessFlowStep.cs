@@ -5,6 +5,6 @@ namespace Domain.Interfaces
     public interface IProcessFlowStep
     {
         bool CanHandle(string key);
-        TravelExpenseStage GetResultingStage(TravelExpenseEntity travelExpenseEntity);
+        StageEntity GetResultingStage(TravelExpenseEntity travelExpenseEntity);
     }
 }

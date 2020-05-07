@@ -9,7 +9,7 @@ namespace Domain.Specifications
     {
         public TravelExpenseById(Guid id)
         {
-            Criteria = e =>e.Id ==id;
+            Criteria = e => e.Id == id;
         }
 
         public Expression<Func<TravelExpenseEntity, bool>> Criteria { get; }

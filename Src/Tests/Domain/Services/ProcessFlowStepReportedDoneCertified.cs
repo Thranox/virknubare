@@ -10,6 +10,14 @@ namespace Tests.Domain.Services
 {
     public class ProcessFlowStepReportedDoneCertifiedTests
     {
+        private static Mock<IStageService> _stageServiceMock;
+
+        [SetUp]
+        public void Setup()
+        {
+            _stageServiceMock = new Mock<IStageService>();
+        }
+
         [Test]
         public void CanHandle_KeyForReporteddoneCertified_ReturnsTrue()
         {
@@ -30,9 +38,10 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInInvalidStage_ThrowsBusinessRuleViolationException(TravelExpenseStage travelExpenseStage)
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""));
+            var stageEntity = new StageEntity(travelExpenseStage);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
-            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(travelExpenseStage);
+            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
             var sut = GetSut();
 
@@ -45,48 +54,27 @@ namespace Tests.Domain.Services
         public void GetResultingStage_TravelExpenseInValidStage_ReturnsCertified()
         {
             // Arrange
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""));
+            var stageEntity = new StageEntity(TravelExpenseStage.ReportedDone);
+            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
-            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(TravelExpenseStage.ReportedDone);
+            processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
+            var stageEntityCertified=new StageEntity(TravelExpenseStage.Certified);
+            _stageServiceMock.Setup(x => x.GetStage(TravelExpenseStage.Certified))
+                .Returns(stageEntityCertified);
+
             var sut = GetSut();
 
             // Act
             var actual = sut.GetResultingStage(travelExpenseEntity);
 
             // Assert
-            Assert.That(actual, Is.EqualTo(TravelExpenseStage.Certified));
+            Assert.That(actual.Value, Is.EqualTo(TravelExpenseStage.Certified));
         }
 
         private static ProcessFlowStepReportedDoneCertified GetSut()
         {
-            return new ProcessFlowStepReportedDoneCertified();
+            return new ProcessFlowStepReportedDoneCertified(_stageServiceMock.Object);
         }
     }
-}//using Domain;
- //using Domain.Entities;
- //using Domain.Exceptions;
- //using Domain.Interfaces;
- //using Domain.SharedKernel;
-
-//namespace Tests.Domain.Services
-//{
-//    public class ProcessFlowStepReportedDoneCertified : IProcessFlowStep
-//    {
-//        public bool CanHandle(string key)
-//        {
-//            return key == Globals.ReporteddoneCertified;
-//        }
-
-//        public TravelExpenseStage GetResultingStage(TravelExpenseEntity travelExpenseEntity)
-//        {
-//            //BR: Can't be certified if not reported done:
-//            if (travelExpenseEntity.Stage!=TravelExpenseStage.ReportedDone)
-//                throw new BusinessRuleViolationException(travelExpenseEntity.Id, "Rejseafregning kan ikke attesteres da den ikke er færdigmeldt.");
-
-//            travelExpenseEntity.Events.Add(new TravelExpenseUpdatedDomainEvent());
-
-//            return TravelExpenseStage.Certified;
-//        }
-//    }
-//}
+}

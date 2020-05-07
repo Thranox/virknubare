@@ -1,15 +1,19 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using API.Shared;
+using API.Shared.Controllers;
+using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Services;
+using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Web;
-using Web.MapperProfiles;
+using SharedWouldBeNugets;
 
 namespace Tests.TestHelpers
 {
@@ -29,10 +33,14 @@ namespace Tests.TestHelpers
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
 
-            ServicesConfiguration.MapServices(serviceCollection, false);
+            ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
             
             serviceCollection.AddScoped(x => Serilog.Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
+            serviceCollection.AddScoped<TravelExpenseController>();
+            serviceCollection.AddScoped<FlowStepController>();
+
+            serviceCollection.AddScoped<IStageService, StageService>();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
@@ -45,15 +53,22 @@ namespace Tests.TestHelpers
 
         private void SeedDb()
         {
-            using (var dbContext = new PolDbContext(DbContextOptions))
+            var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
+            dbSeeder.Seed();
+
+            using (var unitOfWork=ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
             {
-                dbContext.Seed();
-                var travelExpenseEntities = dbContext.CustomerEntities.First().TravelExpenses.ToList();
+                var customer = unitOfWork
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .SingleOrDefault();
+
+                var travelExpenseEntities = customer.TravelExpenses.ToList();
                 TravelExpenseEntity1 = travelExpenseEntities[0];
                 TravelExpenseEntity2 = travelExpenseEntities[1];
                 TravelExpenseEntity3 = travelExpenseEntities[2];
 
-                dbContext.SaveChanges();
+                unitOfWork.Commit();
             }
         }
 
@@ -61,6 +76,15 @@ namespace Tests.TestHelpers
         {
             var context = new PolDbContext(DbContextOptions);
             return new UnitOfWork(new EfRepository(context));
+        }
+
+        public Guid GetDummyCustomerId()
+        {
+            return CreateUnitOfWork().
+                Repository.
+                List(new CustomerByName(TestData.DummyCustomerName)).
+                Single().
+                Id;
         }
     }
 }

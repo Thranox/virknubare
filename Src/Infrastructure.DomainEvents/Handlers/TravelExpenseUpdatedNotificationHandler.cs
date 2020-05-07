@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Events;
+using Domain.Interfaces;
 using Domain.SharedKernel;
 using Serilog;
 

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Domain.Exceptions;
 using Domain.SharedKernel;
 
 namespace Domain.Entities
@@ -8,7 +11,7 @@ namespace Domain.Entities
         private CustomerEntity()
         {
             FlowSteps = new List<FlowStepEntity>();
-            Users = new List<UserEntity>();
+            CustomerUserPermissions = new List<CustomerUserPermissionEntity>();
             TravelExpenses = new List<TravelExpenseEntity>();
         }
 
@@ -19,7 +22,18 @@ namespace Domain.Entities
 
         public ICollection<TravelExpenseEntity> TravelExpenses { get; }
         public ICollection<FlowStepEntity> FlowSteps { get; }
-        public ICollection<UserEntity> Users { get; }
+        public ICollection<CustomerUserPermissionEntity> CustomerUserPermissions  { get; }
         public string Name { get; set; }
+
+        public void AddUser(UserEntity userEntity, UserStatus userStatus)
+        {
+            if (userEntity == null)
+                throw new ArgumentNullException(nameof(userEntity), "User to be added can't be null");
+
+            if (CustomerUserPermissions.Any(x => x.CustomerId == userEntity.Id))
+                throw new BusinessRuleViolationException(userEntity.Id, "User " + userEntity.Id + " already exists for Customer " + Id);
+
+            CustomerUserPermissions.Add(new CustomerUserPermissionEntity() { User = userEntity, UserStatus = userStatus });
+        }
     }
 }
