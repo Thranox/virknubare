@@ -1,11 +1,9 @@
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
-using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -13,7 +11,7 @@ using NUnit.Framework;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
 
-namespace Tests.Web.Controllers
+namespace Tests.API.Controllers
 {
     public class SubmissionControllerIntegrationTests
     {
