@@ -14,7 +14,7 @@ using NUnit.Framework;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
 
-namespace Tests.Web.Controllers
+namespace Tests.API.Controllers
 {
     public class FlowStepControllerIntegrationTests
     {
