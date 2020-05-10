@@ -64,7 +64,7 @@ namespace PolAPI
                 c =>
                 {
                     c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version);
-                    c.DocumentTitle = "PolAPI OPEN " + env.WebRootPath;
+                    c.DocumentTitle = "PolAPI";
                 });
 
             app.UseRouting();

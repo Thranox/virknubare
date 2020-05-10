@@ -75,7 +75,11 @@ namespace Web
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", Title + " " + CommonApi.Version));
+                c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", Title + " " + CommonApi.Version);
+                    c.DocumentTitle = "Web hosted API";
+                });
 
             app.UseStaticFiles();
             if (!env.IsDevelopment()) app.UseSpaStaticFiles();
