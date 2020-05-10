@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIOPEN", "APIOPEN\APIOPEN.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolAPI", "PolAPI\PolAPI.csproj", "{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Messaging", "Infrastructure.Messaging\Infrastructure.Messaging.csproj", "{B1580232-0C68-4512-9B32-EB22582C45DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1580232-0C68-4512-9B32-EB22582C45DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1580232-0C68-4512-9B32-EB22582C45DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1580232-0C68-4512-9B32-EB22582C45DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1580232-0C68-4512-9B32-EB22582C45DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
