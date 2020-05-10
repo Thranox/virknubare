@@ -60,7 +60,11 @@ namespace APIOPEN
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version));
+                c =>
+                {
+                    c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version);
+                    c.DocumentTitle = "API OPEN "+env.WebRootPath;
+                });
 
             app.UseRouting();
 

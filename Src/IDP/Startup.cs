@@ -104,7 +104,11 @@ namespace IDP
 
         public void Configure(IApplicationBuilder app, ILogger logger, ICorsPolicyService corsPolicyService)
         {
-            (corsPolicyService as DefaultCorsPolicyService).AllowAll = true;
+            if (corsPolicyService is DefaultCorsPolicyService defaultCorsPolicyService)
+            {
+                defaultCorsPolicyService.AllowAll = true;
+            }
+
             Log.Information("Ensuring database is migrated and seeded...");
             var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
             var connectionString = connectionStringService.GetConnectionString("DefaultConnection");
