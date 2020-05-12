@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using SendGrid;
@@ -9,9 +11,26 @@ namespace Tests.Web
     public class MailSendingTests
     {
         [Test]
-        [Explicit]
+        //[Explicit]
         public async Task SendEmail()
         {
+
+            var smtp = new SmtpClient();
+            {
+                smtp.Host = "172.20.157.15";
+                smtp.Port = 25;
+                smtp.EnableSsl = false;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.Credentials = new NetworkCredential("", "");
+                smtp.Timeout = 100000;
+            }
+            var subject = "Test";
+            var body = "Test email from SMTP server";
+            var fromAddress = "tobias.jensen@improvento.com";
+            var toAddress = "tobias.jensen@improvento.com";
+            await smtp.SendMailAsync(fromAddress, toAddress, subject, body);
+            
+            /*
             // Note: This API Key for sendgrid is for dev & test only. If we use sendgrid for production we need an improvento account.
             var client = new SendGridClient("SG"+
                                             "."+
@@ -23,7 +42,7 @@ namespace Tests.Web
 
             // Send a Single Email using the Mail Helper
             var from = new EmailAddress("andersjuulsfirma@gmail.com", "Anders Juul");
-            var subject = "Hello World from the Twilio SendGrid CSharp Library Helper!";
+            //var subject = "Hello World from the Twilio SendGrid CSharp Library Helper!";
             var to = new EmailAddress("andersjuulsfirma@gmail.com", "Anders Juul");
             var plainTextContent = "Hello, Email from the helper [SendSingleEmailAsync]!";
             var htmlContent = "<strong>Hello, Email from the helper! [SendSingleEmailAsync]</strong>";
@@ -48,6 +67,7 @@ namespace Tests.Web
             Console.WriteLine(response.StatusCode);
             Console.WriteLine(response.Headers);
             Console.WriteLine("\n\nPress <Enter> to continue.");
+            */
         }
     }
 }
