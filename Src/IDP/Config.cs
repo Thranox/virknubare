@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using SharedWouldBeNugets;
 
 namespace IdentityServerAspNetIdentit
 {
@@ -20,7 +21,8 @@ namespace IdentityServerAspNetIdentit
                     "Your roles(s)",
                     new List<string>
                     {
-                        "role"
+                        "role",
+                        ImproventoGlobals.ImproventoSubClaimName
                     }
                 )
             };
@@ -36,7 +38,8 @@ namespace IdentityServerAspNetIdentit
                     JwtClaimTypes.EmailVerified,
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
-                    JwtClaimTypes.Role
+                    JwtClaimTypes.Role,
+                    ImproventoGlobals.ImproventoSubClaimName
                 })
             };
 
