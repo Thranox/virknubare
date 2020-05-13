@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using API.Shared;
 using API.Shared.Controllers;
+using API.Shared.Services;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
@@ -39,8 +40,6 @@ namespace Tests.TestHelpers
             serviceCollection.AddScoped(x => CreateUnitOfWork());
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
-
-            serviceCollection.AddScoped<IStageService, StageService>();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
@@ -85,6 +84,12 @@ namespace Tests.TestHelpers
                 List(new CustomerByName(TestData.DummyCustomerName1)).
                 Single().
                 Id;
+        }
+
+        public void SetCallingUserBySub(string sub)
+        {
+            (ServiceProvider.GetRequiredService<ISubManagementService>() as FakeSubManagementService)
+                .Sub = sub;
         }
     }
 }

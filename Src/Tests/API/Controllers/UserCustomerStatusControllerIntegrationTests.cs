@@ -16,14 +16,23 @@ namespace Tests.API.Controllers
 {
     public class UserCustomerStatusControllerIntegrationTests
     {
+        private static Mock<ISubManagementService> subManagementService;
+
+        [SetUp]
+        public void SetUp()
+        {
+            subManagementService = new Mock<ISubManagementService>();
+        }
+
         [Test]
         public async Task Get_NoParameters_ReturnsTravelExpenses()
         {
             // Arrange
+            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyAdminSubDennis);
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = GetSut(testContext);
-
+                
                 // Act
                 var actual = await sut.Put(new Guid( TestData.DummyLedSubCharlie), testContext.GetDummyCustomerId(), "Registered");
 
@@ -38,9 +47,6 @@ namespace Tests.API.Controllers
 
         private static UserCustomerStatusController GetSut(IntegrationTestContext testContext)
         {
-            var subManagementService = new Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
-
             return new UserCustomerStatusController(subManagementService.Object,
                 testContext.ServiceProvider.GetService<IUserCustomerStatusService>());
         }

@@ -165,6 +165,7 @@ namespace IdentityServerAspNetIdentit
                         }
 
                         result = userMgr.AddClaimsAsync(charlie, new Claim[]{
+                            new Claim(ImproventoGlobals.ImproventoSubClaimName, TestData.DummyAdminSubDennis),
                             new Claim(JwtClaimTypes.Name, "Dennis The Menace"),
                             new Claim(JwtClaimTypes.GivenName, "Dennis"),
                             new Claim(JwtClaimTypes.FamilyName, "Menace"),
@@ -199,6 +200,7 @@ namespace IdentityServerAspNetIdentit
                         }
 
                         result = userMgr.AddClaimsAsync(charlie, new Claim[]{
+                            new Claim(ImproventoGlobals.ImproventoSubClaimName, TestData.DummyInitialSubEdward),
                             new Claim(JwtClaimTypes.Name, "Edward Norton"),
                             new Claim(JwtClaimTypes.GivenName, "Edward"),
                             new Claim(JwtClaimTypes.FamilyName, "Norton"),

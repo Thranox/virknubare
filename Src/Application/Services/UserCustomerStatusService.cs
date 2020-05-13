@@ -21,14 +21,16 @@ namespace Application.Services
 
         public Task<UserCustomerStatusPutResponse> PutAsync(string sub, Guid userId, Guid customerId, string userStatus)
         {
-            var userEntity = _unitOfWork.Repository.List(new UserBySub(sub)).SingleOrDefault();
+            var callingUserEntity = _unitOfWork.Repository.List(new UserBySub(sub)).SingleOrDefault();
 
-            var userIsAdmin = userEntity
+            var callingUserIsAdmin = callingUserEntity
                 .CustomerUserPermissions
                 .Any(x => x.CustomerId == customerId && x.UserStatus == UserStatus.UserAdministrator);
 
-            if (!userIsAdmin)
+            if (!callingUserIsAdmin)
                 throw new BusinessRuleViolationException(userId, "Can't change as calling user is not admin.");
+
+            var userStatuses = (UserStatus[]) Enum.GetValues(typeof(UserStatus));
 
             throw new NotImplementedException();
         }
