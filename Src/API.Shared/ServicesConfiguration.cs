@@ -112,6 +112,7 @@ namespace API.Shared
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
             services.AddScoped<IGetStatisticsService, GetStatisticsService>();
+            services.AddScoped<IUserCustomerStatusService, UserCustomerStatusService>();
 
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();

@@ -60,7 +60,7 @@ namespace Tests.TestHelpers
             {
                 var customer = unitOfWork
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
                     .SingleOrDefault();
 
                 var travelExpenseEntities = customer.TravelExpenses.ToList();
@@ -82,7 +82,7 @@ namespace Tests.TestHelpers
         {
             return CreateUnitOfWork().
                 Repository.
-                List(new CustomerByName(TestData.DummyCustomerName)).
+                List(new CustomerByName(TestData.DummyCustomerName1)).
                 Single().
                 Id;
         }

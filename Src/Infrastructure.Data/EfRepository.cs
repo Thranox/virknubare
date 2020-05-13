@@ -67,6 +67,7 @@ namespace Infrastructure.Data
                     .Include(g => g.FlowStepUserPermissions)
                     .ThenInclude(gg => gg.FlowStep)
                     .ThenInclude(ggg=>ggg.From)
+                    .Include(g=>g.CustomerUserPermissions)
                     //.Include(g => g.Customer)
                     //.ThenInclude(gg=>gg.TravelExpenses)
                     ;

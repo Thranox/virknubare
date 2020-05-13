@@ -42,7 +42,7 @@ namespace Tests.API.Controllers
             subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
 
             return new UserCustomerStatusController(subManagementService.Object,
-                testContext.ServiceProvider.GetService<IUserCustomerStatusService>(), testContext.CreateUnitOfWork());
+                testContext.ServiceProvider.GetService<IUserCustomerStatusService>());
         }
     }
 }

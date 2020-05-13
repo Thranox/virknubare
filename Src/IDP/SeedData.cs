@@ -67,7 +67,7 @@ namespace IdentityServerAspNetIdentit
                         new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                         new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
                         new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
-                    }).Result;
+                        }).Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
@@ -146,6 +146,75 @@ namespace IdentityServerAspNetIdentit
                     {
                         Log.Debug("charlie already exists");
                     }
+
+                    var dennis = userMgr.FindByNameAsync("dennis").Result;
+                    if (dennis == null)
+                    {
+                        dennis = new ApplicationUser
+                        {
+                            UserName = "dennis"
+                        };
+                        var result = userMgr.CreateAsync(dennis, "Pass123$").Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(charlie, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Dennis The Menace"),
+                            new Claim(JwtClaimTypes.GivenName, "Dennis"),
+                            new Claim(JwtClaimTypes.FamilyName, "Menace"),
+                            new Claim(JwtClaimTypes.Email, "DennisTheMenace@email.com"),
+                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                            new Claim(JwtClaimTypes.WebSite, "http://dennis.com"),
+                            new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
+                            new Claim("location", "somewhere")
+                        }).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                        Log.Debug("dennis created");
+                    }
+                    else
+                    {
+                        Log.Debug("dennis already exists");
+                    }
+
+                    var edward= userMgr.FindByNameAsync("edward").Result;
+                    if (edward == null)
+                    {
+                        edward = new ApplicationUser
+                        {
+                            UserName = "edward"
+                        };
+                        var result = userMgr.CreateAsync(edward, "Pass123$").Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(charlie, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Edward Norton"),
+                            new Claim(JwtClaimTypes.GivenName, "Edward"),
+                            new Claim(JwtClaimTypes.FamilyName, "Norton"),
+                            new Claim(JwtClaimTypes.Email, "EdwardNorton@email.com"),
+                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                            new Claim(JwtClaimTypes.WebSite, "http://edward.com"),
+                            new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
+                            new Claim("location", "somewhere")
+                        }).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                        Log.Debug("edward created");
+                    }
+                    else
+                    {
+                        Log.Debug("edward already exists");
+                    }
+
                 }
             }
         }
