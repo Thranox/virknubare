@@ -45,6 +45,7 @@ namespace API.Shared
         }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
+            services.AddControllers();
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
             services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
@@ -59,26 +60,26 @@ namespace API.Shared
 
 
                     Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
-                })
-                ;
-            var assembly = typeof(TravelExpenseController).Assembly;
-            services.AddControllersWithViews(options =>
-                {
-                    // Include handling of Domain Exceptions
-                    options.Filters.Add<HttpResponseExceptionFilter>();
-                    // Log all entries and exits of controller methods.
-                    options.Filters.Add<MethodLoggingActionFilter>();
+                });
 
-                    // If desired, be set up a global Authorize filter
-                    if (enforceAuthenticated)
-                    {
-                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
-                    }
-                })
-                .AddApplicationPart(assembly);
+            //var assembly = typeof(TravelExpenseController).Assembly;
+            //services.AddControllersWithViews(options =>
+            //    {
+            //        // Include handling of Domain Exceptions
+            //        options.Filters.Add<HttpResponseExceptionFilter>();
+            //        // Log all entries and exits of controller methods.
+            //        options.Filters.Add<MethodLoggingActionFilter>();
+
+            //        // If desired, be set up a global Authorize filter
+            //        if (enforceAuthenticated)
+            //        {
+            //            var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
+            //                .RequireAuthenticatedUser()
+            //                .Build();
+            //            options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
+            //        }
+            //    })
+            //    .AddApplicationPart(assembly);
 
             services.AddSwaggerGen(x =>
             {
@@ -87,11 +88,7 @@ namespace API.Shared
 
             MapServices(services, enforceAuthenticated, configuration);
 
-            services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
-
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            services.AddControllers();
         }
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
