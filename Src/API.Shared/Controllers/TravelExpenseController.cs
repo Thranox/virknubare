@@ -60,12 +60,12 @@ namespace API.Shared.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id,
-            TravelExpenseUpdateDto travelExpenseUpdateDto)
+        [HttpPut]
+        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(
+            [FromBody] TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var sub = _subManagementService.GetSub(User);
-            var travelExpenseDtos = await _updateTravelExpenseService.UpdateAsync(id, travelExpenseUpdateDto, sub);
+            var travelExpenseDtos = await _updateTravelExpenseService.UpdateAsync(travelExpenseUpdateDto.Id, travelExpenseUpdateDto, sub);
 
             return Ok(travelExpenseDtos);
         }
