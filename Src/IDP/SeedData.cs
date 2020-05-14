@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace IdentityServerAspNetIdentit
 {
@@ -60,6 +61,7 @@ namespace IdentityServerAspNetIdentit
                         }
 
                         result = userMgr.AddClaimsAsync(alice, new Claim[]{
+                        new Claim(ImproventoGlobals.ImproventoSubClaimName, TestData.DummyPolSubAlice), 
                         new Claim(JwtClaimTypes.Name, "Alice Smith"),
                         new Claim(JwtClaimTypes.GivenName, "Alice"),
                         new Claim(JwtClaimTypes.FamilyName, "Smith"),
@@ -93,6 +95,7 @@ namespace IdentityServerAspNetIdentit
                         }
 
                         result = userMgr.AddClaimsAsync(bob, new Claim[]{
+                            new Claim(ImproventoGlobals.ImproventoSubClaimName, TestData.DummySekSubBob),
                             new Claim(JwtClaimTypes.Name, "Bob Smith"),
                             new Claim(JwtClaimTypes.GivenName, "Bob"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
@@ -127,6 +130,7 @@ namespace IdentityServerAspNetIdentit
                         }
 
                         result = userMgr.AddClaimsAsync(charlie, new Claim[]{
+                            new Claim(ImproventoGlobals.ImproventoSubClaimName, TestData.DummyLedSubCharlie),
                             new Claim(JwtClaimTypes.Name, "Charlie Brown"),
                             new Claim(JwtClaimTypes.GivenName, "Charlie"),
                             new Claim(JwtClaimTypes.FamilyName, "Brown"),
