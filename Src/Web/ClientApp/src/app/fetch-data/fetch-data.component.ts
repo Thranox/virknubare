@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from "../core/auth-service.component";
+import {Constants} from "../constants";
 
 @Component({
   selector: 'app-fetch-data',
@@ -16,9 +17,10 @@ export class FetchDataComponent {
         this.forecasts = null;
       } else {
         //baseUrl = 'https://localhost:44324/'; // Api via WebApp's own API
-        baseUrl = 'https://localhost:44348/'; //PolAPI
+        //baseUrl = 'https://localhost:44348/'; //PolAPI
         //baseUrl = 'https://andersathome.dk/polapi/'; //PolAPI
         //baseUrl = 'https://ajf-prod-02/polapi/'; //PolAPI
+        baseUrl = Constants.apiRoot;
         console.info('Calling with token:' + token);
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
         http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { headers: headers }).subscribe(result => {
