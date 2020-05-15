@@ -9,13 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Shared.Controllers
 {
     [ApiController]
+    [Route("travelexpenses")]
     public class TravelExpenseController : ControllerBase
     {
-        private readonly IGetTravelExpenseService _getTravelExpenseService;
-        private readonly IUpdateTravelExpenseService _updateTravelExpenseService;
         private readonly ICreateTravelExpenseService _createTravelExpenseService;
-        private readonly ISubManagementService _subManagementService;
+        private readonly IGetTravelExpenseService _getTravelExpenseService;
         private readonly IProcessStepTravelExpenseService _processStepTravelExpenseService;
+        private readonly ISubManagementService _subManagementService;
+        private readonly IUpdateTravelExpenseService _updateTravelExpenseService;
 
         public TravelExpenseController(IProcessStepTravelExpenseService processStepTravelExpenseService,
             IGetTravelExpenseService getTravelExpenseService,
@@ -30,18 +31,20 @@ namespace API.Shared.Controllers
             _subManagementService = subManagementService;
         }
 
-        [HttpPost("travelexpenses/{id}/ProcessStep/{processStepKey}")]
+        [HttpPost("{id}/ProcessStep/{processStepKey}")]
         public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(Guid id, string processStepKey)
         {
-            var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto {TravelExpenseId = id, ProcessStepKey = processStepKey};
+            var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto
+                {TravelExpenseId = id, ProcessStepKey = processStepKey};
             var sub = _subManagementService.GetSub(User);
 
-            var travelExpenseDtos = await _processStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
+            var travelExpenseDtos =
+                await _processStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
 
             return Ok(travelExpenseDtos);
         }
 
-        [HttpGet("travelexpenses/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<TravelExpenseGetByIdResponse>> GetById(Guid id)
         {
             var sub = _subManagementService.GetSub(User);
@@ -50,7 +53,7 @@ namespace API.Shared.Controllers
             return Ok(travelExpenseDto);
         }
 
-        [HttpGet("travelexpenses")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
         {
             var sub = _subManagementService.GetSub(User);
@@ -59,21 +62,22 @@ namespace API.Shared.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPut("travelexpense")]
-        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(
+        [HttpPut("{id}")]
+        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id,
             [FromBody] TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var sub = _subManagementService.GetSub(User);
-            var travelExpenseDtos = await _updateTravelExpenseService.UpdateAsync(travelExpenseUpdateDto.Id, travelExpenseUpdateDto, sub);
+            var travelExpenseDtos =
+                await _updateTravelExpenseService.UpdateAsync(id, travelExpenseUpdateDto, sub);
 
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPost("newtravelexpense")]
+        [HttpPost]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             var sub = _subManagementService.GetSub(User);
-            var travelExpenseDtos = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto,sub);
+            var travelExpenseDtos = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto, sub);
 
             return Created(nameof(GetById), travelExpenseDtos);
         }
