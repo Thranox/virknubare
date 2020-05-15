@@ -58,6 +58,7 @@ namespace PolAPI
             });
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            app.UseMiddleware<ErrorWrappingMiddleware>();
 
             app.UseSwagger();
             app.UseSwaggerUI(

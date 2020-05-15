@@ -22,6 +22,7 @@ namespace PolAPI
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
                 });
