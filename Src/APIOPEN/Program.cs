@@ -21,6 +21,7 @@ namespace APIOPEN
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
                 });

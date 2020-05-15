@@ -45,6 +45,7 @@ namespace API.Shared
         }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
+            services.AddControllers();
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
             services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
@@ -59,8 +60,8 @@ namespace API.Shared
 
 
                     Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
-                })
-                ;
+                });
+
             var assembly = typeof(TravelExpenseController).Assembly;
             services.AddControllersWithViews(options =>
                 {
@@ -87,11 +88,7 @@ namespace API.Shared
 
             MapServices(services, enforceAuthenticated, configuration);
 
-            services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
-
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            services.AddControllers();
         }
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
@@ -113,6 +110,7 @@ namespace API.Shared
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
             services.AddScoped<IGetStatisticsService, GetStatisticsService>();
             services.AddScoped<IUserCustomerStatusService, UserCustomerStatusService>();
+            services.AddScoped<IGetUserInfoService, GetUserInfoService>();
 
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();
@@ -137,5 +135,4 @@ namespace API.Shared
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
     }
-
 }
