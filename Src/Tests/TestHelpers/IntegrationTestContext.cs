@@ -8,7 +8,6 @@ using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Services;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

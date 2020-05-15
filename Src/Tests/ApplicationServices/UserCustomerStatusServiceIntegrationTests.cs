@@ -13,6 +13,7 @@ namespace Tests.ApplicationServices
     public class UserCustomerStatusServiceIntegrationTests
     {
         [Test]
+        [Ignore("Not done")]
         public async Task GetAsync_NoParameters_ReturnsFlowSteps()
         {
             // Arrange
