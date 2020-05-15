@@ -1,5 +1,4 @@
 using API.Shared;
-using IDP.Services;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -70,7 +69,7 @@ namespace APIOPEN
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
 
             logger.Information("TravelExpense APIOPEN started. Version=" + _configuration.GetValue<string>("Version"));
         }

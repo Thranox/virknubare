@@ -86,11 +86,11 @@ namespace Tests.API.Controllers
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Description = newDescription};
+                        {Description = newDescription, Id = existingId};
                     var sut = GetSut(testContext);
 
                     // Act
-                    actual = await sut.Put(existingId,travelExpenseUpdateDto);
+                    actual = await sut.Put(travelExpenseUpdateDto);
                 }
 
                 // Assert
@@ -118,13 +118,13 @@ namespace Tests.API.Controllers
             {
                 var newDescription = testContext.Fixture.Create<string>();
                 var existingId = Guid.NewGuid();
-                var travelExpenseUpdateDto = new TravelExpenseUpdateDto {Description = newDescription};
+                var travelExpenseUpdateDto = new TravelExpenseUpdateDto {Description = newDescription, Id = existingId };
 
                 var sut = GetSut(testContext);
 
                 // Act
                 var travelExpenseNotFoundByIdException =
-                    Assert.ThrowsAsync<ItemNotFoundException>(async () => await sut.Put(existingId,travelExpenseUpdateDto));
+                    Assert.ThrowsAsync<ItemNotFoundException>(async () => await sut.Put(travelExpenseUpdateDto));
 
                 // Assert
                 Assert.That(travelExpenseNotFoundByIdException, Is.Not.Null);
@@ -144,13 +144,13 @@ namespace Tests.API.Controllers
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existing.ApplyProcessStep(testContext.ServiceProvider.GetServices<IProcessFlowStep>().Single(x=>x.CanHandle(Globals.InitialReporteddone)));
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Description = newDescription};
+                        {Description = newDescription,Id = existing.Id };
                     var sut = GetSut(testContext);
 
                     // Act
                     var businessRuleViolationException =
                         Assert.ThrowsAsync<BusinessRuleViolationException>(async () =>
-                            await sut.Put(existing.Id,travelExpenseUpdateDto));
+                            await sut.Put(travelExpenseUpdateDto));
 
                     // Assert
                     Assert.That(businessRuleViolationException, Is.Not.Null);

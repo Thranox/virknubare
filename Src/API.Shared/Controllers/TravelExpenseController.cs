@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Shared.Controllers
 {
     [ApiController]
-    [Route("travelexpenses")]
     public class TravelExpenseController : ControllerBase
     {
         private readonly IGetTravelExpenseService _getTravelExpenseService;
@@ -31,7 +30,7 @@ namespace API.Shared.Controllers
             _subManagementService = subManagementService;
         }
 
-        [HttpPost("{id}/ProcessStep/{processStepKey}")]
+        [HttpPost("travelexpenses/{id}/ProcessStep/{processStepKey}")]
         public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(Guid id, string processStepKey)
         {
             var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto {TravelExpenseId = id, ProcessStepKey = processStepKey};
@@ -42,7 +41,7 @@ namespace API.Shared.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("travelexpenses/{id}")]
         public async Task<ActionResult<TravelExpenseGetByIdResponse>> GetById(Guid id)
         {
             var sub = _subManagementService.GetSub(User);
@@ -51,7 +50,7 @@ namespace API.Shared.Controllers
             return Ok(travelExpenseDto);
         }
 
-        [HttpGet]
+        [HttpGet("travelexpenses")]
         public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
         {
             var sub = _subManagementService.GetSub(User);
@@ -60,17 +59,17 @@ namespace API.Shared.Controllers
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id,
-            TravelExpenseUpdateDto travelExpenseUpdateDto)
+        [HttpPut("travelexpense")]
+        public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(
+            [FromBody] TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var sub = _subManagementService.GetSub(User);
-            var travelExpenseDtos = await _updateTravelExpenseService.UpdateAsync(id, travelExpenseUpdateDto, sub);
+            var travelExpenseDtos = await _updateTravelExpenseService.UpdateAsync(travelExpenseUpdateDto.Id, travelExpenseUpdateDto, sub);
 
             return Ok(travelExpenseDtos);
         }
 
-        [HttpPost]
+        [HttpPost("newtravelexpense")]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             var sub = _subManagementService.GetSub(User);
