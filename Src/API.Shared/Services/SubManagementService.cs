@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Claims;
+using SharedWouldBeNugets;
 
 namespace API.Shared.Services
 {
@@ -9,7 +10,7 @@ namespace API.Shared.Services
         {
             var userIdentity = claimsPrincipal.Identity;
             var claims = (userIdentity as ClaimsIdentity).Claims;
-            var sub = claims.Single(x => x.Type == "sub").Value;
+            var sub = claims.Single(x => x.Type == ImproventoGlobals.ImproventoSubClaimName).Value;
             return sub;
         }
     }
