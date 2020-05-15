@@ -56,7 +56,7 @@ namespace APIOPEN
             });
 
             app.UseHttpsRedirection();
-
+            app.UseMiddleware<ErrorWrappingMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI(
                 c =>

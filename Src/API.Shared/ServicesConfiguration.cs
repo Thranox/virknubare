@@ -133,5 +133,4 @@ namespace API.Shared
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
         }
     }
-
 }
