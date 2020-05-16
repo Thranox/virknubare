@@ -18,7 +18,7 @@ namespace API.Shared.Controllers
             _adminService = adminService;
         }
 
-        [HttpPost("/databasereset")]
+        [HttpPost("databasereset")]
         public async Task<ActionResult> DatabaseReset()
         {
             var sub = _subManagementService.GetSub(User);

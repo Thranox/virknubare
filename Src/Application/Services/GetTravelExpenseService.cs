@@ -63,7 +63,7 @@ namespace Application.Services
             return await Task.FromResult(new TravelExpenseGetResponse
             {
                 Result = rees
-                    .Select(x => _mapper.Map<TravelExpenseDto>(x))
+                    .Select(x => _mapper.Map<TravelExpenseDto>(x)).ToArray()
             });
         }
 

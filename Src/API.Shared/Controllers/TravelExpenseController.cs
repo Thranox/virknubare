@@ -54,7 +54,7 @@ namespace API.Shared.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TravelExpenseDto>>> Get()
+        public async Task<ActionResult<TravelExpenseGetResponse>> Get()
         {
             var sub = _subManagementService.GetSub(User);
             var travelExpenseDtos = await _getTravelExpenseService.GetAsync(sub);

@@ -89,8 +89,8 @@ namespace IdentityServerAspNetIdentit
                         "http://localhost:50627"
                     },
                     AccessTokenType = AccessTokenType.Jwt,
-                    //AccessTokenLifetime = 15 * 60 * 60 // 15 hrs
-                    AccessTokenLifetime = 730*24 * 60 * 60 // 2 yrs
+                    AccessTokenLifetime = 15 * 60 * 60 // 15 hrs
+                    //AccessTokenLifetime = 730*24 * 60 * 60 // 2 yrs
                 }
             };
     }

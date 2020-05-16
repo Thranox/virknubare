@@ -10,6 +10,7 @@ using CommandLine;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
 using Newtonsoft.Json;
+using RestSharp;
 
 namespace Kata
 {
@@ -36,30 +37,43 @@ namespace Kata
             _jwtUsers = JsonConvert.DeserializeObject<JwtUser[]>(json);
 
 
-            HttpResponseMessage response;
 
-            // Reset test data in database. This requires God access.
-            _apiClient.SetBearerToken(_jwtUsers.Single(x => x.Name == "alice").AccessToken);
-            response = await _apiClient.PostAsync("/Admin/DatabaseReset", new StringContent(""));
 
-            // As Alice (politician), get all Travel Expenses (that is, all she can see)
-            _apiClient.SetBearerToken(_jwtUsers.Single(x => x.Name == "alice").AccessToken);
-            response = await _apiClient.GetAsync("/TravelExpenses");
-
-            // Still alice, create new Travel Expense
-            response = await _apiClient.PostAsync(
-                "/TravelExpenses", 
-                new StringContent(
-                    JsonConvert.SerializeObject( 
-                        new TravelExpenseCreateDto
-                        {
-                            CustomerId = Guid.Empty, 
-                            Description = "Created by Kata"
-                        }), 
-                    Encoding.UTF8, 
-                    "application/json"));
-
+            Console.WriteLine("Press enter...");
             Console.ReadLine();
+
+            do
+            {
+                HttpResponseMessage response;
+
+                IRestClient restClient = new RestClient(new Uri(_api));
+                restClient.AddDefaultHeader("Authorization", $"Bearer {_jwtUsers.Single(x => x.Name == "alice").AccessToken}");
+                var travelExpenseDtos = await restClient.GetAsync<TravelExpenseGetResponse>(new RestRequest(new Uri("/travelexpenses",UriKind.Relative)));
+
+                // Reset test data in database. This requires God access.
+                _apiClient.SetBearerToken(_jwtUsers.Single(x => x.Name == "alice").AccessToken);
+                response = await _apiClient.PostAsync("/Admin/DatabaseReset", new StringContent(""));
+
+                // As Alice (politician), get all Travel Expenses (that is, all she can see)
+                _apiClient.SetBearerToken(_jwtUsers.Single(x => x.Name == "alice").AccessToken);
+                response = await _apiClient.GetAsync("/TravelExpenses");
+
+                // Still alice, create new Travel Expense
+                response = await _apiClient.PostAsync(
+                    "/TravelExpenses",
+                    new StringContent(
+                        JsonConvert.SerializeObject(
+                            new TravelExpenseCreateDto
+                            {
+                                CustomerId = Guid.Empty,
+                                Description = "Created by Kata"
+                            }),
+                        Encoding.UTF8,
+                        "application/json"));
+
+                Console.WriteLine("Press enter...");
+                Console.ReadLine();
+            } while (true);
         }
 
         private static async Task HandleParseError(IEnumerable<Error> errs)
