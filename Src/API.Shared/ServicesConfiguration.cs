@@ -12,7 +12,6 @@ using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
 using IdentityServer4.AccessTokenValidation;
-using IDP.Services;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
@@ -110,6 +109,7 @@ namespace API.Shared
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
             services.AddScoped<IGetStatisticsService, GetStatisticsService>();
             services.AddScoped<IGetUserInfoService, GetUserInfoService>();
+            services.AddScoped<IAdminService, AdminService>();
 
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();

@@ -67,8 +67,8 @@ namespace Infrastructure.Data
                     .Include(g => g.FlowStepUserPermissions)
                     .ThenInclude(gg => gg.FlowStep)
                     .ThenInclude(ggg=>ggg.From)
-                    //.Include(g => g.Customer)
-                    //.ThenInclude(gg=>gg.TravelExpenses)
+                    .Include(g=>g.CustomerUserPermissions)
+                    .Include(g=>g.TravelExpenses)
                     ;
                 if (spec != null)
                 {

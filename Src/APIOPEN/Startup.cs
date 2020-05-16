@@ -1,4 +1,5 @@
 using API.Shared;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,7 @@ namespace APIOPEN
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
+                dbSeeder.RemoveTestData().Wait();
                 dbSeeder.Seed();
                 logger.Information("Done Db Migration and Seeding...");
             });
