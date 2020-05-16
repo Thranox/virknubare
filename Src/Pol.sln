@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIOPEN", "APIOPEN\APIOPEN.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolAPI", "PolAPI\PolAPI.csproj", "{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata", "Kata\Kata.csproj", "{E4E22B9F-555A-491B-B70C-658D175DA4A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4E22B9F-555A-491B-B70C-658D175DA4A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4E22B9F-555A-491B-B70C-658D175DA4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4E22B9F-555A-491B-B70C-658D175DA4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4E22B9F-555A-491B-B70C-658D175DA4A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
