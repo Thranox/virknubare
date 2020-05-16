@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
@@ -32,11 +31,11 @@ namespace Application.Services
             if(user==null)
                 throw new ItemNotFoundException(sub, "UserEntity");
 
-            return new UserInfoGetResponse
+            return await Task.FromResult( new UserInfoGetResponse
             {
                 UserCustomerInfo = GetUserCustomerInfo(user.CustomerUserPermissions)
                     .ToArray()
-            };
+            });
         }
 
         private IEnumerable<UserCustomerInfo> GetUserCustomerInfo(ICollection<CustomerUserPermissionEntity> customerUserPermissions)
@@ -47,7 +46,8 @@ namespace Application.Services
                 {
                     CustomerId = customerUserPermissionEntity.CustomerId,
                     CustomerName = customerUserPermissionEntity.Customer.Name,
-                    UserCustomerStatus =Globals.UserStatusNamesDanish[customerUserPermissionEntity.UserStatus]
+                    UserCustomerStatusText =Globals.UserStatusNamesDanish[customerUserPermissionEntity.UserStatus],
+                    UserCustomerStatus=(int) customerUserPermissionEntity.UserStatus
                 };
             }
         }
