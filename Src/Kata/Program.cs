@@ -9,8 +9,11 @@ using Application.Dtos;
 using CommandLine;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
+using Serilog;
+using SharedWouldBeNugets;
 
 namespace Kata
 {
@@ -36,8 +39,10 @@ namespace Kata
             var json = File.ReadAllText(Path.Combine(expectedDir, "jwts.json"));
             _jwtUsers = JsonConvert.DeserializeObject<JwtUser[]>(json);
 
+            var cb=new ConfigurationBuilder();
+            StartupHelper.SetupConfig(new string[]{}, cb, "Development");
 
-
+            var logger = StartupHelper.CreateLogger(cb.Build(), "Kata");
 
             Console.WriteLine("Press enter...");
             Console.ReadLine();
@@ -46,34 +51,53 @@ namespace Kata
             {
                 HttpResponseMessage response;
 
-                IRestClient restClient = new RestClient(new Uri(_api));
-                restClient.AddDefaultHeader("Authorization", $"Bearer {_jwtUsers.Single(x => x.Name == "alice").AccessToken}");
-                var travelExpenseDtos = await restClient.GetAsync<TravelExpenseGetResponse>(new RestRequest(new Uri("/travelexpenses",UriKind.Relative)));
-
                 // Reset test data in database. This requires God access.
-                _apiClient.SetBearerToken(_jwtUsers.Single(x => x.Name == "alice").AccessToken);
-                response = await _apiClient.PostAsync("/Admin/DatabaseReset", new StringContent(""));
+                logger.Debug("Resetting Database...");
+                var restClient = GetRestClient("alice");
+                await restClient.PostAsync<object>(new RestRequest(new Uri("/Admin/DatabaseReset", UriKind.Relative)));
+                logger.Debug("Database reset.");
+
+                Console.WriteLine("Press enter...");
+                Console.ReadLine();
+
+                // As Alice, get customers from the UserInfo endpoint
+                logger.Debug("Getting UserInfoGetResponse...");
+                restClient = GetRestClient("alice");
+                var result = await restClient.ExecuteAsync<UserInfoGetResponse>(new RestRequest(new Uri("/userinfo", UriKind.Relative),Method.GET));
+                var userInfoGetResponse = JsonConvert.DeserializeObject<UserInfoGetResponse>(result.Content);
+                logger.Debug("userInfoGetResponse - {userInfoGetResponse}",JsonConvert.SerializeObject( userInfoGetResponse));
+
+                Console.WriteLine("Press enter...");
+                Console.ReadLine();
 
                 // As Alice (politician), get all Travel Expenses (that is, all she can see)
-                _apiClient.SetBearerToken(_jwtUsers.Single(x => x.Name == "alice").AccessToken);
-                response = await _apiClient.GetAsync("/TravelExpenses");
+                logger.Debug("Getting TravelExpenses...");
+                restClient = GetRestClient("alice");
+                var travelExpenseGetResponse = await restClient.GetAsync<TravelExpenseGetResponse>(new RestRequest(new Uri("/travelexpenses",UriKind.Relative)));
+                logger.Debug("travelExpenseGetResponse - {travelExpenseGetResponse}", JsonConvert.SerializeObject( travelExpenseGetResponse));
+
+                Console.WriteLine("Press enter...");
+                Console.ReadLine();
 
                 // Still alice, create new Travel Expense
-                response = await _apiClient.PostAsync(
-                    "/TravelExpenses",
-                    new StringContent(
-                        JsonConvert.SerializeObject(
-                            new TravelExpenseCreateDto
-                            {
-                                CustomerId = Guid.Empty,
-                                Description = "Created by Kata"
-                            }),
-                        Encoding.UTF8,
-                        "application/json"));
+                logger.Debug("Creating TravelExpense...");
+                restClient = GetRestClient("alice");
+                var travelExpenseCreateDto = new TravelExpenseCreateDto(){Description = "From kata",CustomerId = userInfoGetResponse.UserCustomerInfo.First(x=>x.UserCustomerStatus=="Registered").CustomerId};
+                var restRequest = new RestRequest(new Uri("/travelexpenses", UriKind.Relative))
+                    .AddJsonBody(travelExpenseCreateDto);
+                var o = await restClient.PostAsync<TravelExpenseGetResponse>(restRequest);
+                logger.Debug("Created TravelExpense {object}",JsonConvert.SerializeObject( o));
 
                 Console.WriteLine("Press enter...");
                 Console.ReadLine();
             } while (true);
+        }
+
+        private static IRestClient GetRestClient(string jwtUserName)
+        {
+            IRestClient restClient = new RestClient(new Uri(_api));
+            restClient.AddDefaultHeader("Authorization", $"Bearer {_jwtUsers.Single(x => x.Name == jwtUserName).AccessToken}");
+            return restClient;
         }
 
         private static async Task HandleParseError(IEnumerable<Error> errs)

@@ -40,7 +40,7 @@ namespace Tests.Domain.Services
         {
             // Arrange
             var stageEntity = new StageEntity(travelExpenseStage);
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
+            var travelExpenseEntity = new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
@@ -55,7 +55,7 @@ namespace Tests.Domain.Services
         {
             // Arrange
             var stageEntityAssignedForPayment = new StageEntity(TravelExpenseStage.AssignedForPayment);
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntityAssignedForPayment);
+            var travelExpenseEntity = new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntityAssignedForPayment);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity))
                 .Returns(stageEntityAssignedForPayment);

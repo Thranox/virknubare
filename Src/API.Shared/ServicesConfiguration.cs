@@ -44,7 +44,7 @@ namespace API.Shared
         }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
             services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));

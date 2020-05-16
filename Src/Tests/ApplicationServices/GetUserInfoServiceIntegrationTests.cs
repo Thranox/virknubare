@@ -26,7 +26,7 @@ namespace Tests.ApplicationServices
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
-                Assert.That(actual.UserCustomerInfo.Length, Is.EqualTo(1));
+                Assert.That(actual.UserCustomerInfo.Count(), Is.EqualTo(1));
                 var userCustomerInfo = actual.UserCustomerInfo.Single();
                 var customerEntity = testContext
                     .CreateUnitOfWork()
