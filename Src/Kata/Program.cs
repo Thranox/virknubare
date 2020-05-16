@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
+using Microsoft.Extensions.Configuration;
 using NativeConsolePKCEClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
+using SharedWouldBeNugets;
 
 namespace ConsolePKCEClient
 {
@@ -31,29 +34,33 @@ namespace ConsolePKCEClient
 
         private static async Task Login()
         {
-            var browser = new SystemBrowser(45656);
-            var redirectUri = "https://127.0.0.1:45656";
+            var browser = new SystemBrowser(ImproventoGlobals.LocalKataPort);
+            var redirectUri = ImproventoGlobals.LocalKataRedirect;
 
             var options = new OidcClientOptions
             {
                 Authority = _authority,
-                ClientId = "polconsoleclient",
+                ClientId = ImproventoGlobals.AngularClientId,
                 RedirectUri = redirectUri,
                 Scope = "openid profile teapi",
                 FilterClaims = false,
                 Browser = browser,
                 Flow = OidcClientOptions.AuthenticationFlow.AuthorizationCode,
                 ResponseMode = OidcClientOptions.AuthorizeResponseMode.Redirect,
-                LoadProfile = true
+                LoadProfile = true,
             };
+            options.Policy.Discovery.ValidateIssuerName = false;
 
-            var serilog = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.LiterateConsole(
-                    outputTemplate:
-                    "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message}{NewLine}{Exception}{NewLine}")
-                .CreateLogger();
+            ConfigurationBuilder cb=new ConfigurationBuilder();
+            var serilog = StartupHelper.CreateLogger(cb.Build(), "Kata");
+
+            //var serilog = new LoggerConfiguration()
+            //    .MinimumLevel.Verbose()
+            //    .Enrich.FromLogContext()
+            //    .WriteTo.LiterateConsole(
+            //        outputTemplate:
+            //        "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message}{NewLine}{Exception}{NewLine}")
+            //    .CreateLogger();
 
             options.LoggerFactory.AddSerilog(serilog);
 
@@ -70,6 +77,7 @@ namespace ConsolePKCEClient
                 catch (Exception e)
                 {
                     Console.WriteLine("Failed: " + e.Message);
+                    Thread.Sleep(1000);
                 }
             } while (!success);
 
