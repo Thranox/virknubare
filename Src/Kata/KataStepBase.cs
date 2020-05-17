@@ -5,18 +5,20 @@ namespace Kata
 {
     public abstract class KataStepBase
     {
-        private IClientContext _clientContext;
+        protected IClientContext ClientContext;
 
         protected KataStepBase(IClientContext clientContext)
         {
-            _clientContext = clientContext;
+            ClientContext = clientContext;
         }
 
         public async Task ExecuteAndVerifyAsync(string nameOfLoggedInUser,
             Func<IClientContext, bool> verificationFunc)
         {
             await Execute(nameOfLoggedInUser);
-            verificationFunc(_clientContext);
+            var valid = verificationFunc(ClientContext);
+            if(!valid)
+                throw new InvalidOperationException("Validation failed in "+this.GetType().FullName);
         }
 
         protected abstract Task Execute(string nameOfLoggedInUser);

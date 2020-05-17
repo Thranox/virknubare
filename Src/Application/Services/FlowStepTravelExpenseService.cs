@@ -11,19 +11,19 @@ using Domain.Specifications;
 
 namespace Application.Services
 {
-    public class ProcessStepTravelExpenseService : IProcessStepTravelExpenseService
+    public class FlowStepTravelExpenseService : IFlowStepTravelExpenseService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEnumerable<IProcessFlowStep> _processFlowSteps;
 
-        public ProcessStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps)
+        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps)
         {
             _unitOfWork = unitOfWork;
             _processFlowSteps = processFlowSteps;
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
-            TravelExpenseProcessStepDto travelExpenseProcessStepDto, string sub)
+            TravelExpenseFlowStepDto travelExpenseFlowStepDto, string sub)
         {
             // Get user by sub
             var userEntities = _unitOfWork
@@ -37,17 +37,19 @@ namespace Application.Services
 
             var travelExpenseEntity = _unitOfWork
                 .Repository
-                .GetById<TravelExpenseEntity>(travelExpenseProcessStepDto.TravelExpenseId);
+                .GetById<TravelExpenseEntity>(travelExpenseFlowStepDto.TravelExpenseId);
 
             if (travelExpenseEntity == null)
-                throw new ItemNotFoundException(travelExpenseProcessStepDto.TravelExpenseId.ToString(),
+                throw new ItemNotFoundException(travelExpenseFlowStepDto.TravelExpenseId.ToString(),
                     "TravelExpense");
 
-            var processFlowStep = _processFlowSteps
-                .SingleOrDefault(x => x.CanHandle(travelExpenseProcessStepDto.ProcessStepKey));
+            var flowStep = _unitOfWork.Repository.GetById<FlowStepEntity>(travelExpenseFlowStepDto.FlowStepId);
+            if (flowStep == null)
+                throw new ItemNotFoundException(travelExpenseFlowStepDto.FlowStepId.ToString(),
+                    "FlowStep");
 
-            if (processFlowStep == null)
-                throw new ItemNotFoundException(travelExpenseProcessStepDto.ProcessStepKey, "ProcessFlowStep");
+            var processFlowStep = _processFlowSteps
+                .SingleOrDefault(x => x.CanHandle(flowStep.Key));
 
             travelExpenseEntity.ApplyProcessStep(processFlowStep);
 

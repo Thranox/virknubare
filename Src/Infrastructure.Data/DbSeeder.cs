@@ -72,7 +72,7 @@ namespace Infrastructure.Data
                 var stageEntity = GetOrCreateStage(travelExpenseStage);
                 if (travelExpenseStage != TravelExpenseStage.Final)
                 {
-                    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
+                    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity, TestData.GetFlowStepDescription(travelExpenseStage));
                     GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol);
 
                     if (travelExpenseStage == TravelExpenseStage.ReportedDone)
@@ -192,13 +192,13 @@ namespace Infrastructure.Data
             return stageEntity;
         }
         
-        private FlowStepEntity GetOrCreateFlowStep(CustomerEntity customer, StageEntity stage)
+        private FlowStepEntity GetOrCreateFlowStep(CustomerEntity customer, StageEntity stage, string description)
         {
             var flowStepEntity =_unitOfWork.Repository.List(new FlowStepByCustomerAndStage(customer.Id, (TravelExpenseStage) stage.Value)).SingleOrDefault();
             if (flowStepEntity == null)
             {
                 var key = _dictionary[(TravelExpenseStage)stage.Value];
-                flowStepEntity = new FlowStepEntity(key, stage, customer);
+                flowStepEntity = new FlowStepEntity(key, stage, customer, description);
                 _unitOfWork.Repository.Add(flowStepEntity);
             }
 

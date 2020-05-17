@@ -11,7 +11,6 @@ namespace Kata
 {
     public class KataStepCreateNewTravelExpense :KataStepBase, IKataStep
     {
-        private readonly IClientContext _clientContext;
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
 
@@ -20,7 +19,6 @@ namespace Kata
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
-            _clientContext = clientContext;
         }
 
         public bool CanHandle(string kataStepIdentifier)
@@ -39,11 +37,12 @@ namespace Kata
                 .AddJsonBody(new TravelExpenseCreateDto
                 {
                     Description = "From kata",
-                    CustomerId = _clientContext.UserInfoGetResponse.UserCustomerInfo
+                    CustomerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
                         .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId
                 });
-            var o = await restClient.PostAsync<TravelExpenseGetResponse>(restRequest);
-            _logger.Debug("Created TravelExpense {object}", JsonConvert.SerializeObject(o));
+            var travelExpenseCreateResponse = await restClient.PostAsync<TravelExpenseCreateResponse>(restRequest);
+            ClientContext.TravelExpenseCreateResponse = travelExpenseCreateResponse;
+            _logger.Debug("Created TravelExpense {travelExpenseCreateResponse}", JsonConvert.SerializeObject(travelExpenseCreateResponse));
         }
     }
 }

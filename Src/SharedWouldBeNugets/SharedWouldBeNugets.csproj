@@ -20,4 +20,8 @@
     <PackageReference Include="Serilog.Sinks.Humio" Version="1.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
 </Project>

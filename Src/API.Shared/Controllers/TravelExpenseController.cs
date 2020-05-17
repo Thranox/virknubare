@@ -14,34 +14,35 @@ namespace API.Shared.Controllers
     {
         private readonly ICreateTravelExpenseService _createTravelExpenseService;
         private readonly IGetTravelExpenseService _getTravelExpenseService;
-        private readonly IProcessStepTravelExpenseService _processStepTravelExpenseService;
+        private readonly IFlowStepTravelExpenseService _flowStepTravelExpenseService;
         private readonly ISubManagementService _subManagementService;
         private readonly IUpdateTravelExpenseService _updateTravelExpenseService;
 
-        public TravelExpenseController(IProcessStepTravelExpenseService processStepTravelExpenseService,
+        public TravelExpenseController(IFlowStepTravelExpenseService flowStepTravelExpenseService,
             IGetTravelExpenseService getTravelExpenseService,
             IUpdateTravelExpenseService updateTravelExpenseService,
             ICreateTravelExpenseService createTravelExpenseService,
             ISubManagementService subManagementService)
         {
-            _processStepTravelExpenseService = processStepTravelExpenseService;
+            _flowStepTravelExpenseService = flowStepTravelExpenseService;
             _getTravelExpenseService = getTravelExpenseService;
             _updateTravelExpenseService = updateTravelExpenseService;
             _createTravelExpenseService = createTravelExpenseService;
             _subManagementService = subManagementService;
         }
 
-        [HttpPost("{id}/ProcessStep/{processStepKey}")]
-        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(Guid id, string processStepKey)
+        [HttpPost("{id}/FlowStep/{flowStepId}")]
+        public async Task<ActionResult<TravelExpenseProcessStepResponse>> Process(Guid id, Guid flowStepId)
         {
-            var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto
-                {TravelExpenseId = id, ProcessStepKey = processStepKey};
+            var travelExpenseProcessStepDto = new TravelExpenseFlowStepDto
+                {TravelExpenseId = id, FlowStepId = flowStepId};
+
             var sub = _subManagementService.GetSub(User);
 
-            var travelExpenseDtos =
-                await _processStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
+            var travelExpenseProcessStepResponse =
+                await _flowStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
 
-            return Ok(travelExpenseDtos);
+            return Ok(travelExpenseProcessStepResponse);
         }
 
         [HttpGet("{id}")]
@@ -77,9 +78,9 @@ namespace API.Shared.Controllers
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             var sub = _subManagementService.GetSub(User);
-            var travelExpenseDtos = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto, sub);
+            var travelExpenseCreateResponse = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto, sub);
 
-            return Created(nameof(GetById), travelExpenseDtos);
+            return Created(nameof(GetById), travelExpenseCreateResponse);
         }
     }
 }

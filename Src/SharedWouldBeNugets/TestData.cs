@@ -2,12 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Domain;
 using IdentityModel;
 
 namespace SharedWouldBeNugets
 {
     public static class TestData
     {
+        private static readonly Dictionary<TravelExpenseStage, string> FlowStepDescriptionNameByStage =
+            new Dictionary<TravelExpenseStage, string>
+            {
+                {TravelExpenseStage.Initial, "Færdigmeld"},
+                {TravelExpenseStage.ReportedDone, "Attester"},
+                {TravelExpenseStage.Certified, "Anvis afregning"},
+                {TravelExpenseStage.AssignedForPayment, "Udbetal"},
+            };
         public const string DummyCustomerName = "Dummy Customer";
         public const string DummyPolSubAlice = "6E9D6247-8436-420B-A542-55B97B8B05E0";
         public const string DummySekSubBob = "6E9D6247-8436-420B-A542-55B97B8B05E1";
@@ -71,6 +80,11 @@ namespace SharedWouldBeNugets
         public static IEnumerable<TestCustomer> GetTestCustomers()
         {
             yield return new TestCustomer { Name = TestData.DummyCustomerName };
+        }
+
+        public static string GetFlowStepDescription(TravelExpenseStage travelExpenseStage)
+        {
+            return FlowStepDescriptionNameByStage[travelExpenseStage];
         }
     }
 }

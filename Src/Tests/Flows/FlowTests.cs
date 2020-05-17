@@ -59,7 +59,7 @@ namespace Tests.Flows
 
                 Assert.That(flowStepGetResponse.Result.Any());
                 var firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After Reporting done:");
                 Console.WriteLine(JsonConvert.SerializeObject(
@@ -83,7 +83,7 @@ namespace Tests.Flows
                 Assert.That(flowStepGetResponse.Result.Any());
 
                 firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After certifying");
                 ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
@@ -109,7 +109,7 @@ namespace Tests.Flows
                 Assert.That(flowStepGetResponse.Result.Any());
 
                 firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After Assigning Payment");
                 ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
