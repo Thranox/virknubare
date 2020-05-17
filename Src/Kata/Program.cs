@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Dtos;
 using CommandLine;
-using Domain;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using RestSharp;
-using Serilog.Core;
+using Serilog;
 using SharedWouldBeNugets;
 
 namespace Kata
@@ -44,41 +41,52 @@ namespace Kata
 
             try
             {
-                // Wait for api being up
-                var kataApiRetryPolicy = new PolicyService(logger).KataApiRetryPolicy;
-                await kataApiRetryPolicy.Execute(async () =>
-                 {
-                     try
-                     {
-                         logger.Information("Trying to reach swagger page...");
-                         var cancellationTokenSource = new CancellationTokenSource(100);
-                         var httpClient = new HttpClient();
-                         await httpClient.GetAsync(new Uri (_properties.ApiEndpoint + "/swagger/index.html"), cancellationTokenSource.Token);
-                         logger.Information("Done trying to reach swagger page...");
-                     }
-                     catch (TaskCanceledException e)
-                     {
-                         logger.Debug("Timeout");
-                     }
-                 });
+                var serviceCollection = new ServiceCollection()
+                    .AddScoped<ILogger>(s => logger)
+                    .AddScoped<IRestClientProvider, RestClientProvider>()
+                    .AddScoped(s => _properties)
+                    .AddScoped(s => _jwtUsers)
+                    .AddScoped<IClientContext>(s=>new ClientContext())
+                    .AddScoped<IKataStepProvider, KataStepProvider>();
+                Assembly
+                    .GetAssembly(typeof(IKataStep))
+                    .GetTypesAssignableFrom<IKataStep>()
+                    .ForEach(t => { serviceCollection.AddScoped(typeof(IKataStep), t); });
 
-                Thread.Sleep(opts.SleepMs);
-                await ResetTestDataInDatabase(logger);
-                Thread.Sleep(opts.SleepMs);
-                var userInfoGetResponse = await GetUserInfo(logger);
-                Thread.Sleep(opts.SleepMs);
-                await GetAllTravelExpenses(logger);
-                Thread.Sleep(opts.SleepMs);
-                await CreateNewTravelExpense(logger, userInfoGetResponse);
-                Thread.Sleep(opts.SleepMs);
-                logger.Information("Done");
+                var serviceProvider = serviceCollection
+                    .BuildServiceProvider();
+
+                var kataStepProvider = serviceProvider.GetRequiredService<IKataStepProvider>();
+                var kataStepDescriptors = new[]
+                {
+                    new KataStepDescriptor("VerifySwaggerUp"),
+                    new KataStepDescriptor("ResetTestData"),
+                    new KataStepDescriptor("GetUserInfo")
+                };
+
+                foreach (var kataStepDescriptor in kataStepDescriptors)
+                {
+                    var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
+                    await step.ExecuteAsync(_properties);
+                    Thread.Sleep(opts.SleepMs);
+                }
+
+                //Thread.Sleep(opts.SleepMs);
+                //var userInfoGetResponse = await GetUserInfo(logger);
+                //Thread.Sleep(opts.SleepMs);
+                //await GetAllTravelExpenses(logger);
+                //Thread.Sleep(opts.SleepMs);
+                //await CreateNewTravelExpense(logger, userInfoGetResponse);
+                //Thread.Sleep(opts.SleepMs);
+                //logger.Information("Done");
             }
             catch (Exception e)
             {
                 logger.Error(e, "During Kata steps...");
                 throw;
             }
-            logger.Information("Kata executed without errors!");
+
+            logger.Information("Kata executed without errors on {system}!", opts.SutName);
 
             if (opts.UsePrompt)
             {
@@ -87,66 +95,6 @@ namespace Kata
             }
         }
 
-        private static async Task CreateNewTravelExpense(Logger logger, UserInfoGetResponse userInfoGetResponse)
-        {
-            // Still alice, create new Travel Expense
-            logger.Debug("Creating TravelExpense...");
-            var restClient = GetRestClient("alice");
-            var restRequest = new RestRequest(
-                    new Uri("/travelexpenses", UriKind.Relative)
-                )
-                .AddJsonBody(new TravelExpenseCreateDto
-                {
-                    Description = "From kata",
-                    CustomerId = userInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId
-                });
-            var o = await restClient.PostAsync<TravelExpenseGetResponse>(restRequest);
-            logger.Debug("Created TravelExpense {object}", JsonConvert.SerializeObject(o));
-        }
-
-        private static async Task GetAllTravelExpenses(Logger logger)
-        {
-            // As Alice (politician), get all Travel Expenses (that is, all she can see)
-            logger.Debug("Getting TravelExpenses...");
-            var restClient = GetRestClient("alice");
-            var travelExpenseGetResponse =
-                await restClient.GetAsync<TravelExpenseGetResponse>(
-                    new RestRequest(new Uri("/travelexpenses", UriKind.Relative)));
-            logger.Debug("travelExpenseGetResponse - {travelExpenseGetResponse}",
-                JsonConvert.SerializeObject(travelExpenseGetResponse));
-        }
-
-        private static async Task<UserInfoGetResponse> GetUserInfo(Logger logger)
-        {
-            // As Alice, get customers from the UserInfo endpoint
-            logger.Debug("Getting UserInfoGetResponse...");
-            var restClient = GetRestClient("alice");
-            var result =
-                await restClient.ExecuteAsync<UserInfoGetResponse>(
-                    new RestRequest(new Uri("/userinfo", UriKind.Relative), Method.GET));
-            var userInfoGetResponse = JsonConvert.DeserializeObject<UserInfoGetResponse>(result.Content);
-            logger.Debug("userInfoGetResponse - {userInfoGetResponse}",
-                JsonConvert.SerializeObject(userInfoGetResponse));
-            return userInfoGetResponse;
-        }
-
-        private static async Task ResetTestDataInDatabase(Logger logger)
-        {
-            // Reset test data in database. This requires God access.
-            logger.Debug("Resetting Database...");
-            var restClient = GetRestClient("alice");
-            await restClient.PostAsync<object>(new RestRequest(new Uri("/Admin/DatabaseReset", UriKind.Relative)));
-            logger.Debug("Database reset.");
-        }
-
-        private static IRestClient GetRestClient(string jwtUserName)
-        {
-            IRestClient restClient = new RestClient(new Uri(_properties.ApiEndpoint));
-            restClient.AddDefaultHeader("Authorization",
-                $"Bearer {_jwtUsers.Single(x => x.Name == jwtUserName).AccessToken}");
-            return restClient;
-        }
 
         private static async Task HandleParseError(IEnumerable<Error> errs)
         {
