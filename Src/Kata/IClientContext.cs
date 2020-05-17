@@ -8,5 +8,6 @@ namespace Kata
         TravelExpenseGetResponse TravelExpenseGetResponse { get; set; }
         TravelExpenseCreateResponse TravelExpenseCreateResponse { get; set; }
         FlowStepGetResponse FlowStepGetResponse { get; set; }
+        TravelExpenseProcessStepResponse TravelExpenseProcessStepResponse { get; set; }
     }
 }

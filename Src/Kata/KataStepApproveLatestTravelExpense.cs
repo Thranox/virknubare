@@ -42,9 +42,9 @@ namespace Kata
                     new Uri($"/travelexpenses/{latestCreated.Id}/FlowStep/{allowedFlowDto.FlowStepId}", UriKind.Relative)
                 )
                 ;
-            var travelExpenseCreateResponse = await restClient.PostAsync<TravelExpenseCreateResponse>(restRequest);
-            ClientContext.TravelExpenseCreateResponse = travelExpenseCreateResponse;
-            _logger.Debug("Created TravelExpense {travelExpenseCreateResponse}", JsonConvert.SerializeObject(travelExpenseCreateResponse));
+            var travelExpenseProcessStepResponse = await restClient.PostAsync<TravelExpenseProcessStepResponse>(restRequest);
+            ClientContext.TravelExpenseProcessStepResponse = travelExpenseProcessStepResponse;
+            _logger.Debug("Applied flowstep to TravelExpense: ", JsonConvert.SerializeObject(travelExpenseProcessStepResponse));
         }
     }
 }

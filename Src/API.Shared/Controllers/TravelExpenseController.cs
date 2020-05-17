@@ -36,12 +36,13 @@ namespace API.Shared.Controllers
         {
             var travelExpenseProcessStepDto = new TravelExpenseFlowStepDto
                 {TravelExpenseId = id, FlowStepId = flowStepId};
+
             var sub = _subManagementService.GetSub(User);
 
-            var travelExpenseDtos =
+            var travelExpenseProcessStepResponse =
                 await _flowStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
 
-            return Ok(travelExpenseDtos);
+            return Ok(travelExpenseProcessStepResponse);
         }
 
         [HttpGet("{id}")]
