@@ -12,7 +12,6 @@ using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
 using IdentityServer4.AccessTokenValidation;
-using IDP.Services;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
@@ -45,7 +44,7 @@ namespace API.Shared
         }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
             services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
@@ -110,6 +109,7 @@ namespace API.Shared
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
             services.AddScoped<IGetStatisticsService, GetStatisticsService>();
             services.AddScoped<IGetUserInfoService, GetUserInfoService>();
+            services.AddScoped<IAdminService, AdminService>();
 
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();

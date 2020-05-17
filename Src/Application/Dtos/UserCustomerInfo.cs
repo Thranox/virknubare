@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain;
 
 namespace Application.Dtos
 {
@@ -6,6 +7,7 @@ namespace Application.Dtos
     {
         public Guid CustomerId;
         public string CustomerName;
-        public string UserCustomerStatus;
+        public string UserCustomerStatusText;
+        public int UserCustomerStatus { get; set; }
     }
 }
