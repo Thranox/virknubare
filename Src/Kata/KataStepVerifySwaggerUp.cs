@@ -37,7 +37,7 @@ namespace Kata
                     await httpClient.GetAsync(new Uri(_properties.ApiEndpoint + "/swagger/index.html"), cancellationTokenSource.Token);
                     _logger.Information("Done trying to reach swagger page...");
                 }
-                catch (TaskCanceledException e)
+                catch (TaskCanceledException)
                 {
                     _logger.Debug("Timeout");
                 }

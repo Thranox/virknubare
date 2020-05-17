@@ -92,8 +92,10 @@ namespace Kata
             }
         }
 
-        private static async Task HandleParseError(IEnumerable<Error> errs)
+        private static async Task HandleParseErrorAsync(IEnumerable<Error> errs)
         {
+            await Task.CompletedTask;
+
             _exitCode = 1;
         }
 
@@ -104,7 +106,7 @@ namespace Kata
                 var parserResult = Parser.Default.ParseArguments<Options>(args);
                 var withParsedAsync = await parserResult
                     .WithParsedAsync(RunOptions);
-                await withParsedAsync.WithNotParsedAsync(HandleParseError);
+                await withParsedAsync.WithNotParsedAsync(HandleParseErrorAsync);
             }
             catch (Exception e)
             {
