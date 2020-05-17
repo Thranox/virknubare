@@ -7,11 +7,11 @@ using SharedWouldBeNugets;
 
 namespace Kata
 {
-    public class KataStepVerifySwaggerUp : IKataStep
+    public class KataStepVerifySwaggerUp : KataStepBase, IKataStep
     {
         private readonly ILogger _logger;
 
-        public KataStepVerifySwaggerUp(ILogger logger)
+        public KataStepVerifySwaggerUp(ILogger logger, IClientContext clientContext):base(clientContext)
         {
             _logger = logger;
         }
@@ -20,7 +20,8 @@ namespace Kata
         {
             return kataStepIdentifier == "VerifySwaggerUp";
         }
-        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
+
+        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
         {
             // Wait for api being up
             var kataApiRetryPolicy = new PolicyService(_logger).KataApiRetryPolicy;

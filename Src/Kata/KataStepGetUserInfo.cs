@@ -7,13 +7,13 @@ using Serilog;
 
 namespace Kata
 {
-    public class KataStepGetUserInfo : IKataStep
+    public class KataStepGetUserInfo : KataStepBase, IKataStep
     {
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
         private readonly IClientContext _clientContext;
 
-        public KataStepGetUserInfo(ILogger logger, IRestClientProvider restClientProvider, IClientContext clientContext)
+        public KataStepGetUserInfo(ILogger logger, IRestClientProvider restClientProvider, IClientContext clientContext):base(clientContext)
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
@@ -24,18 +24,19 @@ namespace Kata
         {
             return kataStepIdentifier == "GetUserInfo";
         }
-        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
+
+        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
         {
             // As Alice, get customers from the UserInfo endpoint
             _logger.Debug("Getting UserInfoGetResponse...");
-            var restClient =_restClientProvider. GetRestClient(nameOfLoggedInUser);
+            var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var result =
                 await restClient.ExecuteAsync<UserInfoGetResponse>(
                     new RestRequest(new Uri("/userinfo", UriKind.Relative), Method.GET));
             var userInfoGetResponse = JsonConvert.DeserializeObject<UserInfoGetResponse>(result.Content);
             _logger.Debug("userInfoGetResponse - {userInfoGetResponse}",
                 JsonConvert.SerializeObject(userInfoGetResponse));
-            _clientContext.UserInfoGetResponse= userInfoGetResponse;
+            _clientContext.UserInfoGetResponse = userInfoGetResponse;
         }
     }
 }

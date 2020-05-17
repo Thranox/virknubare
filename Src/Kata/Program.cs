@@ -61,15 +61,15 @@ namespace Kata
                 {
                     new KataStepDescriptor("VerifySwaggerUp"),
                     new KataStepDescriptor("ResetTestData").AsUser("alice"),
-                    new KataStepDescriptor("GetUserInfo").AsUser("alice"),
-                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice"),
+                    new KataStepDescriptor("GetUserInfo").AsUser("alice").WithVerification(c=>c.UserInfoGetResponse!=null),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse!=null),
                     new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice")
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)
                 {
                     var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
-                    await step.ExecuteAsync(_properties, kataStepDescriptor.NameOfLoggedInUser);
+                    await step.ExecuteAndVerifyAsync(_properties, kataStepDescriptor.NameOfLoggedInUser, kataStepDescriptor.VerificationFunc);
                     Thread.Sleep(opts.SleepMs);
                 }
             }

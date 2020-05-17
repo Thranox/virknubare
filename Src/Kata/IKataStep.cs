@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Kata
 {
     public interface IKataStep
     {
-        Task ExecuteAsync(Properties properties, string nameOfLoggedInUser);
+        Task ExecuteAndVerifyAsync(Properties properties, string nameOfLoggedInUser, Func<IClientContext, bool> verificationFunc);
         bool CanHandle(string kataStepIdentifier);
     }
 }

@@ -9,14 +9,14 @@ using Serilog;
 
 namespace Kata
 {
-    public class KataStepCreateNewTravelExpense : IKataStep
+    public class KataStepCreateNewTravelExpense :KataStepBase, IKataStep
     {
         private readonly IClientContext _clientContext;
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
 
         public KataStepCreateNewTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
-            IClientContext clientContext)
+            IClientContext clientContext):base(clientContext)
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
@@ -28,7 +28,7 @@ namespace Kata
             return kataStepIdentifier == "CreateNewTravelExpense";
         }
 
-        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
+        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
         {
             // Still alice, create new Travel Expense
             _logger.Debug("Creating TravelExpense...");
@@ -40,7 +40,7 @@ namespace Kata
                 {
                     Description = "From kata",
                     CustomerId = _clientContext.UserInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int) UserStatus.Initial).CustomerId
+                        .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId
                 });
             var o = await restClient.PostAsync<TravelExpenseGetResponse>(restRequest);
             _logger.Debug("Created TravelExpense {object}", JsonConvert.SerializeObject(o));

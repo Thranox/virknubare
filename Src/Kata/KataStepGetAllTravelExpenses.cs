@@ -7,13 +7,14 @@ using Serilog;
 
 namespace Kata
 {
-    public class KataStepGetAllTravelExpenses : IKataStep
+    public class KataStepGetAllTravelExpenses : KataStepBase, IKataStep
     {
+        private readonly IClientContext _clientContext;
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
-        private readonly IClientContext _clientContext;
 
-        public KataStepGetAllTravelExpenses(ILogger logger, IRestClientProvider restClientProvider, IClientContext clientContext)
+        public KataStepGetAllTravelExpenses(ILogger logger, IRestClientProvider restClientProvider,
+            IClientContext clientContext) : base(clientContext)
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
@@ -24,11 +25,12 @@ namespace Kata
         {
             return kataStepIdentifier == "GetAllTravelExpenses";
         }
-        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
+
+        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
         {
             // As Alice (politician), get all Travel Expenses (that is, all she can see)
             _logger.Debug("Getting TravelExpenses...");
-            var restClient =_restClientProvider.GetRestClient(nameOfLoggedInUser);
+            var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var travelExpenseGetResponse =
                 await restClient.GetAsync<TravelExpenseGetResponse>(
                     new RestRequest(new Uri("/travelexpenses", UriKind.Relative)));
