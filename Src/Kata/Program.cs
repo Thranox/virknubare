@@ -18,12 +18,10 @@ namespace Kata
 {
     public class Program
     {
-        //private static readonly string _authority = "https://localhost:5001";
-        private static readonly string _api = "https://localhost:44348";
-
         //private static OidcClient _oidcClient;
         private static int _exitCode;
         private static JwtUser[] _jwtUsers;
+        private static Properties _properties;
 
         private static async Task RunOptions(Options opts)
         {
@@ -37,6 +35,8 @@ namespace Kata
             var json = File.ReadAllText(Path.Combine(expectedDir, "jwts.json"));
             _jwtUsers = JsonConvert.DeserializeObject<JwtUser[]>(json);
 
+            var propertiesJson = File.ReadAllText(Path.Combine(expectedDir, "properties.json"));
+            _properties = JsonConvert.DeserializeObject<Properties>(propertiesJson);
 
             var cb = new ConfigurationBuilder();
             StartupHelper.SetupConfig(new string[] { }, cb, "Development");
@@ -53,7 +53,7 @@ namespace Kata
                          logger.Information("Trying to reach swagger page...");
                          var cancellationTokenSource = new CancellationTokenSource(100);
                          var httpClient = new HttpClient();
-                         await httpClient.GetAsync(new Uri (_api + "/swagger/index.html"), cancellationTokenSource.Token);
+                         await httpClient.GetAsync(new Uri (_properties.ApiEndpoint + "/swagger/index.html"), cancellationTokenSource.Token);
                          logger.Information("Done trying to reach swagger page...");
                      }
                      catch (TaskCanceledException e)
@@ -62,15 +62,15 @@ namespace Kata
                      }
                  });
 
-                Thread.Sleep(2000);
+                Thread.Sleep(opts.SleepMs);
                 await ResetTestDataInDatabase(logger);
-                Thread.Sleep(2000);
+                Thread.Sleep(opts.SleepMs);
                 var userInfoGetResponse = await GetUserInfo(logger);
-                Thread.Sleep(2000);
+                Thread.Sleep(opts.SleepMs);
                 await GetAllTravelExpenses(logger);
-                Thread.Sleep(2000);
+                Thread.Sleep(opts.SleepMs);
                 await CreateNewTravelExpense(logger, userInfoGetResponse);
-                Thread.Sleep(2000);
+                Thread.Sleep(opts.SleepMs);
                 logger.Information("Done");
             }
             catch (Exception e)
@@ -79,6 +79,12 @@ namespace Kata
                 throw;
             }
             logger.Information("Kata executed without errors!");
+
+            if (opts.UsePrompt)
+            {
+                Console.WriteLine("Press enter to continue...");
+                Console.ReadLine();
+            }
         }
 
         private static async Task CreateNewTravelExpense(Logger logger, UserInfoGetResponse userInfoGetResponse)
@@ -136,7 +142,7 @@ namespace Kata
 
         private static IRestClient GetRestClient(string jwtUserName)
         {
-            IRestClient restClient = new RestClient(new Uri(_api));
+            IRestClient restClient = new RestClient(new Uri(_properties.ApiEndpoint));
             restClient.AddDefaultHeader("Authorization",
                 $"Bearer {_jwtUsers.Single(x => x.Name == jwtUserName).AccessToken}");
             return restClient;
