@@ -1,113 +1,103 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace Domain.SharedKernel
+
+namespace CSharpFunctionalExtensions
 {
-    // source: https://github.com/jhewlett/ValueObject
-    public abstract class ValueObject : IEquatable<ValueObject>
+    /// <summary>
+    /// Use non-generic ValueObject whenever possible: http://bit.ly/vo-new
+    /// </summary>
+    [Serializable]
+    public abstract class ValueObject<T>
+        where T : ValueObject<T>
     {
-        private List<PropertyInfo> properties;
-        private List<FieldInfo> fields;
-
-        public static bool operator ==(ValueObject obj1, ValueObject obj2)
+        public override bool Equals(object obj)
         {
-            if (object.Equals(obj1, null))
-            {
-                if (object.Equals(obj2, null))
-                {
-                    return true;
-                }
+            var valueObject = obj as T;
+
+            if (ReferenceEquals(valueObject, null))
                 return false;
-            }
-            return obj1.Equals(obj2);
+
+            if (GetType() != obj.GetType())
+                return false;
+
+            return EqualsCore(valueObject);
         }
 
-        public static bool operator !=(ValueObject obj1, ValueObject obj2)
+        protected abstract bool EqualsCore(T other);
+
+        public override int GetHashCode()
         {
-            return !(obj1 == obj2);
+            return GetHashCodeCore();
         }
 
-        public bool Equals(ValueObject obj)
+        protected abstract int GetHashCodeCore();
+
+        public static bool operator ==(ValueObject<T> a, ValueObject<T> b)
         {
-            return Equals(obj as object);
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+                return true;
+
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+                return false;
+
+            return a.Equals(b);
         }
+
+        public static bool operator !=(ValueObject<T> a, ValueObject<T> b)
+        {
+            return !(a == b);
+        }
+    }
+
+    [Serializable]
+    public abstract class ValueObject
+    {
+        public abstract IEnumerable<object> GetEqualityComponents();
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType()) return false;
+            if (obj == null)
+                return false;
 
-            return GetProperties().All(p => PropertiesAreEqual(obj, p))
-                && GetFields().All(f => FieldsAreEqual(obj, f));
-        }
+            if (GetType() != obj.GetType())
+                return false;
 
-        private bool PropertiesAreEqual(object obj, PropertyInfo p)
-        {
-            return object.Equals(p.GetValue(this, null), p.GetValue(obj, null));
-        }
+            var valueObject = (ValueObject)obj;
 
-        private bool FieldsAreEqual(object obj, FieldInfo f)
-        {
-            return object.Equals(f.GetValue(this), f.GetValue(obj));
-        }
-
-        private IEnumerable<PropertyInfo> GetProperties()
-        {
-            if (this.properties == null)
-            {
-                this.properties = GetType()
-                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.GetCustomAttribute(typeof(IgnoreMemberAttribute)) == null)
-                    .ToList();
-                
-                // Not available in Core
-                // !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute))).ToList();
-            }
-
-            return this.properties;
-        }
-
-        private IEnumerable<FieldInfo> GetFields()
-        {
-            if (this.fields == null)
-            {
-                this.fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.GetCustomAttribute(typeof(IgnoreMemberAttribute)) == null)
-                    .ToList();
-            }
-
-            return this.fields;
+            var equalityComponents1 = valueObject.GetEqualityComponents().ToArray();
+            var equalityComponents2 = GetEqualityComponents().ToArray();
+            var sequenceEqual = equalityComponents2.SequenceEqual(equalityComponents1);
+            return sequenceEqual;
         }
 
         public override int GetHashCode()
         {
-            unchecked   //allow overflow
-            {
-                int hash = 17;
-                foreach (var prop in GetProperties())
+            return GetEqualityComponents()
+                .Aggregate(1, (current, obj) =>
                 {
-                    var value = prop.GetValue(this, null);
-                    hash = HashValue(hash, value);
-                }
-
-                foreach (var field in GetFields())
-                {
-                    var value = field.GetValue(this);
-                    hash = HashValue(hash, value);
-                }
-
-                return hash;
-            }
+                    unchecked
+                    {
+                        return (current * 23) + (obj?.GetHashCode() ?? 0);
+                    }
+                });
         }
 
-        private int HashValue(int seed, object value)
+        public static bool operator ==(ValueObject a, ValueObject b)
         {
-            var currentHash = value != null
-                ? value.GetHashCode()
-                : 0;
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+                return true;
 
-            return seed * 23 + currentHash;
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+                return false;
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(ValueObject a, ValueObject b)
+        {
+            return !(a == b);
         }
     }
 }

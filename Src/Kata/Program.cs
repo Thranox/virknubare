@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,10 +61,16 @@ namespace Kata
                 var kataStepDescriptors = new[]
                 {
                     new KataStepDescriptor("VerifySwaggerUp"),
+
                     new KataStepDescriptor("ResetTestData").AsUser("alice"),
                     new KataStepDescriptor("GetUserInfo").AsUser("alice").WithVerification(c=>c.UserInfoGetResponse!=null),
-                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse!=null),
-                    new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice")
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse!=null && c.TravelExpenseGetResponse.Result.Count()==3),
+                    new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseCreateResponse!=null && c.TravelExpenseCreateResponse.Id!=Guid.Empty),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse!=null && c.TravelExpenseGetResponse.Result.Count()==4),
+                    new KataStepDescriptor("GetFlowSteps").AsUser("alice"),
+                    new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice")
+
+
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)

@@ -21,11 +21,11 @@ namespace Tests.ApplicationServices
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var sut = testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>();
+                var sut = testContext.ServiceProvider.GetService<IFlowStepTravelExpenseService>();
 
                 // Act & Assert
                 var itemNotFoundException =
-                    Assert.ThrowsAsync<ItemNotFoundException>(() => sut.ProcessStepAsync(new TravelExpenseProcessStepDto(),  Guid.Empty.ToString()));
+                    Assert.ThrowsAsync<ItemNotFoundException>(() => sut.ProcessStepAsync(new TravelExpenseFlowStepDto(),  Guid.Empty.ToString()));
                 Assert.That(itemNotFoundException.Id, Is.EqualTo(Guid.Empty.ToString()));
                 Assert.That(itemNotFoundException.Item, Is.EqualTo("UserEntity"));
             }
@@ -37,12 +37,22 @@ namespace Tests.ApplicationServices
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var travelExpenseProcessStepDto = new TravelExpenseProcessStepDto()
+                var flowStepId= testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(
+                        new FlowStepByCustomerAndStage(
+                            testContext.GetDummyCustomerId(),testContext.TravelExpenseEntity1.Stage.Value
+                            )
+                        )
+                    .Single()
+                    .Id;
+                var travelExpenseProcessStepDto = new TravelExpenseFlowStepDto()
                 {
-                    ProcessStepKey = Globals.InitialReporteddone,
+                    FlowStepId =flowStepId,
                     TravelExpenseId = testContext.TravelExpenseEntity1.Id
                 };
-                var sut = testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>();
+                var sut = testContext.ServiceProvider.GetService<IFlowStepTravelExpenseService>();
 
                 // Act
                 var travelExpenseProcessStepResponse =await sut.ProcessStepAsync(travelExpenseProcessStepDto,  TestData.DummyPolSubAlice);

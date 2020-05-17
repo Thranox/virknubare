@@ -2,9 +2,9 @@
 
 namespace Application.Dtos
 {
-    public class TravelExpenseProcessStepDto
+    public class TravelExpenseFlowStepDto
     {
         public Guid TravelExpenseId { get; set; }
-        public string ProcessStepKey { get; set; }
+        public Guid FlowStepId { get; set; }
     }
 }

@@ -10,9 +10,10 @@ namespace Domain.Entities
             FlowStepUserPermissions = new List<FlowStepUserPermissionEntity>();
         }
 
-        public FlowStepEntity(string key, StageEntity from, CustomerEntity customer) : this(from,customer)
+        public FlowStepEntity(string key, StageEntity from, CustomerEntity customer,string description) : this(from,customer)
         {
             Key = key;
+            Description = description;
         }
 
         private FlowStepEntity(StageEntity @from, CustomerEntity customer)
@@ -25,6 +26,9 @@ namespace Domain.Entities
         public CustomerEntity Customer { get; set; }
 
         public string Key { get; set; }
+
+        public string Description { get; set; }
+
         //public TravelExpenseStage From { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
     }

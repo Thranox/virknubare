@@ -11,13 +11,11 @@ namespace Kata
     {
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
-        private readonly IClientContext _clientContext;
 
         public KataStepGetUserInfo(ILogger logger, IRestClientProvider restClientProvider, IClientContext clientContext):base(clientContext)
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
-            _clientContext = clientContext;
         }
 
         public bool CanHandle(string kataStepIdentifier)
@@ -36,7 +34,7 @@ namespace Kata
             var userInfoGetResponse = JsonConvert.DeserializeObject<UserInfoGetResponse>(result.Content);
             _logger.Debug("userInfoGetResponse - {userInfoGetResponse}",
                 JsonConvert.SerializeObject(userInfoGetResponse));
-            _clientContext.UserInfoGetResponse = userInfoGetResponse;
+            ClientContext.UserInfoGetResponse = userInfoGetResponse;
         }
     }
 }

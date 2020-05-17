@@ -104,7 +104,7 @@ namespace API.Shared
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
+            services.AddScoped<IFlowStepTravelExpenseService, FlowStepTravelExpenseService>();
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
             services.AddScoped<IGetStatisticsService, GetStatisticsService>();

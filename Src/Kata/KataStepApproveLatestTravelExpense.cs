@@ -9,12 +9,12 @@ using Serilog;
 
 namespace Kata
 {
-    public class KataStepCreateNewTravelExpense :KataStepBase, IKataStep
+    public class KataStepApproveLatestTravelExpense : KataStepBase, IKataStep
     {
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
 
-        public KataStepCreateNewTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
+        public KataStepApproveLatestTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
             IClientContext clientContext) :base(clientContext)
         {
             _logger = logger;
@@ -23,23 +23,25 @@ namespace Kata
 
         public bool CanHandle(string kataStepIdentifier)
         {
-            return kataStepIdentifier == "CreateNewTravelExpense";
+            return kataStepIdentifier == "ApproveLatestTravelExpense";
         }
 
         protected override async Task Execute(string nameOfLoggedInUser)
         {
-            // Still alice, create new Travel Expense
-            _logger.Debug("Creating TravelExpense...");
+            var allTravelExpenseDtos = ClientContext.TravelExpenseGetResponse.Result;
+            var idOfLatestCreation = ClientContext.TravelExpenseCreateResponse.Id;
+
+            var latestCreated = allTravelExpenseDtos.Single(x => x.Id == idOfLatestCreation);
+
+            // For now -- we only have one flowstep for each stage
+            var allowedFlowDto = latestCreated.AllowedFlows.First();
+
+            _logger.Debug("Applying flowstep to TravelExpense: " +allowedFlowDto.Description);
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var restRequest = new RestRequest(
-                    new Uri("/travelexpenses", UriKind.Relative)
+                    new Uri($"/travelexpenses/{latestCreated.Id}/FlowStep/{allowedFlowDto.FlowStepId}", UriKind.Relative)
                 )
-                .AddJsonBody(new TravelExpenseCreateDto
-                {
-                    Description = "From kata",
-                    CustomerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId
-                });
+                ;
             var travelExpenseCreateResponse = await restClient.PostAsync<TravelExpenseCreateResponse>(restRequest);
             ClientContext.TravelExpenseCreateResponse = travelExpenseCreateResponse;
             _logger.Debug("Created TravelExpense {travelExpenseCreateResponse}", JsonConvert.SerializeObject(travelExpenseCreateResponse));

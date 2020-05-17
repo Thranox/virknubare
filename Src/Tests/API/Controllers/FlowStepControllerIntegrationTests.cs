@@ -35,8 +35,8 @@ namespace Tests.API.Controllers
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as FlowStepGetResponse;
                 Assert.That(value, Is.Not.Null);
-                var resultArray = value.Result.ToArray();
-                Assert.That(resultArray.Length, Is.EqualTo(4));
+                var flowStepDtoArray = value.Result.ToArray();
+                Assert.That(flowStepDtoArray.Length, Is.EqualTo(4));
                 var customer = testContext
                     .CreateUnitOfWork()
                     .Repository
@@ -67,13 +67,13 @@ namespace Tests.API.Controllers
                     .List(new StageByValue(TravelExpenseStage.AssignedForPayment))
                     .Single();
 
-                var stageEntityFinal = testContext
-                    .CreateUnitOfWork()
-                    .Repository
-                    .List(new StageByValue(TravelExpenseStage.Final))
-                    .Single();
+                //var stageEntityFinal = testContext
+                //    .CreateUnitOfWork()
+                //    .Repository
+                //    .List(new StageByValue(TravelExpenseStage.Final))
+                //    .Single();
 
-                Assert.That(resultArray,
+                Assert.That(flowStepDtoArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
                         CustomerName = customer.Name,
@@ -82,7 +82,7 @@ namespace Tests.API.Controllers
                         Key = Globals.InitialReporteddone,
                         CustomerId = customer.Id
                     }));
-                Assert.That(resultArray,
+                Assert.That(flowStepDtoArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
                         CustomerName = customer.Name,
@@ -91,7 +91,7 @@ namespace Tests.API.Controllers
                         Key = Globals.ReporteddoneCertified,
                         CustomerId = customer.Id,
                     }));
-                Assert.That(resultArray,
+                Assert.That(flowStepDtoArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
                         CustomerName = customer.Name,
@@ -100,7 +100,7 @@ namespace Tests.API.Controllers
                         Key = Globals.CertifiedAssignedForPayment,
                         CustomerId = customer.Id,
                     }));
-                Assert.That(resultArray,
+                Assert.That(flowStepDtoArray,
                     Has.One.EqualTo(new FlowStepDto()
                     {
                         CustomerName = customer.Name,
