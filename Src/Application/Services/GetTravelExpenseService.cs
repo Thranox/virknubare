@@ -60,11 +60,31 @@ namespace Application.Services
             //// 1) owned by the user or if
             //// 2) user may manipulate travel expense stage
 
-            return await Task.FromResult(new TravelExpenseGetResponse
+            var travelExpenseGetResponse = new TravelExpenseGetResponse
             {
                 Result = rees
-                    .Select(x => _mapper.Map<TravelExpenseDto>(x))
-            });
+                    .Select(x =>
+                    {
+                        var travelExpenseDto = _mapper.Map<TravelExpenseDto>(x);
+                        travelExpenseDto.AllowedFlows = GetAllowedFlows(x, sub).ToArray();
+                        return travelExpenseDto;
+                    }).ToArray()
+            };
+            return await Task.FromResult(travelExpenseGetResponse);
+        }
+
+        private IEnumerable< AllowedFlowDto> GetAllowedFlows(TravelExpenseEntity travelExpenseEntity, string sub)
+        {
+            foreach (var VARIABLE in travelExpenseEntity.OwnedByUser.FlowStepUserPermissions.Where(x=>x.FlowStep.From==travelExpenseEntity.Stage && x.FlowStep.Customer==travelExpenseEntity.Customer))
+            {
+                yield return new AllowedFlowDto()
+                {
+                    FlowStepId=VARIABLE.FlowStepId,
+                    Description = VARIABLE.FlowStep.Description
+                };
+               
+            }
+
         }
 
         public async Task<TravelExpenseGetByIdResponse> GetByIdAsync(Guid id, string sub)

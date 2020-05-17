@@ -1,5 +1,6 @@
 ﻿using System;
-using Domain.SharedKernel;
+using System.Collections.Generic;
+using CSharpFunctionalExtensions;
 using Newtonsoft.Json;
 
 namespace Application.Dtos
@@ -13,11 +14,33 @@ namespace Application.Dtos
         public bool IsAssignedPayment { get; set; }
         public string StageId { get; set; }
         public string StageText { get; set; }
+        public IEnumerable< AllowedFlowDto> AllowedFlows { get; set; }
 
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
         }
 
+        public override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Description;
+            yield return Id;
+            yield return IsCertified;
+            yield return IsReportedDone;
+            yield return IsAssignedPayment;
+            yield return StageId;
+            yield return StageText;
+
+            if (AllowedFlows==null)
+                yield break;
+
+            foreach (var allowedFlowDto in AllowedFlows)
+            {
+                foreach (var equalityComponent in allowedFlowDto.GetEqualityComponents())
+                {
+                    yield return equalityComponent;
+                }
+            }
+        }
     }
 }

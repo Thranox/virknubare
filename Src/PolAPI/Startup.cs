@@ -1,6 +1,6 @@
 using System;
 using API.Shared;
-using IDP.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +58,7 @@ namespace PolAPI
             });
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            app.UseMiddleware<ErrorWrappingMiddleware>();
 
             app.UseSwagger();
             app.UseSwaggerUI(

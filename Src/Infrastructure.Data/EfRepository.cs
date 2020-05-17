@@ -67,12 +67,31 @@ namespace Infrastructure.Data
                     .Include(g => g.FlowStepUserPermissions)
                     .ThenInclude(gg => gg.FlowStep)
                     .ThenInclude(ggg=>ggg.From)
-                    //.Include(g => g.Customer)
-                    //.ThenInclude(gg=>gg.TravelExpenses)
+                    .Include(g=>g.CustomerUserPermissions)
+                    .ThenInclude(gg=>gg.Customer)
+                    .Include(g=>g.TravelExpenses)
+                    .ThenInclude(gg=>gg.Stage)
                     ;
                 if (spec != null)
                 {
                     var castedSpec = spec as ISpecification<UserEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+                return includableQueryable.ToList() as List<T>;
+            }
+
+            if (typeof(T) == typeof(FlowStepEntity))
+            {
+                IQueryable<FlowStepEntity> includableQueryable = _dbContext
+                        .Set<FlowStepEntity>()
+                        .Include(g => g.FlowStepUserPermissions)
+                        .ThenInclude(gg => gg.FlowStep)
+                        .ThenInclude(ggg => ggg.From)
+                        .Include(g => g.From)
+                    ;
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<FlowStepEntity>;
                     includableQueryable = includableQueryable.Where(castedSpec.Criteria);
                 }
                 return includableQueryable.ToList() as List<T>;

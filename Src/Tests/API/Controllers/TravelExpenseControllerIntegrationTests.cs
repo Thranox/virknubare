@@ -44,14 +44,16 @@ namespace Tests.API.Controllers
                 Assert.That(v.Length, Is.EqualTo(3));
 
                 var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
+                var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
+                var flowStepId = flowSteps.Single(x=>x.From.Value==TravelExpenseStage.Initial).Id;
 
-                Assert.That(v,
-                    Has.One.EqualTo(new TravelExpenseDto
+                Assert.That(v[0],Is.EqualTo(new TravelExpenseDto
                     {
                         Description = testContext.TravelExpenseEntity1.Description,
                         Id = testContext.TravelExpenseEntity1.Id,
                         StageId = stageEntities.Single(x=>x.Value==TravelExpenseStage.Initial).Id.ToString(),
-                        StageText =Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                        StageText =Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        AllowedFlows = new[] {new AllowedFlowDto {Description = "Færdigmeld", FlowStepId = flowStepId} }
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
@@ -59,7 +61,8 @@ namespace Tests.API.Controllers
                         Description = testContext.TravelExpenseEntity2.Description,
                         Id = testContext.TravelExpenseEntity2.Id,
                         StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
-                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
@@ -67,7 +70,8 @@ namespace Tests.API.Controllers
                         Description = testContext.TravelExpenseEntity3.Description,
                         Id = testContext.TravelExpenseEntity3.Id,
                         StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
-                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                     }));
             }
         }
@@ -90,7 +94,7 @@ namespace Tests.API.Controllers
                     var sut = GetSut(testContext);
 
                     // Act
-                    actual = await sut.Put(existingId,travelExpenseUpdateDto);
+                    actual = await sut.Put(existingId, travelExpenseUpdateDto);
                 }
 
                 // Assert
@@ -124,7 +128,7 @@ namespace Tests.API.Controllers
 
                 // Act
                 var travelExpenseNotFoundByIdException =
-                    Assert.ThrowsAsync<ItemNotFoundException>(async () => await sut.Put(existingId,travelExpenseUpdateDto));
+                    Assert.ThrowsAsync<ItemNotFoundException>(async () => await sut.Put(existingId, travelExpenseUpdateDto));
 
                 // Assert
                 Assert.That(travelExpenseNotFoundByIdException, Is.Not.Null);
@@ -144,13 +148,13 @@ namespace Tests.API.Controllers
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existing.ApplyProcessStep(testContext.ServiceProvider.GetServices<IProcessFlowStep>().Single(x=>x.CanHandle(Globals.InitialReporteddone)));
                     var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Description = newDescription};
+                        {Description = newDescription };
                     var sut = GetSut(testContext);
 
                     // Act
                     var businessRuleViolationException =
                         Assert.ThrowsAsync<BusinessRuleViolationException>(async () =>
-                            await sut.Put(existing.Id,travelExpenseUpdateDto));
+                            await sut.Put(existing.Id, travelExpenseUpdateDto));
 
                     // Assert
                     Assert.That(businessRuleViolationException, Is.Not.Null);
@@ -395,7 +399,10 @@ namespace Tests.API.Controllers
                 var sut = GetSut(testContext);
 
                 // Act
-                var actual = await sut.Process(testContext.TravelExpenseEntity1.Id, Globals.InitialReporteddone);
+                var actual = await sut.Process(testContext.TravelExpenseEntity1.Id,
+                    testContext.CreateUnitOfWork().Repository
+                        .List(new FlowStepByCustomerAndStage(testContext.GetDummyCustomerId(),
+                            testContext.TravelExpenseEntity1.Stage.Value)).Single().Id); // Globals.InitialReporteddone);
 
                 // Assert
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
@@ -411,7 +418,7 @@ namespace Tests.API.Controllers
             var subManagementService = new Moq.Mock<ISubManagementService>();
             subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
 
-            return new TravelExpenseController(testContext.ServiceProvider.GetService<IProcessStepTravelExpenseService>(),
+            return new TravelExpenseController(testContext.ServiceProvider.GetService<IFlowStepTravelExpenseService>(),
                 testContext.ServiceProvider.GetService< IGetTravelExpenseService> (),
                 testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>(),
                 testContext.ServiceProvider.GetService<ICreateTravelExpenseService>(),

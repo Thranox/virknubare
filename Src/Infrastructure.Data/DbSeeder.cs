@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -42,17 +43,21 @@ namespace Infrastructure.Data
 
             // -----------------------------------
             // Dummy customer
-            var customer =_unitOfWork.Repository.List(new CustomerByName(TestData.DummyCustomerName)).SingleOrDefault();
-            if (customer == null)
+            CustomerEntity customer=null;
+            foreach (var testCustomer in TestData.GetTestCustomers())
             {
-                customer = new CustomerEntity(TestData.DummyCustomerName);
-                _unitOfWork.Repository.Add(customer);
+                customer = _unitOfWork.Repository.List(new CustomerByName(testCustomer.Name)).SingleOrDefault();
+                if (customer == null)
+                {
+                    customer = new CustomerEntity(testCustomer.Name);
+                    _unitOfWork.Repository.Add(customer);
+                }
+                else
+                {
+                    Log.Logger.Debug("Dummy Customer already present");
+                }
             }
-            else
-            {
-                Log.Logger.Debug("Dummy Customer already present");
-            }
-            
+
             // -----------------------------------
             // Dummy Users
             var userEntityPol = GetOrCreateTestUser(customer, TestData.DummyPolSubAlice, "dummy pol Alice", UserStatus.Registered);
@@ -67,7 +72,7 @@ namespace Infrastructure.Data
                 var stageEntity = GetOrCreateStage(travelExpenseStage);
                 if (travelExpenseStage != TravelExpenseStage.Final)
                 {
-                    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity);
+                    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity, TestData.GetFlowStepDescription(travelExpenseStage));
                     GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol);
 
                     if (travelExpenseStage == TravelExpenseStage.ReportedDone)
@@ -93,6 +98,54 @@ namespace Infrastructure.Data
             }
 
             _unitOfWork.Commit();
+        }
+
+        public async Task RemoveTestData()
+        {
+            var polTestUsers = TestData.GetTestUsers();
+            foreach (var polTestUser in polTestUsers)
+            {
+                var userEntity = _unitOfWork.Repository.List<UserEntity>(new UserBySub(polTestUser.ImproventoSub.ToString())).SingleOrDefault();
+                if(userEntity==null)
+                    continue;
+
+                foreach (var customerUserPermissionEntity in userEntity.CustomerUserPermissions)
+                {
+                    _unitOfWork.Repository.Delete(customerUserPermissionEntity);
+                }
+
+                foreach (var flowStepUserPermissionEntity in userEntity.FlowStepUserPermissions)
+                {
+                    _unitOfWork.Repository.Delete(flowStepUserPermissionEntity);
+                }
+
+                foreach (var travelExpenseEntity in userEntity.TravelExpenses)
+                {
+                    _unitOfWork.Repository.Delete(travelExpenseEntity);
+                }
+
+                _unitOfWork.Repository.Delete(userEntity);
+            }
+
+            var testCustomers = TestData.GetTestCustomers();
+            foreach (var testCustomer in testCustomers)
+            {
+                var customerEntity = _unitOfWork.Repository.List(new CustomerByName(testCustomer.Name)).SingleOrDefault();
+
+                if(customerEntity==null)
+                    continue;
+
+                foreach (var flowStepEntity in customerEntity.FlowSteps)
+                {
+                    _unitOfWork.Repository.Delete(flowStepEntity);
+                }
+
+                _unitOfWork.Repository.Delete(customerEntity);
+            }
+
+            _unitOfWork.Commit();
+
+            await Task.CompletedTask;
         }
 
         private object GetOrCreateFlowStepUserPermission(FlowStepEntity flowStepEntity, UserEntity userEntity)
@@ -139,13 +192,13 @@ namespace Infrastructure.Data
             return stageEntity;
         }
         
-        private FlowStepEntity GetOrCreateFlowStep(CustomerEntity customer, StageEntity stage)
+        private FlowStepEntity GetOrCreateFlowStep(CustomerEntity customer, StageEntity stage, string description)
         {
             var flowStepEntity =_unitOfWork.Repository.List(new FlowStepByCustomerAndStage(customer.Id, (TravelExpenseStage) stage.Value)).SingleOrDefault();
             if (flowStepEntity == null)
             {
                 var key = _dictionary[(TravelExpenseStage)stage.Value];
-                flowStepEntity = new FlowStepEntity(key, stage, customer);
+                flowStepEntity = new FlowStepEntity(key, stage, customer, description);
                 _unitOfWork.Repository.Add(flowStepEntity);
             }
 

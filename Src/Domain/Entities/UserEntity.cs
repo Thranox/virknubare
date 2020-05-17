@@ -9,6 +9,7 @@ namespace Domain.Entities
         {
             FlowStepUserPermissions=new List<FlowStepUserPermissionEntity>();
             CustomerUserPermissions=new List<CustomerUserPermissionEntity>();
+            TravelExpenses=new List<TravelExpenseEntity>();
         }
 
         public UserEntity(string name, string subject) : this()
@@ -21,5 +22,6 @@ namespace Domain.Entities
         public string Subject { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
         public ICollection<CustomerUserPermissionEntity>  CustomerUserPermissions { get; set; }
+        public ICollection<TravelExpenseEntity> TravelExpenses { get; set; }
     }
 }

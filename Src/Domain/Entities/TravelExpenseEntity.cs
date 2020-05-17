@@ -14,8 +14,11 @@ namespace Domain.Entities
 
         public TravelExpenseEntity(string description, UserEntity user, CustomerEntity customer, StageEntity stage) : this()
         {
+            if(string.IsNullOrEmpty( description))
+                throw new ArgumentNullException(nameof(description));
+
             Description = description;
-            Stage = stage;
+            Stage = stage??throw new ArgumentNullException(nameof(stage));
             OwnedByUser = user ?? throw new ArgumentNullException(nameof(user));
             Customer = customer ?? throw new ArgumentNullException(nameof(customer));
         }

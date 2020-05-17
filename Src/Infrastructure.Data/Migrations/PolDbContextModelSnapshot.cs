@@ -66,6 +66,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("FromId")
                         .HasColumnType("uniqueidentifier");
 
@@ -207,7 +210,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("Domain.Entities.UserEntity", "OwnedByUser")
-                        .WithMany()
+                        .WithMany("TravelExpenses")
                         .HasForeignKey("OwnedByUserId");
 
                     b.HasOne("Domain.Entities.StageEntity", "Stage")
