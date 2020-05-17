@@ -20,7 +20,7 @@ namespace Kata
         {
             return kataStepIdentifier == "VerifySwaggerUp";
         }
-        public async Task ExecuteAsync(Properties properties)
+        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
         {
             // Wait for api being up
             var kataApiRetryPolicy = new PolicyService(_logger).KataApiRetryPolicy;

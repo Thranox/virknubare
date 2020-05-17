@@ -24,11 +24,11 @@ namespace Kata
         {
             return kataStepIdentifier == "GetUserInfo";
         }
-        public async Task ExecuteAsync(Properties properties)
+        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
         {
             // As Alice, get customers from the UserInfo endpoint
             _logger.Debug("Getting UserInfoGetResponse...");
-            var restClient =_restClientProvider. GetRestClient("alice");
+            var restClient =_restClientProvider. GetRestClient(nameOfLoggedInUser);
             var result =
                 await restClient.ExecuteAsync<UserInfoGetResponse>(
                     new RestRequest(new Uri("/userinfo", UriKind.Relative), Method.GET));

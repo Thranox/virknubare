@@ -20,11 +20,11 @@ namespace Kata
         {
             return kataStepIdentifier == "ResetTestData";
         }
-        public async Task ExecuteAsync(Properties properties)
+        public async Task ExecuteAsync(Properties properties, string nameOfLoggedInUser)
         {
             // Reset test data in database. This requires God access.
             _logger.Debug("Resetting Database...");
-            var restClient =_restClientProvider.GetRestClient("alice");
+            var restClient =_restClientProvider.GetRestClient(nameOfLoggedInUser);
             await restClient.PostAsync<object>(new RestRequest(new Uri("/Admin/DatabaseReset", UriKind.Relative)));
             _logger.Debug("Database reset.");
         }

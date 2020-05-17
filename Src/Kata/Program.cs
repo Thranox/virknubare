@@ -46,7 +46,7 @@ namespace Kata
                     .AddScoped<IRestClientProvider, RestClientProvider>()
                     .AddScoped(s => _properties)
                     .AddScoped(s => _jwtUsers)
-                    .AddScoped<IClientContext>(s=>new ClientContext())
+                    .AddScoped<IClientContext>(s => new ClientContext())
                     .AddScoped<IKataStepProvider, KataStepProvider>();
                 Assembly
                     .GetAssembly(typeof(IKataStep))
@@ -60,25 +60,18 @@ namespace Kata
                 var kataStepDescriptors = new[]
                 {
                     new KataStepDescriptor("VerifySwaggerUp"),
-                    new KataStepDescriptor("ResetTestData"),
-                    new KataStepDescriptor("GetUserInfo")
+                    new KataStepDescriptor("ResetTestData").AsUser("alice"),
+                    new KataStepDescriptor("GetUserInfo").AsUser("alice"),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice"),
+                    new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice")
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)
                 {
                     var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
-                    await step.ExecuteAsync(_properties);
+                    await step.ExecuteAsync(_properties, kataStepDescriptor.NameOfLoggedInUser);
                     Thread.Sleep(opts.SleepMs);
                 }
-
-                //Thread.Sleep(opts.SleepMs);
-                //var userInfoGetResponse = await GetUserInfo(logger);
-                //Thread.Sleep(opts.SleepMs);
-                //await GetAllTravelExpenses(logger);
-                //Thread.Sleep(opts.SleepMs);
-                //await CreateNewTravelExpense(logger, userInfoGetResponse);
-                //Thread.Sleep(opts.SleepMs);
-                //logger.Information("Done");
             }
             catch (Exception e)
             {
