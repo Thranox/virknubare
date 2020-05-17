@@ -5,7 +5,7 @@ namespace Kata
 {
     public interface IKataStep
     {
-        Task ExecuteAndVerifyAsync(Properties properties, string nameOfLoggedInUser, Func<IClientContext, bool> verificationFunc);
+        Task ExecuteAndVerifyAsync(string nameOfLoggedInUser, Func<IClientContext, bool> verificationFunc);
         bool CanHandle(string kataStepIdentifier);
     }
 }

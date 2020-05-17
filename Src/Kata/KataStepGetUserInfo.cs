@@ -25,7 +25,7 @@ namespace Kata
             return kataStepIdentifier == "GetUserInfo";
         }
 
-        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
+        protected override async Task Execute(string nameOfLoggedInUser)
         {
             // As Alice, get customers from the UserInfo endpoint
             _logger.Debug("Getting UserInfoGetResponse...");

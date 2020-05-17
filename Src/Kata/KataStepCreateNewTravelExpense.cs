@@ -16,7 +16,7 @@ namespace Kata
         private readonly IRestClientProvider _restClientProvider;
 
         public KataStepCreateNewTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
-            IClientContext clientContext):base(clientContext)
+            IClientContext clientContext) :base(clientContext)
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
@@ -28,7 +28,7 @@ namespace Kata
             return kataStepIdentifier == "CreateNewTravelExpense";
         }
 
-        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
+        protected override async Task Execute(string nameOfLoggedInUser)
         {
             // Still alice, create new Travel Expense
             _logger.Debug("Creating TravelExpense...");

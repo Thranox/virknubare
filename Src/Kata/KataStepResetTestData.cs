@@ -22,7 +22,7 @@ namespace Kata
             return kataStepIdentifier == "ResetTestData";
         }
 
-        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
+        protected override async Task Execute(string nameOfLoggedInUser)
         {
             // Reset test data in database. This requires God access.
             _logger.Debug("Resetting Database...");

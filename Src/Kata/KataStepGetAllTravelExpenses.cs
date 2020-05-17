@@ -26,7 +26,7 @@ namespace Kata
             return kataStepIdentifier == "GetAllTravelExpenses";
         }
 
-        protected override async Task Execute(Properties properties, string nameOfLoggedInUser)
+        protected override async Task Execute(string nameOfLoggedInUser)
         {
             // As Alice (politician), get all Travel Expenses (that is, all she can see)
             _logger.Debug("Getting TravelExpenses...");

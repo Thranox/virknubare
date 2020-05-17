@@ -33,7 +33,7 @@ namespace Kata
             _jwtUsers = JsonConvert.DeserializeObject<JwtUser[]>(json);
 
             var propertiesJson = File.ReadAllText(Path.Combine(expectedDir, "properties.json"));
-            _properties = JsonConvert.DeserializeObject<Properties>(propertiesJson);
+            _properties= JsonConvert.DeserializeObject<Properties>(propertiesJson);
 
             var cb = new ConfigurationBuilder();
             StartupHelper.SetupConfig(new string[] { }, cb, "Development");
@@ -69,7 +69,11 @@ namespace Kata
                 foreach (var kataStepDescriptor in kataStepDescriptors)
                 {
                     var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
-                    await step.ExecuteAndVerifyAsync(_properties, kataStepDescriptor.NameOfLoggedInUser, kataStepDescriptor.VerificationFunc);
+                    
+                    await step.ExecuteAndVerifyAsync(
+                        kataStepDescriptor.NameOfLoggedInUser, 
+                        kataStepDescriptor.VerificationFunc);
+
                     Thread.Sleep(opts.SleepMs);
                 }
             }
@@ -87,7 +91,6 @@ namespace Kata
                 Console.ReadLine();
             }
         }
-
 
         private static async Task HandleParseError(IEnumerable<Error> errs)
         {

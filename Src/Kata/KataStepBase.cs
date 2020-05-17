@@ -12,13 +12,13 @@ namespace Kata
             _clientContext = clientContext;
         }
 
-        public async Task ExecuteAndVerifyAsync(Properties properties, string nameOfLoggedInUser,
+        public async Task ExecuteAndVerifyAsync(string nameOfLoggedInUser,
             Func<IClientContext, bool> verificationFunc)
         {
-            await Execute(properties, nameOfLoggedInUser);
+            await Execute(nameOfLoggedInUser);
             verificationFunc(_clientContext);
         }
 
-        protected abstract Task Execute(Properties properties, string nameOfLoggedInUser);
+        protected abstract Task Execute(string nameOfLoggedInUser);
     }
 }
