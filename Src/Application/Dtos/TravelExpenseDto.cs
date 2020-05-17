@@ -14,7 +14,7 @@ namespace Application.Dtos
         public bool IsAssignedPayment { get; set; }
         public string StageId { get; set; }
         public string StageText { get; set; }
-        public AllowedFlowDto[] AllowedFlows { get; set; }
+        public IEnumerable< AllowedFlowDto> AllowedFlows { get; set; }
 
         public override string ToString()
         {
