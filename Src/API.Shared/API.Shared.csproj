@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Infrastructure.Data\Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Infrastructure.DomainEvents\Infrastructure.DomainEvents.csproj" />
+    <ProjectReference Include="..\Infrastructure.Messaging\Infrastructure.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

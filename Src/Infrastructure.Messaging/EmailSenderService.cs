@@ -1,14 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Domain.Interfaces;
 
 namespace Infrastructure.Messaging
 {
     public class EmailSenderService : IMessageSenderService
     {
-        public Task SendMessageAsync(IMessage message)
+        public async Task SendMessageAsync(IMessage message)
         {
-            throw new NotImplementedException();
+            // TODO
+
+            await Task.CompletedTask;
         }
     }
 }
