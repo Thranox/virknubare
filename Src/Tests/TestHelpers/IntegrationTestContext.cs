@@ -74,7 +74,8 @@ namespace Tests.TestHelpers
 
         public IUnitOfWork CreateUnitOfWork()
         {
-            var context = new PolDbContext(DbContextOptions);
+            var domainEventDispatcher = ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
+            var context = new PolDbContext(DbContextOptions, domainEventDispatcher);
             return new UnitOfWork(new EfRepository(context));
         }
 
