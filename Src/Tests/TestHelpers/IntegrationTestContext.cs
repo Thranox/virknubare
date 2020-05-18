@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using API.Shared;
 using API.Shared.Controllers;
 using Application.MapperProfiles;
@@ -44,17 +45,17 @@ namespace Tests.TestHelpers
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            SeedDb();
+            SeedDb().Wait();
         }
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
 
-        private void SeedDb()
+        private async Task SeedDb()
         {
             var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
-            dbSeeder.Seed();
+            await dbSeeder.SeedAsync();
 
             using (var unitOfWork=ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
             {
@@ -68,7 +69,7 @@ namespace Tests.TestHelpers
                 TravelExpenseEntity2 = travelExpenseEntities[1];
                 TravelExpenseEntity3 = travelExpenseEntities[2];
 
-                unitOfWork.Commit();
+                await unitOfWork.CommitAsync();
             }
         }
 

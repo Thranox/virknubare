@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
         IRepository Repository { get; }
-        void Commit();
+        Task CommitAsync();
     }
 }

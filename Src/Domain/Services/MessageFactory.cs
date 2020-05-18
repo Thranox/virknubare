@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 
 namespace Domain.Services
 {
@@ -7,7 +8,7 @@ namespace Domain.Services
     {
         public IMessage GetMessage(IMessageTemplate messageTemplate, Dictionary<string, string> messageValues)
         {
-            throw new System.NotImplementedException();
+            return new Message();
         }
     }
 }

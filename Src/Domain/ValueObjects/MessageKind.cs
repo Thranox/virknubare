@@ -4,6 +4,6 @@
     {
         None=0,
         YouCanNowProcessTravelExpense=1,
-        YouTravelExpenseHasChangedState=2
+        YourTravelExpenseHasChangedState=2
     }
 }

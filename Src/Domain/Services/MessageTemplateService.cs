@@ -13,8 +13,14 @@ namespace Domain.Services
                 case MessageKind.YouCanNowProcessTravelExpense:
                     return new MessageTemplate()
                     {
-                        Subject = "",
-                        Body=""
+                        Subject = "Rejseafregning klar til behandling",
+                        Body = ""
+                    };
+                case MessageKind.YourTravelExpenseHasChangedState:
+                    return new MessageTemplate()
+                    {
+                        Subject = "Din rejseafregning har skiftet tilstand",
+                        Body = ""
                     };
                 default:
                     throw new NotImplementedException();

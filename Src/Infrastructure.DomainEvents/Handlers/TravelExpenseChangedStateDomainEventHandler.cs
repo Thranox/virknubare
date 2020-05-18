@@ -44,7 +44,7 @@ namespace Infrastructure.DomainEvents.Handlers
                     .SendMessageAsync(
                         new[] {travelExpenseChangedStateDomainEvent.TravelExpenseEntity.OwnedByUser},
                         travelExpenseChangedStateDomainEvent.TravelExpenseEntity,
-                        MessageKind.YouTravelExpenseHasChangedState);
+                        MessageKind.YourTravelExpenseHasChangedState);
         }
     }
 }

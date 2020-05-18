@@ -63,7 +63,7 @@ namespace Application.Services
 
             travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, userEntity));
 
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             return await Task.FromResult(new TravelExpenseProcessStepResponse());
         }

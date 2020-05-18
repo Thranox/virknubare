@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Domain.Interfaces;
 
 namespace Infrastructure.Data
@@ -16,9 +17,9 @@ namespace Infrastructure.Data
 
         public IRepository Repository { get; }
 
-        public void Commit()
+        public async Task CommitAsync()
         {
-            Repository.Commit();
+            await Repository.CommitAsync();
         }
     }
 }
