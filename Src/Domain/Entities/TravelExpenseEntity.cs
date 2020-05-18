@@ -3,6 +3,7 @@ using Domain.Events;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.SharedKernel;
+using Domain.ValueObjects;
 
 namespace Domain.Entities
 {

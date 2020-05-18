@@ -23,5 +23,10 @@ namespace Domain.Entities
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
         public ICollection<CustomerUserPermissionEntity>  CustomerUserPermissions { get; set; }
         public ICollection<TravelExpenseEntity> TravelExpenses { get; set; }
+
+        public Dictionary<string,string> GetMessageValues()
+        {
+            return new Dictionary<string, string>();
+        }
     }
 }

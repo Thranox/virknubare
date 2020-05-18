@@ -6,6 +6,7 @@ using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Serilog;
 using SharedWouldBeNugets;
 

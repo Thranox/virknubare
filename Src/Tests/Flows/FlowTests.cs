@@ -12,6 +12,7 @@ using Domain;
 using Domain.Interfaces;
 using Domain.Services;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

@@ -115,6 +115,9 @@ namespace API.Shared
             services.AddScoped<ICreateUserService, CreateUserService>();
             services.AddScoped<ITravelExpenseFactory, TravelExpenseFactory>();
             services.AddScoped<IStageService, StageService>();
+            services.AddScoped<IMessageBrokerService, MessageBrokerService>();
+            services.AddScoped<IMessageTemplateService, MessageTemplateService>();
+            services.AddScoped<IMessageFactory, MessageFactory>();
 
             if (enforceAuthenticated)
             {

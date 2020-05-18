@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using System.Threading.Tasks;
 using Domain.Interfaces;
 using Serilog;
 
@@ -15,9 +13,9 @@ namespace Infrastructure.Messaging
             _logger = logger;
         }
 
-        public Task SendWelcomeMessageAsync(UserEntity user)
+        public Task SendMessageAsync(IMessage message)
         {
-            _logger.Information("Sending welcome message to user: " + user);
+            _logger.Information("Sending message : " + message);
             return Task.CompletedTask;
         }
     }

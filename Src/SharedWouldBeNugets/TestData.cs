@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Domain;
+using Domain.ValueObjects;
 using IdentityModel;
 
 namespace SharedWouldBeNugets

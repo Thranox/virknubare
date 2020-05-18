@@ -69,8 +69,6 @@ namespace Kata
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse!=null && c.TravelExpenseGetResponse.Result.Count()==4),
                     new KataStepDescriptor("GetFlowSteps").AsUser("alice"),
                     new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice")
-
-
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)

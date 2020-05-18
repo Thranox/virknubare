@@ -52,7 +52,7 @@ namespace Infrastructure.DomainEvents
 
             public override void Handle(BaseDomainEvent domainEvent)
             {
-                _handler.Handle((T)domainEvent);
+                _handler.HandleAsync((T)domainEvent);
             }
         }
     }

@@ -2,6 +2,7 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Exceptions;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 
 namespace Domain.Services
 {

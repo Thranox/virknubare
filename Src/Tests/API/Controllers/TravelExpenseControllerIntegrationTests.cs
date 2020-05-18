@@ -12,6 +12,7 @@ using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
