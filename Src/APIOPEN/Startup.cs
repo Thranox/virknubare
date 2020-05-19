@@ -43,8 +43,8 @@ namespace APIOPEN
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
-                dbSeeder.RemoveTestData().Wait();
-                dbSeeder.Seed();
+                dbSeeder.RemoveTestDataAsync().Wait();
+                dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 

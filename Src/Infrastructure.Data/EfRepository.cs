@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
@@ -123,9 +124,9 @@ namespace Infrastructure.Data
             _dbContext.Set<T>().Remove(entity);
         }
 
-        public void Commit()
+        public async Task CommitAsync()
         {
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public void Update<T>(T entity) where T : BaseEntity

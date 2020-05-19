@@ -1,9 +1,10 @@
-﻿using Domain.SharedKernel;
+﻿using System.Threading.Tasks;
+using Domain.SharedKernel;
 
 namespace Domain.Interfaces
 {
     public interface IHandle<T> where T : BaseDomainEvent
     {
-        void Handle(T travelExpenseUpdatedDomainEvent);
+        Task HandleAsync(T travelExpenseChangedStateDomainEvent);
     }
 }

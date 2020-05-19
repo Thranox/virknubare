@@ -4,7 +4,7 @@ namespace Domain.Interfaces
 {
     public interface IDbSeeder
     {
-        void Seed();
-        Task RemoveTestData();
+        Task SeedAsync();
+        Task RemoveTestDataAsync();
     }
 }

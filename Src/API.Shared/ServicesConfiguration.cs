@@ -15,6 +15,7 @@ using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
+using Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -115,6 +116,9 @@ namespace API.Shared
             services.AddScoped<ICreateUserService, CreateUserService>();
             services.AddScoped<ITravelExpenseFactory, TravelExpenseFactory>();
             services.AddScoped<IStageService, StageService>();
+            services.AddScoped<IMessageBrokerService, MessageBrokerService>();
+            services.AddScoped<IMessageTemplateService, MessageTemplateService>();
+            services.AddScoped<IMessageFactory, MessageFactory>();
 
             if (enforceAuthenticated)
             {
@@ -126,12 +130,18 @@ namespace API.Shared
             }
 
             Assembly
-                .GetAssembly(typeof(IProcessFlowStep))
+                .GetAssembly(typeof(ProcessFlowStepAssignedForPaymentFinal))
                 .GetTypesAssignableFrom<IProcessFlowStep>()
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
+            Assembly
+                .GetAssembly(typeof(EmailMessageSenderService))
+                .GetTypesAssignableFrom<IMessageSenderService>()
+                .ForEach(t => { services.AddScoped(typeof(IMessageSenderService), t); });
+
             // Domain event handlers
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
+            services.AddScoped<IHandle<TravelExpenseChangedStateDomainEvent>, TravelExpenseChangedStateDomainEventHandler>();
         }
     }
 }

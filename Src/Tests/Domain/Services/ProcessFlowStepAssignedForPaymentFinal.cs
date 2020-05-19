@@ -3,6 +3,7 @@ using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Services;
+using Domain.ValueObjects;
 using Moq;
 using NUnit.Framework;
 

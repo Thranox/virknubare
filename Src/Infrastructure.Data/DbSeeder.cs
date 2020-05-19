@@ -6,6 +6,7 @@ using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -31,7 +32,7 @@ namespace Infrastructure.Data
                 {TravelExpenseStage.AssignedForPayment, Globals.AssignedForPaymentFinal }
             };
         }
-        public void Seed()
+        public async Task SeedAsync()
         {
             // -----------------------------------
             // Stages(Not Dummy!)
@@ -39,7 +40,7 @@ namespace Infrastructure.Data
             {
                 GetOrCreateStage(travelExpenseStage);
             }
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             // -----------------------------------
             // Dummy customer
@@ -97,10 +98,10 @@ namespace Infrastructure.Data
                 _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description3", userEntityPol, customer));
             }
 
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
         }
 
-        public async Task RemoveTestData()
+        public async Task RemoveTestDataAsync()
         {
             var polTestUsers = TestData.GetTestUsers();
             foreach (var polTestUser in polTestUsers)
@@ -143,7 +144,7 @@ namespace Infrastructure.Data
                 _unitOfWork.Repository.Delete(customerEntity);
             }
 
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             await Task.CompletedTask;
         }

@@ -6,6 +6,7 @@ using Application.Interfaces;
 using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
+using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;

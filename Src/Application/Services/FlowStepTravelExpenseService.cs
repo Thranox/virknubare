@@ -5,6 +5,7 @@ using Application.Dtos;
 using Application.Interfaces;
 using Domain;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
@@ -15,11 +16,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEnumerable<IProcessFlowStep> _processFlowSteps;
+        private readonly IMessageBrokerService _messageBrokerService;
 
-        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps)
+        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps, IMessageBrokerService messageBrokerService)
         {
             _unitOfWork = unitOfWork;
             _processFlowSteps = processFlowSteps;
+            _messageBrokerService = messageBrokerService;
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
@@ -43,6 +46,7 @@ namespace Application.Services
                 throw new ItemNotFoundException(travelExpenseFlowStepDto.TravelExpenseId.ToString(),
                     "TravelExpense");
 
+            var stageBefore = travelExpenseEntity.Stage;
             var flowStep = _unitOfWork.Repository.GetById<FlowStepEntity>(travelExpenseFlowStepDto.FlowStepId);
             if (flowStep == null)
                 throw new ItemNotFoundException(travelExpenseFlowStepDto.FlowStepId.ToString(),
@@ -57,7 +61,9 @@ namespace Application.Services
                 .Repository
                 .Update(travelExpenseEntity);
 
-            _unitOfWork.Commit();
+            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, userEntity));
+
+            await _unitOfWork.CommitAsync();
 
             return await Task.FromResult(new TravelExpenseProcessStepResponse());
         }
