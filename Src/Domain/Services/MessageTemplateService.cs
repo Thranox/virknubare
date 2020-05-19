@@ -14,13 +14,13 @@ namespace Domain.Services
                     return new MessageTemplate()
                     {
                         Subject = "Rejseafregning klar til behandling",
-                        Body = ""
+                        Body = "Hej $$firstname$$, en rejseafregning er klar til behandling på https://wwww.politikerafregning.dk/stuff?id=abc"
                     };
                 case MessageKind.YourTravelExpenseHasChangedState:
                     return new MessageTemplate()
                     {
                         Subject = "Din rejseafregning har skiftet tilstand",
-                        Body = ""
+                        Body = "Hej $$firstname$$, din rejseafregning er behandlet af en medarbejder. Følg den på https://wwww.politikerafregning.dk/stuff?id=abc"
                     };
                 default:
                     throw new NotImplementedException();

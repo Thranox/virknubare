@@ -135,7 +135,7 @@ namespace API.Shared
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
             Assembly
-                .GetAssembly(typeof(EmailSenderService))
+                .GetAssembly(typeof(EmailMessageSenderService))
                 .GetTypesAssignableFrom<IMessageSenderService>()
                 .ForEach(t => { services.AddScoped(typeof(IMessageSenderService), t); });
 
