@@ -16,7 +16,7 @@ namespace Application.Services
         public async Task ResetSeedningAsync()
         {
             await _dbSeeder.RemoveTestDataAsync();
-            _dbSeeder.SeedAsync();
+            await _dbSeeder.SeedAsync();
         }
     }
 }
