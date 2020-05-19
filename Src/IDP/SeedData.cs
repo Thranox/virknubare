@@ -120,6 +120,57 @@ namespace IdentityServerAspNetIdentit
                     {
                         Log.Debug("charlie already exists");
                     }
+
+                    var dennis = userMgr.FindByNameAsync("dennis").Result;
+                    if (dennis == null)
+                    {
+                        dennis = new ApplicationUser
+                        {
+                            UserName = "dennis"
+                        };
+                        var result = userMgr.CreateAsync(dennis, "Pass123$").Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(charlie,TestData.GetClaimsByUserName("dennis")).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                        Log.Debug("dennis created");
+                    }
+                    else
+                    {
+                        Log.Debug("dennis already exists");
+                    }
+
+                    var edward= userMgr.FindByNameAsync("edward").Result;
+                    if (edward == null)
+                    {
+                        edward = new ApplicationUser
+                        {
+                            UserName = "edward"
+                        };
+                        var result = userMgr.CreateAsync(edward, "Pass123$").Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(edward,TestData.GetClaimsByUserName("edward") ).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                        Log.Debug("edward created");
+                    }
+                    else
+                    {
+                        Log.Debug("edward already exists");
+                    }
+
                 }
             }
         }

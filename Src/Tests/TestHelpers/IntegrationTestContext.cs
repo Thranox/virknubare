@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using API.Shared;
 using API.Shared.Controllers;
+using API.Shared.Services;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Services;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -38,12 +37,11 @@ namespace Tests.TestHelpers
 
             ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
             
-            serviceCollection.AddScoped<ILogger>(x => Logger);
+            serviceCollection.AddScoped<ILogger>(x =>Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
             serviceCollection.AddScoped<IMessageSenderService, MemoryListMessageSenderService>();
-
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
@@ -63,7 +61,7 @@ namespace Tests.TestHelpers
             {
                 var customer = unitOfWork
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
                     .SingleOrDefault();
 
                 var travelExpenseEntities = customer.TravelExpenses.ToList();
@@ -89,17 +87,23 @@ namespace Tests.TestHelpers
 
         public CustomerEntity GetDummyCustomer()
         {
-            return CreateUnitOfWork().
-                Repository.
-                List(new CustomerByName(TestData.DummyCustomerName)).
-                Single();
+            return CreateUnitOfWork()
+                .Repository.
+                List(new CustomerByName(TestData.DummyCustomerName1))
+                .Single();
         }
 
         public List<StageEntity> GetStages()
         {
-            return CreateUnitOfWork().
-                Repository.
-                List<StageEntity>();
+            return CreateUnitOfWork()
+                .Repository
+                .List<StageEntity>();
+        }
+
+        public void SetCallingUserBySub(string sub)
+        {
+            (ServiceProvider.GetRequiredService<ISubManagementService>() as FakeSubManagementService)
+                .Sub = sub;
         }
     }
 }

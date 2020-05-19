@@ -359,7 +359,7 @@ namespace Tests.API.Controllers
                 var customerId = testContext
                     .CreateUnitOfWork()
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single()
                     .Id;
                 var travelExpenseCreateDto = new TravelExpenseCreateDto

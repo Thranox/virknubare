@@ -9,20 +9,18 @@ namespace Tests.TestHelpers
     {
         public BaseTestContext()
         {
-            Logger = new LoggerConfiguration()
+            Log.Logger= new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
-            Logger.Information("Starting test");
+            Log.Logger.Information("Starting test");
 
             Fixture = new Fixture();
         }
 
         public Fixture Fixture { get; }
-        public Logger Logger { get; private set; }
 
         public void Dispose()
         {
-            Logger?.Dispose();
         }
     }
 }

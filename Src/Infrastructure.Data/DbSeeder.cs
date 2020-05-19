@@ -44,26 +44,16 @@ namespace Infrastructure.Data
 
             // -----------------------------------
             // Dummy customer
-            CustomerEntity customer=null;
-            foreach (var testCustomer in TestData.GetTestCustomers())
-            {
-                customer = _unitOfWork.Repository.List(new CustomerByName(testCustomer.Name)).SingleOrDefault();
-                if (customer == null)
-                {
-                    customer = new CustomerEntity(testCustomer.Name);
-                    _unitOfWork.Repository.Add(customer);
-                }
-                else
-                {
-                    Log.Logger.Debug("Dummy Customer already present");
-                }
-            }
-
+            var customer1 = GetOrCreateTestCustomer(TestData.DummyCustomerName1);
+            
             // -----------------------------------
             // Dummy Users
-            var userEntityPol = GetOrCreateTestUser(customer, TestData.DummyPolSubAlice, "dummy pol Alice", UserStatus.Registered);
-            var userEntitySek = GetOrCreateTestUser(customer, TestData.DummySekSubBob, "dummy sek Bob", UserStatus.Registered);
-            var userEntityLed = GetOrCreateTestUser(customer, TestData.DummyLedSubCharlie, "dummy led Charlie", UserStatus.Registered);
+            var userEntityPol = GetOrCreateTestUser(customer1, TestData.DummyPolSubAlice, "dummy pol Alice", UserStatus.Registered);
+            var userEntitySek = GetOrCreateTestUser(customer1, TestData.DummySekSubBob, "dummy sek Bob", UserStatus.Registered);
+            var userEntityLed = GetOrCreateTestUser(customer1, TestData.DummyLedSubCharlie, "dummy led Charlie", UserStatus.Registered);
+            var userEntityAdm = GetOrCreateTestUser(customer1, TestData.DummyAdminSubDennis, "dummy adm Dennis", UserStatus.UserAdministrator);
+            var userEntityInit = GetOrCreateTestUser(customer1, TestData.DummyInitialSubEdward, "dummy Init Edward", UserStatus.Initial);
+
 
 
             // -----------------------------------
@@ -73,8 +63,8 @@ namespace Infrastructure.Data
                 var stageEntity = GetOrCreateStage(travelExpenseStage);
                 if (travelExpenseStage != TravelExpenseStage.Final)
                 {
-                    var flowStepEntity = GetOrCreateFlowStep(customer, stageEntity, TestData.GetFlowStepDescription(travelExpenseStage));
-                    GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol);
+                   var flowStepEntity = GetOrCreateFlowStep(customer1, stageEntity, TestData.GetFlowStepDescription(travelExpenseStage));
+                   GetOrCreateFlowStepUserPermission(flowStepEntity, userEntityPol);
 
                     if (travelExpenseStage == TravelExpenseStage.ReportedDone)
                     {
@@ -93,9 +83,9 @@ namespace Infrastructure.Data
             var polTravelExpenses = _unitOfWork.Repository.List(new TravelExpenseByUserId(userEntityPol.Id));
             if (!polTravelExpenses.Any())
             {
-                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description1", userEntityPol, customer));
-                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description2", userEntityPol, customer));
-                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description3", userEntityPol, customer));
+                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description1", userEntityPol, customer1));
+                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description2", userEntityPol, customer1));
+                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description3", userEntityPol, customer1));
             }
 
             await _unitOfWork.CommitAsync();
@@ -147,6 +137,22 @@ namespace Infrastructure.Data
             await _unitOfWork.CommitAsync();
 
             await Task.CompletedTask;
+        }
+
+        private CustomerEntity GetOrCreateTestCustomer(string customerName)
+        {
+           var customer= _unitOfWork.Repository.List(new CustomerByName(customerName)).SingleOrDefault();
+            if (customer == null)
+            {
+                customer = new CustomerEntity(customerName);
+                _unitOfWork.Repository.Add(customer);
+            }
+            else
+            {
+                Log.Logger.Debug("Dummy Customer already present: "+customerName);
+            }
+
+            return customer;
         }
 
         private object GetOrCreateFlowStepUserPermission(FlowStepEntity flowStepEntity, UserEntity userEntity)
