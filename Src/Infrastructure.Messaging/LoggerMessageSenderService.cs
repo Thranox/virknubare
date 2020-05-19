@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Domain.Entities;
 using Domain.Interfaces;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace Infrastructure.Messaging
@@ -13,9 +15,10 @@ namespace Infrastructure.Messaging
             _logger = logger;
         }
 
-        public Task SendMessageAsync(IMessage message)
+        public Task SendMessageAsync(IMessage message, UserEntity userEntity)
         {
-            _logger.Information("Sending message : " + message);
+            _logger.Information("Sending message : " + JsonConvert.SerializeObject(message) + " to " + userEntity.Name +
+                                "/" + userEntity.Subject);
             return Task.CompletedTask;
         }
     }

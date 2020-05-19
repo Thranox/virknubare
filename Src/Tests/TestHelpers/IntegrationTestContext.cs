@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using SharedWouldBeNugets;
 
 namespace Tests.TestHelpers
@@ -36,12 +38,12 @@ namespace Tests.TestHelpers
 
             ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
             
-            serviceCollection.AddScoped(x => Serilog.Log.Logger);
+            serviceCollection.AddScoped<ILogger>(x => Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
+            serviceCollection.AddScoped<IMessageSenderService, MemoryListMessageSenderService>();
 
-            serviceCollection.AddScoped<IStageService, StageService>();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
@@ -82,11 +84,22 @@ namespace Tests.TestHelpers
 
         public Guid GetDummyCustomerId()
         {
+            return GetDummyCustomer().Id;
+        }
+
+        public CustomerEntity GetDummyCustomer()
+        {
             return CreateUnitOfWork().
                 Repository.
                 List(new CustomerByName(TestData.DummyCustomerName)).
-                Single().
-                Id;
+                Single();
+        }
+
+        public List<StageEntity> GetStages()
+        {
+            return CreateUnitOfWork().
+                Repository.
+                List<StageEntity>();
         }
     }
 }

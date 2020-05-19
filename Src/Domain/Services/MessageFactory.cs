@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Domain.Interfaces;
+using Domain.SharedKernel;
 using Domain.ValueObjects;
 
 namespace Domain.Services
@@ -8,7 +9,15 @@ namespace Domain.Services
     {
         public IMessage GetMessage(IMessageTemplate messageTemplate, Dictionary<string, string> messageValues)
         {
-            return new Message();
+            return new Message
+            {
+                Subject = messageTemplate
+                    .Subject
+                    .Replace(messageValues),
+                Body = messageTemplate
+                    .Body
+                    .Replace(messageValues)
+            };
         }
     }
 }

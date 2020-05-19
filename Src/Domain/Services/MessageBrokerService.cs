@@ -20,17 +20,23 @@ namespace Domain.Services
             _messageFactory = messageFactory;
         }
 
-        public async Task SendMessageAsync(IEnumerable<UserEntity> userEntities,
+        public async Task<int> SendMessageAsync(IEnumerable<UserEntity> userEntities,
             TravelExpenseEntity travelExpenseEntity, MessageKind messageKind)
         {
+            var messagesSendCount = 0;
             var messageTemplate = _messageTemplateService.Get(messageKind);
             foreach (var userEntity in userEntities)
             {
                 var messageValues = userEntity.GetMessageValues();
                 var message = _messageFactory.GetMessage(messageTemplate, messageValues);
                 foreach (var messageSenderService in _messageSenderServices)
-                    await messageSenderService.SendMessageAsync(message);
+                {
+                    await messageSenderService.SendMessageAsync(message, userEntity);
+                }
+                messagesSendCount++;
             }
+
+            return messagesSendCount;
         }
     }
 }
