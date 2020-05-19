@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using Serilog;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public class KataStepGetFlowSteps : KataStepBase, IKataStep
     {

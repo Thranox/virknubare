@@ -96,7 +96,11 @@ namespace Infrastructure.Data
             var polTestUsers = TestData.GetTestUsers();
             foreach (var polTestUser in polTestUsers)
             {
-                var userEntity = _unitOfWork.Repository.List<UserEntity>(new UserBySub(polTestUser.ImproventoSub.ToString())).SingleOrDefault();
+                var userEntity = _unitOfWork
+                    .Repository
+                    .List(new UserBySub(polTestUser.ImproventoSub.ToString()))
+                    .SingleOrDefault();
+
                 if(userEntity==null)
                     continue;
 
@@ -204,7 +208,7 @@ namespace Infrastructure.Data
             var flowStepEntity =_unitOfWork.Repository.List(new FlowStepByCustomerAndStage(customer.Id, (TravelExpenseStage) stage.Value)).SingleOrDefault();
             if (flowStepEntity == null)
             {
-                var key = _dictionary[(TravelExpenseStage)stage.Value];
+                var key = _dictionary[stage.Value];
                 flowStepEntity = new FlowStepEntity(key, stage, customer, description);
                 _unitOfWork.Repository.Add(flowStepEntity);
             }
@@ -212,5 +216,4 @@ namespace Infrastructure.Data
             return flowStepEntity;
         }
     }
-
 }

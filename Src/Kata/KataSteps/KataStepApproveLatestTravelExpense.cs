@@ -2,12 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
-using Domain;
 using Newtonsoft.Json;
 using RestSharp;
 using Serilog;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public class KataStepApproveLatestTravelExpense : KataStepBase, IKataStep
     {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using RestSharp;
 using Serilog;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public class KataStepResetTestData : KataStepBase, IKataStep
     {
