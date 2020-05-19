@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Domain.SharedKernel;
 
 namespace Domain.Entities
@@ -12,14 +13,14 @@ namespace Domain.Entities
 
         public FlowStepEntity(string key, StageEntity from, CustomerEntity customer,string description) : this(from,customer)
         {
-            Key = key;
-            Description = description;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
+            Description = description ?? throw new ArgumentNullException(nameof(description));
         }
 
-        private FlowStepEntity(StageEntity @from, CustomerEntity customer)
+        private FlowStepEntity(StageEntity @from, CustomerEntity customer):this()
         {
-            From = from;
-            Customer = customer;
+            From = from ?? throw new ArgumentNullException(nameof(from));
+            Customer = customer ?? throw new ArgumentNullException(nameof(customer));
         }
 
         public StageEntity From { get; set; }

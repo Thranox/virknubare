@@ -40,7 +40,8 @@ namespace Application.Services
 
             var travelExpenseEntity = _unitOfWork
                 .Repository
-                .GetById<TravelExpenseEntity>(travelExpenseFlowStepDto.TravelExpenseId);
+                .List(new TravelExpenseById( travelExpenseFlowStepDto.TravelExpenseId))
+                .Single();
 
             if (travelExpenseEntity == null)
                 throw new ItemNotFoundException(travelExpenseFlowStepDto.TravelExpenseId.ToString(),

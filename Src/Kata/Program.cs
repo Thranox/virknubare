@@ -68,7 +68,11 @@ namespace Kata
                     new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseCreateResponse!=null && c.TravelExpenseCreateResponse.Id!=Guid.Empty),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==4),
                     new KataStepDescriptor("GetFlowSteps").AsUser("alice"),
-                    new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice")
+                    new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice"),
+
+                    new KataStepDescriptor("GetFlowSteps").AsUser("bob"),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("bob").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null ),
+                    new KataStepDescriptor("CertifyLatestTravelExpense").AsUser("bob")
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)

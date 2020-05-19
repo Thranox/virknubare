@@ -11,8 +11,8 @@ namespace Domain.Entities
 
         public FlowStepUserPermissionEntity(FlowStepEntity flowStep, UserEntity user):this()
         {
-            FlowStep = flowStep;
-            User = user;
+            FlowStep = flowStep ?? throw new ArgumentNullException(nameof(flowStep));
+            User = user ?? throw new ArgumentNullException(nameof(user));
         }
 
         public Guid FlowStepId { get; private set;}

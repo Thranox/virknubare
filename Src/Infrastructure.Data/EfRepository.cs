@@ -51,7 +51,8 @@ namespace Infrastructure.Data
             {
                 IQueryable<TravelExpenseEntity> includableQueryable = _dbContext
                     .Set<TravelExpenseEntity>()
-                    .Include(g => g.Stage);
+                    .Include(g => g.Stage)
+                    .Include(g=>g.OwnedByUser);
 
                 if (spec != null)
                 {

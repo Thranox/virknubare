@@ -15,7 +15,7 @@ namespace Application.Dtos
         public string StageId { get; set; }
         public string StageText { get; set; }
         public IEnumerable< AllowedFlowDto> AllowedFlows { get; set; }
-
+        public Guid OwnedByUserId { get; set; }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
