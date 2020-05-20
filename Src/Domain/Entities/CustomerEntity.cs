@@ -18,7 +18,7 @@ namespace Domain.Entities
 
         public CustomerEntity(string name) : this()
         {
-            Name = name;
+            Name = name ?? throw new ArgumentNullException(nameof(name)); 
         }
 
         public ICollection<TravelExpenseEntity> TravelExpenses { get; }

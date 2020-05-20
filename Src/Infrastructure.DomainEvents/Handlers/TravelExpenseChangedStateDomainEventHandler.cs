@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Domain.Events;
 using Domain.Interfaces;
 using Domain.ValueObjects;
@@ -20,6 +21,9 @@ namespace Infrastructure.DomainEvents.Handlers
 
         public async Task HandleAsync(TravelExpenseChangedStateDomainEvent travelExpenseChangedStateDomainEvent)
         {
+            if(travelExpenseChangedStateDomainEvent==null)
+                throw new ArgumentNullException(nameof(travelExpenseChangedStateDomainEvent));
+
             _logger.Information("Handling " + travelExpenseChangedStateDomainEvent.GetType().Name);
 
             // ------------------------------------------------------

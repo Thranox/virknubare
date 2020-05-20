@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public abstract class KataStepBase
     {
@@ -15,10 +15,15 @@ namespace Kata
         public async Task ExecuteAndVerifyAsync(string nameOfLoggedInUser,
             Func<IClientContext, bool> verificationFunc)
         {
+            Console.WriteLine("Executing as " +nameOfLoggedInUser);
+            
             await Execute(nameOfLoggedInUser);
             var valid = verificationFunc(ClientContext);
+
             if(!valid)
-                throw new InvalidOperationException("Validation failed in "+this.GetType().FullName);
+                throw new InvalidOperationException(
+                    $"Running as {nameOfLoggedInUser}, validation failed in {GetType().FullName}"
+                    );
         }
 
         protected abstract Task Execute(string nameOfLoggedInUser);

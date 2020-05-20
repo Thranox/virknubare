@@ -32,7 +32,7 @@ namespace Tests.ApplicationServices
                     .CreateUnitOfWork()
                     .Repository
                     .List(
-                        new CustomerByName(TestData.DummyCustomerName)
+                        new CustomerByName(TestData.DummyCustomerName1)
                     )
                     .SingleOrDefault();
                 Assert.That(userCustomerInfo.CustomerId, Is.EqualTo(customerEntity.Id));

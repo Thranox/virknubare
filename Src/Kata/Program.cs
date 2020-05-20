@@ -63,12 +63,21 @@ namespace Kata
                     new KataStepDescriptor("VerifySwaggerUp"),
 
                     new KataStepDescriptor("ResetTestData").AsUser("alice"),
+
                     new KataStepDescriptor("GetUserInfo").AsUser("alice").WithVerification(c=>c.UserInfoGetResponse!=null),
-                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==3),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==TestData.GetNumberOfTestDataTravelExpenses()),
                     new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseCreateResponse!=null && c.TravelExpenseCreateResponse.Id!=Guid.Empty),
-                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==4),
-                    new KataStepDescriptor("GetFlowSteps").AsUser("alice"),
-                    new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice")
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==TestData.GetNumberOfTestDataTravelExpenses()+1),
+                    new KataStepDescriptor("GetFlowSteps").AsUser("alice").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
+                    new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice"),
+
+                    new KataStepDescriptor("GetFlowSteps").AsUser("bob").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("bob").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==1),
+                    new KataStepDescriptor("CertifyLatestTravelExpense").AsUser("bob"),
+                    
+                    new KataStepDescriptor("GetFlowSteps").AsUser("charlie").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
+                    new KataStepDescriptor("GetAllTravelExpenses").AsUser("charlie").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==1),
+                    new KataStepDescriptor("AssignForPaymentLatestTravelExpense").AsUser("charlie")
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)

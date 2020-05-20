@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Serilog;
 using SharedWouldBeNugets;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public class KataStepVerifySwaggerUp : KataStepBase, IKataStep
     {

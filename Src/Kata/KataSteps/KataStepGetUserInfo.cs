@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using Serilog;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public class KataStepGetUserInfo : KataStepBase, IKataStep
     {
@@ -25,7 +25,6 @@ namespace Kata
 
         protected override async Task Execute(string nameOfLoggedInUser)
         {
-            // As Alice, get customers from the UserInfo endpoint
             _logger.Debug("Getting UserInfoGetResponse...");
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var result =

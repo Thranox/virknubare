@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Domain.SharedKernel;
 
 namespace Domain.Entities
@@ -14,8 +15,8 @@ namespace Domain.Entities
 
         public UserEntity(string name, string subject) : this()
         {
-            Name = name;
-            Subject = subject;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Subject = subject ?? throw new ArgumentNullException(nameof(subject));
         }
 
         public string Name { get; set; }

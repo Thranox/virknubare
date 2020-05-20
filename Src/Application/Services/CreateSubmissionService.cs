@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Interfaces;
+using Domain.Specifications;
 
 namespace Application.Services
 {
@@ -17,9 +18,8 @@ namespace Application.Services
 
         public Task<SubmissionPostResponse> CreateAsync(string sub)
         {
+            var travelExpenses = _unitOfWork.Repository.List(new TravelExpensesReadyToSend());
             throw new NotImplementedException();
-
-            //var travelExpenses = _unitOfWork.Repository.List(new TravelExpensesReadyToSend());
             //CreateCsv(travelExpenses);
             //foreach (var travelExpense in travelExpenses)
             //{
@@ -30,4 +30,5 @@ namespace Application.Services
             // ftpService.UploadAllWaiting();
         }
     }
+
 }

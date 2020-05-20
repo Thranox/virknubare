@@ -34,7 +34,7 @@ namespace Tests.ApplicationServices
                 var customer = testContext
                     .CreateUnitOfWork()
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single();
 
                 var stageEntityInitial = testContext

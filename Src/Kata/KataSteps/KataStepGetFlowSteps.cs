@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using Serilog;
 
-namespace Kata
+namespace Kata.KataSteps
 {
     public class KataStepGetFlowSteps : KataStepBase, IKataStep
     {
@@ -26,7 +26,6 @@ namespace Kata
 
         protected override async Task Execute(string nameOfLoggedInUser)
         {
-            // As Alice (politician), get all Travel Expenses (that is, all she can see)
             _logger.Debug("Getting FlowSteps...");
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var flowStepGetResponse =
