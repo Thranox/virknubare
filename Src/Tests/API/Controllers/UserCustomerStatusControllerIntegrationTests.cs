@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -18,21 +17,21 @@ namespace Tests.API.Controllers
 {
     public class UserCustomerStatusControllerIntegrationTests
     {
-        private static Mock<ISubManagementService> subManagementService;
+        private static Mock<ISubManagementService> _subManagementService;
 
         [SetUp]
         public void SetUp()
         {
-            subManagementService = new Mock<ISubManagementService>();
+            _subManagementService = new Mock<ISubManagementService>();
         }
 
         [Test]
-        [Ignore("Not done")]
-        public async Task Get_NoParameters_ReturnsTravelExpenses()
+        public async Task Put_ExistingUser_IsSuccess()
         {
             // Arrange
-            // Set executing user to be Dessis -- he is admin
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyAdminSubDennis);
+            // Set executing user to be Dennis -- he is admin
+            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>()))
+                .Returns(TestData.DummyAdminSubDennis);
             using (var testContext = new IntegrationTestContext())
             {
                 var userEntityEdward = testContext
@@ -42,7 +41,7 @@ namespace Tests.API.Controllers
                     .SingleOrDefault();
 
                 var sut = GetSut(testContext);
-                
+
                 // Act
                 var actual = await sut.Put(userEntityEdward.Id, testContext.GetDummyCustomerId(), "Registered");
 
@@ -50,15 +49,14 @@ namespace Tests.API.Controllers
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
                 var okObjectResult = actual.Result as OkObjectResult;
                 Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as StatisticsGetResponse;
+                var value = okObjectResult.Value as UserCustomerStatusPutResponse;
                 Assert.That(value, Is.Not.Null);
             }
-            Assert.Fail();
         }
 
         private static UserCustomerStatusController GetSut(IntegrationTestContext testContext)
         {
-            return new UserCustomerStatusController(subManagementService.Object,
+            return new UserCustomerStatusController(_subManagementService.Object,
                 testContext.ServiceProvider.GetService<IUserCustomerStatusService>());
         }
     }

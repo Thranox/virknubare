@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.SharedKernel;
+using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
@@ -28,6 +30,13 @@ namespace Domain.Entities
         public Dictionary<string,string> GetMessageValues()
         {
             return new Dictionary<string, string>();
+        }
+
+        public bool IsUserAdminForCustomer(Guid customerId)
+        {
+            return CustomerUserPermissions
+                .Any(x => x.CustomerId == customerId && x.UserStatus == UserStatus.UserAdministrator);
+
         }
     }
 }

@@ -46,5 +46,16 @@ namespace Domain.Entities
                 .Distinct()
                 .ToArray();
         }
+
+        public void SetUserStatus(UserEntity userEntity, UserStatus userStatus)
+        {
+            var any = this.CustomerUserPermissions.SingleOrDefault(x=>x.UserId==userEntity.Id);
+
+            if (any == null)
+                CustomerUserPermissions.Add(new CustomerUserPermissionEntity()
+                    {User = userEntity, UserStatus = userStatus});
+            else
+                any.UserStatus = userStatus;
+        }
     }
 }

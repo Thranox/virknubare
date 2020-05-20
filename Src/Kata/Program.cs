@@ -34,7 +34,7 @@ namespace Kata
             _jwtUsers = JsonConvert.DeserializeObject<JwtUser[]>(json);
 
             var propertiesJson = File.ReadAllText(Path.Combine(expectedDir, "properties.json"));
-            _properties= JsonConvert.DeserializeObject<Properties>(propertiesJson);
+            _properties = JsonConvert.DeserializeObject<Properties>(propertiesJson);
 
             var cb = new ConfigurationBuilder();
             StartupHelper.SetupConfig(new string[] { }, cb, "Development");
@@ -71,10 +71,12 @@ namespace Kata
                     new KataStepDescriptor("GetFlowSteps").AsUser("alice").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
                     new KataStepDescriptor("ApproveLatestTravelExpense").AsUser("alice"),
 
+                    new KataStepDescriptor("GetUserInfo").AsUser("bob").WithVerification(c=>c.UserInfoGetResponse!=null),
                     new KataStepDescriptor("GetFlowSteps").AsUser("bob").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("bob").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==1),
                     new KataStepDescriptor("CertifyLatestTravelExpense").AsUser("bob"),
-                    
+
+                    new KataStepDescriptor("GetUserInfo").AsUser("charlie").WithVerification(c=>c.UserInfoGetResponse!=null),
                     new KataStepDescriptor("GetFlowSteps").AsUser("charlie").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("charlie").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==1),
                     new KataStepDescriptor("AssignForPaymentLatestTravelExpense").AsUser("charlie")
@@ -83,9 +85,9 @@ namespace Kata
                 foreach (var kataStepDescriptor in kataStepDescriptors)
                 {
                     var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
-                    
+
                     await step.ExecuteAndVerifyAsync(
-                        kataStepDescriptor.NameOfLoggedInUser, 
+                        kataStepDescriptor.NameOfLoggedInUser,
                         kataStepDescriptor.VerificationFunc);
 
                     Thread.Sleep(opts.SleepMs);
