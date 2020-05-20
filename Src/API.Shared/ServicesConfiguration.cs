@@ -121,6 +121,7 @@ namespace API.Shared
             services.AddScoped<IMessageTemplateService, MessageTemplateService>();
             services.AddScoped<IMessageFactory, MessageFactory>();
             services.AddScoped<IUserStatusService, UserStatusService>();
+            services.AddScoped<ICustomerUserService, CustomerUserService>();
 
             if (enforceAuthenticated)
             {

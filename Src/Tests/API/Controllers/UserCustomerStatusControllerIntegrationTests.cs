@@ -6,6 +6,7 @@ using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -43,7 +44,7 @@ namespace Tests.API.Controllers
                 var sut = GetSut(testContext);
 
                 // Act
-                var actual = await sut.Put(userEntityEdward.Id, testContext.GetDummyCustomerId(), "Registered");
+                var actual = await sut.Put(userEntityEdward.Id, testContext.GetDummyCustomerId(), (int)UserStatus.Registered);
 
                 // Assert
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));

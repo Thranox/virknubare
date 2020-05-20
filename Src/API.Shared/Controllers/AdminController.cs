@@ -9,8 +9,8 @@ namespace API.Shared.Controllers
     [Route("admin")]
     public class AdminController : ControllerBase
     {
-        private readonly ISubManagementService _subManagementService;
         private readonly IAdminService _adminService;
+        private readonly ISubManagementService _subManagementService;
 
         public AdminController(ISubManagementService subManagementService, IAdminService adminService)
         {
@@ -28,5 +28,4 @@ namespace API.Shared.Controllers
             return Ok();
         }
     }
-
 }

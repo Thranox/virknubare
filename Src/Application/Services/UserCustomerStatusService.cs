@@ -26,7 +26,7 @@ namespace Application.Services
         }
 
         public async Task<UserCustomerStatusPutResponse> PutAsync(string sub, Guid userId, Guid customerId,
-            string userStatus)
+            int userStatus)
         {
             var callingUserEntity = _unitOfWork
                                         .Repository
@@ -50,7 +50,7 @@ namespace Application.Services
 
             _logger.Information("Admin=" + callingUserEntity.Name + " UserId=" + userId + " customer=" + customerId);
 
-            var status = _userStatusService.GetUserStatusFromString(userStatus);
+            var status = _userStatusService.GetUserStatusFromInt(userStatus);
 
             customer.SetUserStatus(userToAdd, status);
 

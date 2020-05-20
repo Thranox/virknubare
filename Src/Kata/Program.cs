@@ -79,7 +79,13 @@ namespace Kata
                     new KataStepDescriptor("GetUserInfo").AsUser("charlie").WithVerification(c=>c.UserInfoGetResponse!=null),
                     new KataStepDescriptor("GetFlowSteps").AsUser("charlie").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("charlie").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==1),
-                    new KataStepDescriptor("AssignForPaymentLatestTravelExpense").AsUser("charlie")
+                    new KataStepDescriptor("AssignForPaymentLatestTravelExpense").AsUser("charlie"),
+
+                    new KataStepDescriptor("GetUserInfo").AsUser("dennis").WithVerification(c=>c.UserInfoGetResponse!=null),
+                    new KataStepDescriptor("GetCustomerUsers").AsUser("dennis"),
+                    new KataStepDescriptor("ChangeUserCustomerStatus").AsUser("dennis"),
+
+                    new KataStepDescriptor("GetUserInfo").AsUser("edward").WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.Any(x=>x.UserCustomerStatus!=0)),
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)

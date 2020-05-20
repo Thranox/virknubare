@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 
 namespace Application.Dtos
 {
-    public class StatisticsGetResponse : ValueObject
+    public class UserCustomerPutResponse:ValueObject
     {
         public override IEnumerable<object> GetEqualityComponents()
         {
