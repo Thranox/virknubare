@@ -11,6 +11,7 @@ import {CoreModule} from "./core/core.module";
 import {HttpClientModule} from "@angular/common/http";
 import {FetchDataComponent} from "./modules/fetch-data/fetch-data.component";
 import {FormsModule} from "@angular/forms";
+import {SharedModule} from "./shared/shared.module";
 
 dayjs.locale('da');
 
@@ -28,6 +29,8 @@ dayjs.locale('da');
     CoreModule,
     HttpClientModule,
     FormsModule,
+
+    SharedModule.forRoot(),
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'da-DK' } // For angular date-pipe and custom appDate pipe
