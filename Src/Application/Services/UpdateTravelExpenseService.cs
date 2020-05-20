@@ -35,7 +35,7 @@ namespace Application.Services
                 .Repository
                 .Update(travelExpenseEntity);
 
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return await Task.FromResult(new TravelExpenseUpdateResponse());
         }
     }

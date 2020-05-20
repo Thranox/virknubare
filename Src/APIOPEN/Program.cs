@@ -18,10 +18,10 @@ namespace APIOPEN
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     StartupHelper.SetupConfig(args, config, hostingContext.HostingEnvironment.EnvironmentName);
-                    Log.Logger = StartupHelper.CreateLogger(config, "OPENAPI");
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
                 });

@@ -1,6 +1,6 @@
 using System;
 using API.Shared;
-using IDP.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,7 +28,7 @@ namespace PolAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, true, Title);
+            services.AddPolApi(_configuration, true, Title, "PolAPI");
             services.AddPolDatabase(_configuration, _environment.EnvironmentName);
         }
 
@@ -36,7 +36,6 @@ namespace PolAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
             PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
         {
-            logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning API...");
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
@@ -45,7 +44,7 @@ namespace PolAPI
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
-                dbSeeder.Seed();
+                dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
            
@@ -59,10 +58,15 @@ namespace PolAPI
             });
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            app.UseMiddleware<ErrorWrappingMiddleware>();
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("v1/swagger.json", Title + " " + CommonApi.Version));
+                c =>
+                {
+                    c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version);
+                    c.DocumentTitle = "PolAPI";
+                });
 
             app.UseRouting();
 
@@ -71,7 +75,6 @@ namespace PolAPI
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version"));
-            logger.Information("------------------------------------------------------------");
         }
     }
 }

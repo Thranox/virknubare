@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ namespace Infrastructure.DomainEvents
             _serviceProvider = serviceProvider;
         }
 
-        public void Dispatch(BaseDomainEvent domainEvent)
+        public async Task Dispatch(BaseDomainEvent domainEvent)
         {
             var handlerType = typeof(IHandle<>).MakeGenericType(domainEvent.GetType());
             var wrapperType = typeof(DomainEventHandler<>).MakeGenericType(domainEvent.GetType());
@@ -30,14 +31,14 @@ namespace Infrastructure.DomainEvents
 
                 foreach (var handler in wrappedHandlers)
                 {
-                    handler.Handle(domainEvent);
+                    await handler.HandleAsync(domainEvent);
                 }
             }
         }
 
         private abstract class DomainEventHandler
         {
-            public abstract void Handle(BaseDomainEvent domainEvent);
+            public abstract Task HandleAsync(BaseDomainEvent domainEvent);
         }
 
         private class DomainEventHandler<T> : DomainEventHandler
@@ -50,9 +51,9 @@ namespace Infrastructure.DomainEvents
                 _handler = handler;
             }
 
-            public override void Handle(BaseDomainEvent domainEvent)
+            public override async Task HandleAsync(BaseDomainEvent domainEvent)
             {
-                _handler.Handle((T)domainEvent);
+                await _handler.HandleAsync((T)domainEvent);
             }
         }
     }

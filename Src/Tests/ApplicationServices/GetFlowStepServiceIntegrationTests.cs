@@ -6,6 +6,7 @@ using Application.Services;
 using Domain;
 using Domain.Exceptions;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;
@@ -33,7 +34,7 @@ namespace Tests.ApplicationServices
                 var customer = testContext
                     .CreateUnitOfWork()
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single();
 
                 var stageEntityInitial = testContext

@@ -1,6 +1,52 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
+    <MetricsExclusionList>
+      <Value>IDP\IDP.csproj\Quickstart</Value>
+      <Value>Infrastructure.Data\Infrastructure.Data.csproj\Migrations</Value>
+      <Value>IDP\IDP.csproj\Migrations</Value>
+      <Value>Migrations\20200424191941_Initial.Designer.cs:IDP\IDP.csproj</Value>
+      <Value>Migrations\ApplicationDbContextModelSnapshot.cs:IDP\IDP.csproj</Value>
+      <Value>Migrations\20200424191941_Initial.cs:IDP\IDP.csproj</Value>
+      <Value>TokenValidator.cs:IDP\IDP.csproj</Value>
+      <Value>Startup.cs:IDP\IDP.csproj</Value>
+      <Value>SeedData.cs:IDP\IDP.csproj</Value>
+      <Value>Config.cs:IDP\IDP.csproj</Value>
+      <Value>HealthController.cs:IDP\IDP.csproj</Value>
+      <Value>Program.cs:IDP\IDP.csproj</Value>
+      <Value>Migrations\20200428051024_Initial0710.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428051024_Initial0710.Designer.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428063315_Initial0832.Designer.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200501130355_Added-stage-relation.Designer.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\PolDbContextModelSnapshot.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428052539_Initial0724.Designer.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428045143_Initial.Designer.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428045143_Initial.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428063315_Initial0832.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200501130355_Added-stage-relation.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Migrations\20200428052539_Initial0724.cs:Infrastructure.Data\Infrastructure.Data.csproj</Value>
+      <Value>Startup.cs:Web\Web.csproj</Value>
+      <Value>WeatherForecastController.cs:Web\Web.csproj</Value>
+      <Value>Program.cs:Web\Web.csproj</Value>
+      <Value>StartupHelper.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>ConnectionStringService.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>Extensions.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>BuildVersionInfoProvider.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>PolicyService.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>ImproventoGlobals.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>TestData.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>IPolicyService.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>IConnectionStringService.cs:SharedWouldBeNugets\SharedWouldBeNugets.csproj</Value>
+      <Value>Startup.cs:PolAPI\PolAPI.csproj</Value>
+      <Value>Program.cs:PolAPI\PolAPI.csproj</Value>
+      <Value>WeatherForecast.cs:PolAPI\PolAPI.csproj</Value>
+      <Value>Data\ApplicationDbContext.cs:IDP\IDP.csproj</Value>
+      <Value>Pages\Error.cshtml.cs:Web\Web.csproj</Value>
+      <Value>Handlers\TravelExpenseUpdatedNotificationHandler.cs:Infrastructure.DomainEvents\Infrastructure.DomainEvents.csproj</Value>
+      <Value>DomainEventDispatcher.cs:Infrastructure.DomainEvents\Infrastructure.DomainEvents.csproj</Value>
+      <Value>Program.cs:APIOPEN\APIOPEN.csproj</Value>
+      <Value>Startup.cs:APIOPEN\APIOPEN.csproj</Value>
+    </MetricsExclusionList>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>

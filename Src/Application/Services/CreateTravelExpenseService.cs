@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
 
@@ -22,6 +24,9 @@ namespace Application.Services
         public async Task<TravelExpenseCreateResponse> CreateAsync(TravelExpenseCreateDto travelExpenseCreateDto,
             string sub)
         {
+            //if(travelExpenseCreateDto.CustomerId==Guid.Empty)
+            //    throw new BusinessRuleViolationException(Guid.Empty, "CustomerId can't be empty when creating TravelExpence");
+
             var creatingUser = _unitOfWork.Repository.List(new UserBySub(sub)).FirstOrDefault();
             var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
             var travelExpenseEntity =_travelExpenseFactory.Create(travelExpenseCreateDto.Description, creatingUser,owningCustomer);
@@ -30,7 +35,7 @@ namespace Application.Services
                 .Repository
                 .Add(travelExpenseEntity);
 
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             return await Task.FromResult(new TravelExpenseCreateResponse
             {

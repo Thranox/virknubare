@@ -3,6 +3,7 @@ using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Services;
+using Domain.ValueObjects;
 using Moq;
 using NUnit.Framework;
 
@@ -39,7 +40,7 @@ namespace Tests.Domain.Services
         {
             // Arrange
             var stageEntity = new StageEntity(travelExpenseStage);
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
+            var travelExpenseEntity = new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
@@ -55,7 +56,7 @@ namespace Tests.Domain.Services
         {
             // Arrange
             var stageEntityCertified = new StageEntity(TravelExpenseStage.Certified);
-            var travelExpenseEntity = new TravelExpenseEntity("", new UserEntity("", ""), new CustomerEntity(""),stageEntityCertified);
+            var travelExpenseEntity = new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntityCertified);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntityCertified);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);

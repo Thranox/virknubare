@@ -1,4 +1,4 @@
-﻿namespace IDP.Services
+﻿namespace SharedWouldBeNugets
 {
     public interface IConnectionStringService
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
@@ -50,7 +51,8 @@ namespace Infrastructure.Data
             {
                 IQueryable<TravelExpenseEntity> includableQueryable = _dbContext
                     .Set<TravelExpenseEntity>()
-                    .Include(g => g.Stage);
+                    .Include(g => g.Stage)
+                    .Include(g=>g.OwnedByUser);
 
                 if (spec != null)
                 {
@@ -67,12 +69,31 @@ namespace Infrastructure.Data
                     .Include(g => g.FlowStepUserPermissions)
                     .ThenInclude(gg => gg.FlowStep)
                     .ThenInclude(ggg=>ggg.From)
-                    //.Include(g => g.Customer)
-                    //.ThenInclude(gg=>gg.TravelExpenses)
+                    .Include(g=>g.CustomerUserPermissions)
+                    .ThenInclude(gg=>gg.Customer)
+                    .Include(g=>g.TravelExpenses)
+                    .ThenInclude(gg=>gg.Stage)
                     ;
                 if (spec != null)
                 {
                     var castedSpec = spec as ISpecification<UserEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+                return includableQueryable.ToList() as List<T>;
+            }
+
+            if (typeof(T) == typeof(FlowStepEntity))
+            {
+                IQueryable<FlowStepEntity> includableQueryable = _dbContext
+                        .Set<FlowStepEntity>()
+                        .Include(g => g.FlowStepUserPermissions)
+                        .ThenInclude(gg => gg.FlowStep)
+                        .ThenInclude(ggg => ggg.From)
+                        .Include(g => g.From)
+                    ;
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<FlowStepEntity>;
                     includableQueryable = includableQueryable.Where(castedSpec.Criteria);
                 }
                 return includableQueryable.ToList() as List<T>;
@@ -104,9 +125,9 @@ namespace Infrastructure.Data
             _dbContext.Set<T>().Remove(entity);
         }
 
-        public void Commit()
+        public async Task CommitAsync()
         {
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public void Update<T>(T entity) where T : BaseEntity

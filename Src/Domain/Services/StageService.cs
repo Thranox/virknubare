@@ -3,6 +3,7 @@ using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Specifications;
+using Domain.ValueObjects;
 
 namespace Domain.Services
 {

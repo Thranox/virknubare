@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Domain.SharedKernel;
 
 namespace Domain.Interfaces
 {
     public interface IDomainEventDispatcher
     {
-        void Dispatch(BaseDomainEvent domainEvent);
+        Task Dispatch(BaseDomainEvent domainEvent);
     }
 }

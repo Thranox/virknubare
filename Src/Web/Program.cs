@@ -18,7 +18,6 @@ namespace Web
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     StartupHelper.SetupConfig(args, config, hostingContext.HostingEnvironment.EnvironmentName);
-                    Log.Logger = StartupHelper.CreateLogger(config, "Web");
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

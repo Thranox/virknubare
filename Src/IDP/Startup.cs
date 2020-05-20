@@ -1,12 +1,7 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using System.Security.Cryptography;
-using IdentityServer4.Services;
+﻿using IdentityServer4.Services;
+using IdentityServerAspNetIdentit;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
-using IDP.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,19 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Serilog;
 using SharedWouldBeNugets;
-using IdentityServer4.Validation;
+using ILogger = Serilog.ILogger;
 
-namespace IdentityServerAspNetIdentit
+namespace IDP
 {
-    internal class TemporaryRsaKey
-    {
-        public string KeyId { get; set; }
-        public RSAParameters Parameters { get; set; }
-    }
     public class Startup
     {
         public IWebHostEnvironment Environment { get; }
@@ -41,6 +29,7 @@ namespace IdentityServerAspNetIdentit
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ILogger>(s=>Log.Logger);
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
@@ -110,16 +99,16 @@ namespace IdentityServerAspNetIdentit
                         .AllowAnyHeader()
                         .AllowCredentials());
             });
-            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
-            {
-                AllowAll = true
-            };
-            services.AddSingleton<ICorsPolicyService>(cors);
-            //services.AddScoped<ITokenValidator, MyTokenValidator>();
+            services.AddSingleton<ICorsPolicyService, DefaultCorsPolicyService>();
         }
 
-        public void Configure(IApplicationBuilder app, ApplicationDbContext applicationDbContext)
+        public void Configure(IApplicationBuilder app, ILogger logger, ICorsPolicyService corsPolicyService)
         {
+            if (corsPolicyService is DefaultCorsPolicyService defaultCorsPolicyService)
+            {
+                defaultCorsPolicyService.AllowAll = true;
+            }
+
             Log.Information("Ensuring database is migrated and seeded...");
             var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
             var connectionString = connectionStringService.GetConnectionString("DefaultConnection");
@@ -151,6 +140,4 @@ namespace IdentityServerAspNetIdentit
             });
         }
     }
-
-    
 }

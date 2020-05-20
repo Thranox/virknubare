@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace IDP.Services
+namespace SharedWouldBeNugets
 {
     public class ConnectionStringService : IConnectionStringService
     {

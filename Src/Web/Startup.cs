@@ -1,5 +1,5 @@
 using API.Shared;
-using IDP.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,7 +28,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false, Title);
+            services.AddPolApi(_configuration, false, Title, "Web");
             services.AddPolDatabase(_configuration, _environment.EnvironmentName);
 
             // In production, the Angular files will be served from this directory
@@ -39,7 +39,6 @@ namespace Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
             IConfiguration configuration, IDbSeeder dbSeeder, PolDbContext polDbContext, IPolicyService policyService)
         {
-            logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning Web...");
             if (env.IsDevelopment())
             {
@@ -57,7 +56,7 @@ namespace Web
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
-                dbSeeder.Seed();
+                dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 
@@ -76,7 +75,11 @@ namespace Web
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", Title + " " + CommonApi.Version));
+                c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", Title + " " + CommonApi.Version);
+                    c.DocumentTitle = "Web hosted API";
+                });
 
             app.UseStaticFiles();
             if (!env.IsDevelopment()) app.UseSpaStaticFiles();
@@ -102,7 +105,6 @@ namespace Web
             });
 
             logger.Information("TravelExpense Web started. Version=" + configuration.GetValue<string>("Version"));
-            logger.Information("------------------------------------------------------------");
         }
     }
 }

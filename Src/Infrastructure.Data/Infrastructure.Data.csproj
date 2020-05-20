@@ -9,6 +9,8 @@
     <Compile Remove="Migrations\20200428164313_Initial1840.Designer.cs" />
     <Compile Remove="Migrations\20200501130205_aaaaaaa.cs" />
     <Compile Remove="Migrations\20200501130205_aaaaaaa.Designer.cs" />
+    <Compile Remove="Migrations\20200517130649_added-description-to-flowstep.cs" />
+    <Compile Remove="Migrations\20200517130649_added-description-to-flowstep.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,5 @@
 using API.Shared;
-using IDP.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,7 +27,7 @@ namespace APIOPEN
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPolApi(_configuration, false, Title);
+            services.AddPolApi(_configuration, false, Title, "APIOPEN");
             services.AddPolDatabase(_configuration, _environment.EnvironmentName);
         }
 
@@ -35,7 +35,6 @@ namespace APIOPEN
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
             PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
         {
-            logger.Information("------------------------------------------------------------");
             logger.Information("Starting Politikerafregning APIOPEN...");
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
@@ -44,7 +43,8 @@ namespace APIOPEN
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
-                dbSeeder.Seed();
+                dbSeeder.RemoveTestDataAsync().Wait();
+                dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 
@@ -58,19 +58,22 @@ namespace APIOPEN
             });
 
             app.UseHttpsRedirection();
-
+            app.UseMiddleware<ErrorWrappingMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version));
+                c =>
+                {
+                    c.SwaggerEndpoint("v1/swagger.json", Title + CommonApi.Version);
+                    c.DocumentTitle = "API OPEN";
+                });
 
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
 
             logger.Information("TravelExpense APIOPEN started. Version=" + _configuration.GetValue<string>("Version"));
-            logger.Information("------------------------------------------------------------");
         }
     }
 }

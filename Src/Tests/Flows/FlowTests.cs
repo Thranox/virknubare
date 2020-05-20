@@ -1,18 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using API.Shared;
 using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Dtos;
 using AutoFixture;
-using Domain;
 using Domain.Interfaces;
-using Domain.Services;
 using Domain.Specifications;
-using Infrastructure.Data;
+using Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -36,21 +31,23 @@ namespace Tests.Flows
 
                 // Set the calling user to be Alice
                 ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub= TestData.DummyPolSubAlice;
+                    .Sub = TestData.DummyPolSubAlice;
 
 
                 // ** Create TravelExpense
                 var actionResultTePost = await travelExpenseController.Post(
-                    new TravelExpenseCreateDto()
+                    new TravelExpenseCreateDto
                         {Description = testContext.Fixture.Create<string>(), CustomerId = customerId});
 
-                var travelExpenseId = ((actionResultTePost.Result as CreatedResult).Value as TravelExpenseCreateResponse).Id;
+                var travelExpenseId =
+                    ((actionResultTePost.Result as CreatedResult).Value as TravelExpenseCreateResponse).Id;
 
                 Console.WriteLine("-----");
 
                 Console.WriteLine("After posting:");
                 Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                    TravelExpenseGetByIdResponse, Formatting.Indented));
 
                 // ** Report TravelExpense Done
                 var actionResulltFsGet = await flowStepController.Get();
@@ -59,20 +56,19 @@ namespace Tests.Flows
 
                 Assert.That(flowStepGetResponse.Result.Any());
                 var firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After Reporting done:");
                 Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
-
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                    TravelExpenseGetByIdResponse, Formatting.Indented));
 
 
                 // ** Certify TravelExpense
 
 
-
                 // Set the calling user to be Bob
-                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
                     .Sub = TestData.DummySekSubBob;
 
 
@@ -83,22 +79,21 @@ namespace Tests.Flows
                 Assert.That(flowStepGetResponse.Result.Any());
 
                 firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After certifying");
-                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
                     .Sub = TestData.DummyPolSubAlice;
                 Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
-
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                    TravelExpenseGetByIdResponse, Formatting.Indented));
 
 
                 // ** Assign TravelExpense for payment
 
 
-
                 // Set the calling user to be Charlie
-                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
                     .Sub = TestData.DummyLedSubCharlie;
 
 
@@ -109,13 +104,14 @@ namespace Tests.Flows
                 Assert.That(flowStepGetResponse.Result.Any());
 
                 firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.Key);
+                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After Assigning Payment");
-                ((FakeSubManagementService)testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
+                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
                     .Sub = TestData.DummyPolSubAlice;
                 Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as TravelExpenseGetByIdResponse, Formatting.Indented));
+                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                    TravelExpenseGetByIdResponse, Formatting.Indented));
             }
         }
 
@@ -125,40 +121,43 @@ namespace Tests.Flows
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var processFlowSteps =testContext.ServiceProvider.GetServices<IProcessFlowStep>();
+                var processFlowSteps = testContext
+                    .ServiceProvider
+                    .GetServices<IProcessFlowStep>()
+                    .ToArray();
 
-                using (var polDbContext = new PolDbContext(testContext.DbContextOptions))
+                var customer = testContext
+                    .CreateUnitOfWork()
+                    .Repository
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
+                    .Single();
+
+                var newTe = customer.TravelExpenses.First();
+
+                var iterations = 0;
+
+                // Act & Assert
+                do
                 {
-                    var repository = new EfRepository(polDbContext);
-                    var customer = repository
-                        .List(new CustomerByName(TestData.DummyCustomerName))
-                        .Single();
+                    iterations++;
+                    Console.WriteLine("Stage: " + newTe.Stage);
 
-                    var newTe = customer.TravelExpenses.First();
+                    var nextFlowSteps = testContext
+                        .CreateUnitOfWork()
+                        .Repository
+                        .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
+                        .First();
 
-                    var iterations = 0;
+                    var processFlowStep = processFlowSteps
+                        .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
 
-                    // Act & Assert
-                    do
-                    {
-                        iterations++;
-                        Console.WriteLine("Stage: " + newTe.Stage);
+                    Assert.That(processFlowStep, Is.Not.Null);
 
-                        var nextFlowSteps = testContext.CreateUnitOfWork().Repository
-                            .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
-                            .First();
+                    newTe.ApplyProcessStep(processFlowStep);
 
-                        var processFlowStep = processFlowSteps
-                            .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
-
-                        Assert.That(processFlowStep, Is.Not.Null);
-
-                        newTe.ApplyProcessStep(processFlowStep);
-
-                        if (iterations > 10)
-                            throw new InvalidOperationException();
-                    } while (newTe.Stage.Value != TravelExpenseStage.Final);
-                }
+                    if (iterations > 10)
+                        throw new InvalidOperationException();
+                } while (newTe.Stage.Value != TravelExpenseStage.Final);
             }
         }
     }
