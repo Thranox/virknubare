@@ -27,12 +27,12 @@ dayjs.locale('da');
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    CoreModule,
+    CoreModule.forRoot(),
     HttpClientModule,
     FormsModule,
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'da-DK' } // For angular date-pipe and custom appDate pipe
+    { provide: LOCALE_ID, useValue: 'da-DK' } // For angular date-pipe
   ],
   bootstrap: [AppComponent]
 })

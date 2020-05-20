@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserManager, User } from 'oidc-client';
+import {UserManager, User, UserManagerSettings} from 'oidc-client';
 import { Constants } from '../../constants';
 import { Subject } from 'rxjs';
 
@@ -20,15 +20,9 @@ export class AuthService {
       scope: 'openid profile roles teapi',
       response_type: 'code',
       post_logout_redirect_uri: `${Constants.clientRoot}signout-redirect-callback`,
-      // metadata: {
-      //   issuer: `${Constants.stsAuthority}`,
-      //   authorization_endpoint: `${Constants.stsAuthority}authorize?audience=projects-api`,
-      //   jwks_uri: `${Constants.stsAuthority}.well-known/jwks.json`,
-      //   token_endpoint: `${Constants.stsAuthority}oauth/token`,
-      //   userinfo_endpoint: `${Constants.stsAuthority}userinfo`,
-      //   end_session_endpoint: `${Constants.stsAuthority}v2/logout?client_id=${Constants.clientId}&returnTo=${encodeURI(Constants.clientRoot)}signout-callback`
-      // }
-    };
+      // automaticSilentRenew: true,
+      // loadUserInfo: true
+    } as UserManagerSettings;
     this._userManager = new UserManager(stsSettings);
   }
 

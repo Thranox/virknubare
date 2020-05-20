@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {AuthService} from '../../core/auth-service.component';
+import {AuthService} from '../../core/services/auth.service';
 import {Observable, of} from "rxjs";
 import {TravelExpense} from "../model/travel-expense.model";
 import {FlowStep} from "../model/flow-step.model";

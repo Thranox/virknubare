@@ -2,7 +2,7 @@ import {Component, Inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {TravelExpense} from "../../shared/model/travel-expense.model";
 import {FlowStep} from "../../shared/model/flow-step.model";
-import {AuthService} from "../../core/auth-service.component";
+import {AuthService} from "../../core/services/auth.service";
 import {TravelExpenseService} from "../../shared/services/travel-expense.service";
 
 @Component({
