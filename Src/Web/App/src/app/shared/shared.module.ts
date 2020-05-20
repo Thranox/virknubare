@@ -3,6 +3,8 @@ import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TravelExpenseService} from "./services/travel-expense.service";
 import {TravelExpenseResource} from "./resources/travel-expense.resource";
+import {FlowStepService} from "./services/flow-step.service";
+import {FlowStepResource} from "./resources/flow-step.resource";
 
 
 
@@ -20,11 +22,13 @@ const PROVIDERS = [
     // Services
     // DemoService,
     TravelExpenseService,
+    FlowStepService,
 
 
     // Resources
     // DemoResource,
     TravelExpenseResource,
+    FlowStepResource,
 
     // States
     // ProfileState,

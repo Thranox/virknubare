@@ -4,6 +4,7 @@ import {TravelExpense} from "../../shared/model/travel-expense.model";
 import {FlowStep} from "../../shared/model/flow-step.model";
 import {AuthService} from "../../core/auth-service.component";
 import {TravelExpenseService} from "../../shared/services/travel-expense.service";
+import {FlowStepService} from "../../shared/services/flow-step.service";
 
 @Component({
   selector: 'app-fetch-data',
@@ -21,7 +22,8 @@ export class FetchDataComponent {
   constructor(
     http: HttpClient,
     authService: AuthService,
-    private _travelExpenseService: TravelExpenseService
+    private _travelExpenseService: TravelExpenseService,
+    private _flowStepService: FlowStepService,
   ) {
 
     this.getAllTravelExpenses();
@@ -39,7 +41,7 @@ export class FetchDataComponent {
   }
 
   getAllFlowSteps() {
-    this._travelExpenseService.getFlowsteps().subscribe(result => {
+    this._flowStepService.getFlowsteps().subscribe(result => {
       this.flowSteps = result;
     })
   }
@@ -58,7 +60,7 @@ export class FetchDataComponent {
   }
 
   getNextFlowStep() {
-    this._travelExpenseService.getFlowsteps().subscribe(result => {
+    this._flowStepService.getFlowsteps().subscribe(result => {
       result.forEach((flowStep => {
         if (flowStep.fromStageId === this.selectedTravelExpense.stageId) {
           console.log('Next step for this is', flowStep);
@@ -92,7 +94,7 @@ export class FetchDataComponent {
   moveToNextFlowStep() {
     console.log('Move travelexpense to', this.nextFlowStep.key);
 
-    this._travelExpenseService.processStep(this.selectedTravelExpense, this.nextFlowStep).subscribe(response => {
+    this._flowStepService.processStep(this.selectedTravelExpense, this.nextFlowStep).subscribe(response => {
       console.log('Got response from processStep:', response);
     })
   }
