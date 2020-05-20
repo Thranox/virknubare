@@ -44,7 +44,7 @@ export class AuthService {
       }
       this._user = user;
       return userCurrent;
-    });
+    })
   }
 
   completeLogin() {
