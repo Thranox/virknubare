@@ -7,11 +7,19 @@ import {UnauthorizedComponent} from './modules/authentication/unauthorized.compo
 
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/auth/login',
+    pathMatch: 'full'
+  },
   {path: 'page2', component: Page2Component},
   {path: 'sign-out', component: Page2Component},
   {path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent},
   {path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent},
-  {path: 'unauthorized', component: UnauthorizedComponent}
+  {path: 'unauthorized', component: UnauthorizedComponent},
+  {path: 'travel-expense', loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule)},
+  // Fallback when no prior routes is matched
+  { path: '**', redirectTo: '/auth/login', pathMatch: 'full' }
 ];
 
 @NgModule({
