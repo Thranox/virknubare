@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserManager, User } from 'oidc-client';
-import { Constants } from '../constants';
+import { Constants } from '../../constants';
 import { Subject } from 'rxjs';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class AuthService {
     const stsSettings = {
       authority: Constants.stsAuthority,
       client_id: Constants.clientId,
-      
+
       redirect_uri: `${Constants.clientRoot}signin-redirect-callback`,
       scope: 'openid profile roles teapi',
       response_type: 'code',

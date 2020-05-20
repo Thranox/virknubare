@@ -9,6 +9,7 @@ import { Page2Component } from './modules/page2/page2.component';
 import {NavMenuComponent} from './components/nav-menu/nav-menu.component';
 import {CoreModule} from "./core/core.module";
 import {HttpClientModule} from "@angular/common/http";
+import { FooterComponent } from './components/footer/footer.component';
 
 dayjs.locale('da');
 
@@ -16,7 +17,8 @@ dayjs.locale('da');
   declarations: [
     AppComponent,
     Page2Component,
-    NavMenuComponent
+    NavMenuComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
