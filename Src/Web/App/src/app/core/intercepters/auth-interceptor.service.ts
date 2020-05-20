@@ -8,17 +8,13 @@ import {
 } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {from, Observable, Subject, throwError} from 'rxjs';
-import {catchError, concatAll, flatMap, tap} from 'rxjs/operators';
+import {from, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
 import {AuthService} from '../services/auth.service';
 import {environment} from '../../../environments/environment';
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
-    private isWaitingForRefresh = false;
-    private authFailedCount = 0;
-    private authSubject: Subject<void>;
-
     constructor(
         private authService: AuthService,
         private router: Router) {
