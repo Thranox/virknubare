@@ -1,32 +1,18 @@
 import { Component } from '@angular/core';
-import { AuthService } from './core/auth-service.component';
+import {AuthService} from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: []
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  isLoggedIn = false;
-  title = 'app';
+  title = 'ClientApp';
+  private isLoggedIn: boolean;
 
-  constructor(private _authService: AuthService) {
-    this._authService.loginChanged.subscribe(loggedIn => {
+  constructor(private authService: AuthService) {
+    this.authService.isLoggedIn().then(loggedIn => {
       this.isLoggedIn = loggedIn;
     });
-  }
-
-  ngOnInit() {
-    this._authService.isLoggedIn().then(loggedIn => {
-      this.isLoggedIn = loggedIn;
-    });
-  }
-
-  login() {
-    this._authService.login();
-  }
-
-  logout() {
-    this._authService.logout();
   }
 }

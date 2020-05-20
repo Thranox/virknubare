@@ -1,48 +1,41 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-
+import {LOCALE_ID, NgModule} from '@angular/core';
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import 'dayjs/locale/da'; // import locale
+import * as dayjs from 'dayjs';
+import { Page2Component } from './modules/page2/page2.component';
+import {NavMenuComponent} from './components/nav-menu/nav-menu.component';
+import {CoreModule} from './core/core.module';
+import {HttpClientModule} from '@angular/common/http';
+import { FooterComponent } from './components/footer/footer.component';
+import {FetchDataComponent} from './modules/fetch-data/fetch-data.component';
+import {FormsModule} from '@angular/forms';
+import {SharedModule} from './shared/shared.module';
 
-import { CoreModule } from './core/core.module';
-import { SigninRedirectCallbackComponent } from "./home/signin-redirect-callback.component";
-import { SignoutRedirectCallbackComponent } from "./home/signout-redirect-callback.component";
-import { UnauthorizedComponent } from "./home/unauthorized.component";
-import { ContactUsComponent } from "./home/contact-us.component";
+dayjs.locale('da');
 
 @NgModule({
   declarations: [
     AppComponent,
+    Page2Component,
     NavMenuComponent,
-    ContactUsComponent,
-    HomeComponent,
-    CounterComponent,
+    FooterComponent,
     FetchDataComponent,
-    SigninRedirectCallbackComponent,
-    SignoutRedirectCallbackComponent,
-    UnauthorizedComponent
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserModule,
+    AppRoutingModule,
+    NgbModule,
+    CoreModule.forRoot(),
     HttpClientModule,
     FormsModule,
-    CoreModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent },
-      { path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent },
-      { path: 'unauthorized', component: UnauthorizedComponent }
-    ]),
+    SharedModule.forRoot(),
   ],
-  providers: [],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'da-DK' } // For angular date-pipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
