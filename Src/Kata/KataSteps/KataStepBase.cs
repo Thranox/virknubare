@@ -22,7 +22,7 @@ namespace Kata.KataSteps
 
             if(!valid)
                 throw new InvalidOperationException(
-                    $"Running as {nameOfLoggedInUser},alidation failed in {GetType().FullName}"
+                    $"Running as {nameOfLoggedInUser}, validation failed in {GetType().FullName}"
                     );
         }
 

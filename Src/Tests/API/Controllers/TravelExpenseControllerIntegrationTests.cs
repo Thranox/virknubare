@@ -42,7 +42,7 @@ namespace Tests.API.Controllers
                 var value = okObjectResult.Value as TravelExpenseGetResponse;
                 Assert.That(value, Is.Not.Null);
                 var v = value.Result.ToArray();
-                Assert.That(v.Length, Is.EqualTo(3));
+                Assert.That(v.Length, Is.EqualTo(TestData.GetNumberOfTestDataTravelExpenses()));
 
                 var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
                 var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();

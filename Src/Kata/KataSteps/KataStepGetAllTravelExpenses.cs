@@ -26,7 +26,6 @@ namespace Kata.KataSteps
 
         protected override async Task Execute(string nameOfLoggedInUser)
         {
-            // As Alice (politician), get all Travel Expenses (that is, all she can see)
             _logger.Debug("Getting TravelExpenses...");
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var travelExpenseGetResponse =

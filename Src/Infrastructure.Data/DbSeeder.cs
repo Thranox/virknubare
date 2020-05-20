@@ -58,9 +58,11 @@ namespace Infrastructure.Data
 
             // -----------------------------------
             // Stages(Not Dummy!)
+            var stages=new List<StageEntity>();
             foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
             {
                 var stageEntity = GetOrCreateStage(travelExpenseStage);
+                stages.Add(stageEntity);
                 if (travelExpenseStage != TravelExpenseStage.Final)
                 {
                    var flowStepEntity = GetOrCreateFlowStep(customer1, stageEntity, TestData.GetFlowStepDescription(travelExpenseStage));
@@ -83,9 +85,21 @@ namespace Infrastructure.Data
             var polTravelExpenses = _unitOfWork.Repository.List(new TravelExpenseByUserId(userEntityPol.Id));
             if (!polTravelExpenses.Any())
             {
-                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description1", userEntityPol, customer1));
-                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description2", userEntityPol, customer1));
-                _unitOfWork.Repository.Add(_travelExpenseFactory.Create("Description3", userEntityPol, customer1));
+                var travelExpenseDescriptions=Enumerable.Range(1, TestData.GetNumberOfTestDataTravelExpenses()).Select(x=> "Description"+x);
+                var newTravelExpenses= travelExpenseDescriptions
+                    .Select(x=>_travelExpenseFactory.Create(x, userEntityPol, customer1))
+                    .ToArray();
+                foreach (var travelExpenseEntity in newTravelExpenses)
+                {
+                    _unitOfWork.Repository.Add(travelExpenseEntity);
+                }
+
+                var travelExpensesToFastForward = newTravelExpenses.Reverse().Take(5);
+                foreach (var travelExpenseEntity in travelExpensesToFastForward)
+                {
+                    travelExpenseEntity.ApplyProcessStep(new FastForwardStep(stages, TravelExpenseStage.AssignedForPayment));
+                }
+
             }
 
             await _unitOfWork.CommitAsync();
@@ -214,6 +228,30 @@ namespace Infrastructure.Data
             }
 
             return flowStepEntity;
+        }
+
+        /// <summary>
+        /// This ProcessFlowStep is used for 'cheating' test data into desired state. This should never be made available outside DbSeeder.
+        /// </summary>
+        private class FastForwardStep : IProcessFlowStep
+        {
+            private readonly List<StageEntity> _stages;
+            private readonly TravelExpenseStage _travelExpenseStage;
+
+            public FastForwardStep(List<StageEntity> stages, TravelExpenseStage travelExpenseStage)
+            {
+                _stages = stages;
+                _travelExpenseStage = travelExpenseStage;
+            }
+            public bool CanHandle(string key)
+            {
+                return true;
+            }
+
+            public StageEntity GetResultingStage(TravelExpenseEntity travelExpenseEntity)
+            {
+                return _stages.Single(x => x.Value == _travelExpenseStage);
+            }
         }
     }
 }

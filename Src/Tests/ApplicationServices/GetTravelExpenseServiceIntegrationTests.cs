@@ -29,7 +29,7 @@ namespace Tests.ApplicationServices
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 var v = actual.Result.ToArray();
-                Assert.That(v.Length, Is.EqualTo(3));
+                Assert.That(v.Length, Is.EqualTo(TestData.GetNumberOfTestDataTravelExpenses()));
 
                 var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
                 var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();

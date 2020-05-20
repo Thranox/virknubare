@@ -125,5 +125,10 @@ namespace SharedWouldBeNugets
         {
             return FlowStepDescriptionNameByStage[travelExpenseStage];
         }
+
+        public static int GetNumberOfTestDataTravelExpenses()
+        {
+            return 9;
+        }
     }
 }
