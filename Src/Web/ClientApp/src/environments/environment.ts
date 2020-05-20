@@ -5,11 +5,13 @@
 import {EnvironmentInterface} from './environment-interface';
 
 export const environment: EnvironmentInterface = {
-  production: false,
-  // apiUrl: 'https://dev.politikerafregning.dk/PolAPI/',
-  apiUrl: 'https://dev.politikerafregning.dk/APIOpen/',
-  stsAuthorityUrl: 'https://dev.politikerafregning.dk/IDP/',
-  stsClientId: 'polangularclient'
+    production: false,
+    // apiUrl: 'https://dev.politikerafregning.dk/PolAPI/',
+    // apiUrl: 'https://dev.politikerafregning.dk/APIOpen/',
+    apiUrl: 'https://cors-anywhere.herokuapp.com/https://andersathome.dk/PolAPI/',
+    // stsAuthorityUrl: 'https://dev.politikerafregning.dk/IDP/',
+    stsAuthorityUrl: 'https://andersathome.dk/IDP/',
+    stsClientId: 'polangularclient'
 };
 
 /*
