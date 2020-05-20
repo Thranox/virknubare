@@ -1,34 +1,32 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Politikkerafregning</a>
-  <button class="navbar-toggler" (click)="toggle()" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" [ngClass]="{ show: isExpanded }" id="navbarCollapse">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item" [routerLinkActive]="['link-active']">
-        <a class="nav-link" routerLink="/">Forside</a>
-      </li>
-      <li class="nav-item" [routerLinkActive]="['link-active']">
-        <a class="nav-link" routerLink="/page2">Test</a>
-      </li>
-      <li class="nav-item" [routerLinkActive]="['link-active']">
-        <a class="nav-link" routerLink="/fetch-data">Fetch data</a>
-      </li>
-      <ng-container *ngIf="isLoggedIn">
-        <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="nav-link" routerLink="/page2">Test</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" (click)="logout($event)">Log ud</a>
-        </li>
-      </ng-container>
-      <ng-container *ngIf="! isLoggedIn">
-        <li class="nav-item">
-          <a class="nav-link" href="#" (click)="login($event)">Log ind</a>
-        </li>
-      </ng-container>
+    <a class="navbar-brand" href="#">Politikkerafregning</a>
+    <button class="navbar-toggler" (click)="toggle()" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" [ngClass]="{ show: isExpanded }" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" [routerLinkActive]="['link-active']">
+                <a class="nav-link" routerLink="/">Forside</a>
+            </li>
+            <ng-container *ngIf="isLoggedIn">
+                <li class="nav-item" [routerLinkActive]="['link-active']">
+                    <a class="nav-link" routerLink="/page2">Test</a>
+                </li>
+                <li class="nav-item" [routerLinkActive]="['link-active']">
+                    <a class="nav-link" routerLink="/fetch-data">Fetch data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" (click)="logout($event)">Log ud</a>
+                </li>
+            </ng-container>
+            <ng-container *ngIf="! isLoggedIn">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" (click)="login($event)">Log ind</a>
+                </li>
+            </ng-container>
 
 
-    </ul>
-  </div>
+        </ul>
+    </div>
 </nav>
