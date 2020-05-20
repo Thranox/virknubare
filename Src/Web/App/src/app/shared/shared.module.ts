@@ -1,25 +1,58 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {TravelExpenseService} from "./services/travel-expense.service";
+import {TravelExpenseResource} from "./resources/travel-expense.resource";
+import {FlowStepService} from "./services/flow-step.service";
+import {FlowStepResource} from "./resources/flow-step.resource";
+import {CommonModule} from "@angular/common";
+import {FormsModule} from "@angular/forms";
+
+
+
+const DECLARATIONS = [
+    // Components
+    // PostViewComponent,
+
+
+    // Pipes
+    // AssetPipe,
+
+];
+
+const PROVIDERS = [
+    // Services
+    // DemoService,
+    TravelExpenseService,
+    FlowStepService,
+
+
+    // Resources
+    // DemoResource,
+    TravelExpenseResource,
+    FlowStepResource,
+
+    // States
+    // ProfileState,
+
+    // FullcalendarConfigurator,
+
+    // others
+    // {provide: NgbTimeAdapter, useClass: NgbTimeStringAdapter},
+];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    NgbModule,
-  ],
-  declarations: [],
-  exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-
-    NgbModule,
-  ]
+    imports: [
+    ],
+    declarations: DECLARATIONS,
+    exports: DECLARATIONS,
+    entryComponents: [
+        // FileImageModalComponent,
+    ]
 })
-export class SharedModule {}
+export class SharedModule {
+    public static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: SharedModule,
+            providers: PROVIDERS,
+        };
+    }
+}
