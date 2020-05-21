@@ -20,6 +20,7 @@ namespace Kata
         private static int _exitCode;
         private static JwtUser[] _jwtUsers;
         private static Properties _properties;
+        private static ILogger _logger;
 
         private static async Task RunOptions(Options opts)
         {
@@ -36,14 +37,10 @@ namespace Kata
             var propertiesJson = File.ReadAllText(Path.Combine(expectedDir, "properties.json"));
             _properties = JsonConvert.DeserializeObject<Properties>(propertiesJson);
 
-            var cb = new ConfigurationBuilder();
-            StartupHelper.SetupConfig(new string[] { }, cb, "Development");
-            var logger = StartupHelper.CreateLogger(cb.Build(), "Kata");
-
             try
             {
                 var serviceCollection = new ServiceCollection()
-                    .AddScoped<ILogger>(s => logger)
+                    .AddScoped<ILogger>(s => _logger)
                     .AddScoped<IRestClientProvider, RestClientProvider>()
                     .AddScoped(s => _properties)
                     .AddScoped(s => _jwtUsers)
@@ -92,20 +89,32 @@ namespace Kata
                 {
                     var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
 
-                    await step.ExecuteAndVerifyAsync(
-                        kataStepDescriptor.NameOfLoggedInUser,
-                        kataStepDescriptor.VerificationFunc);
+                    try
+                    {
+                        var logMessage = $"About to execute step: {kataStepDescriptor.Identifier}, {step.GetType().Name}, executing as {kataStepDescriptor.NameOfLoggedInUser}";
+                        _logger.Information(logMessage);
+
+                        await step.ExecuteAndVerifyAsync(
+                            kataStepDescriptor.NameOfLoggedInUser,
+                            kataStepDescriptor.VerificationFunc);
+                    }
+                    catch (Exception)
+                    {
+                        var logMessage = $"Error executing step: {kataStepDescriptor.Identifier}, {step.GetType().Name}, executing as {kataStepDescriptor.NameOfLoggedInUser}";
+                        _logger.Error(logMessage);
+                        throw;
+                    }
 
                     Thread.Sleep(opts.SleepMs);
                 }
             }
             catch (Exception e)
             {
-                logger.Error(e, "During Kata steps...");
+                _logger.Error(e,"During Kata steps...");
                 throw;
             }
 
-            logger.Information("Kata executed without errors on {system}!", opts.SutName);
+            _logger.Information("Kata executed without errors on {system}!", opts.SutName);
 
             if (opts.UsePrompt)
             {
@@ -125,14 +134,18 @@ namespace Kata
         {
             try
             {
+                var cb = new ConfigurationBuilder();
+                StartupHelper.SetupConfig(new string[] { }, cb, "Development");
+                _logger = StartupHelper.CreateLogger(cb.Build(), "Kata");
+
                 var parserResult = Parser.Default.ParseArguments<Options>(args);
                 var withParsedAsync = await parserResult
                     .WithParsedAsync(RunOptions);
                 await withParsedAsync.WithNotParsedAsync(HandleParseErrorAsync);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
+                _logger.Information("Kata executed with errors !");
                 _exitCode = 1;
             }
 
