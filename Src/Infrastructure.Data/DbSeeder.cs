@@ -150,6 +150,11 @@ namespace Infrastructure.Data
                 if(customerEntity==null)
                     continue;
 
+                foreach (var invitationEntity in customerEntity.Invitations)
+                {
+                    _unitOfWork.Repository.Delete(invitationEntity);
+                }
+
                 foreach (var flowStepEntity in customerEntity.FlowSteps)
                 {
                     _unitOfWork.Repository.Delete(flowStepEntity);

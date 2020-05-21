@@ -76,8 +76,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<FlowStepUserPermissionEntity>().ToTable("FlowStepUserPermissions");
             modelBuilder.Entity<TravelExpenseEntity>().ToTable("TravelExpenses");
             modelBuilder.Entity<CustomerUserPermissionEntity>().ToTable("CustomerUserPermissions");
-
-
+            modelBuilder.Entity<InvitationEntity>().ToTable("Invitations");
         }
 
         //public void Seed()
