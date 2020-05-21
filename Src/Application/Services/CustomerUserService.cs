@@ -39,8 +39,6 @@ namespace Application.Services
         public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(string sub, Guid customerId,
             CustomerInvitationsPostDto customerInvitationsPostDto)
         {
-            await Task.CompletedTask;
-
             var customer = _unitOfWork.Repository.List(new CustomerById(customerId)).SingleOrDefault() ??
                            throw new ArgumentException(nameof(customerId));
 
@@ -48,6 +46,8 @@ namespace Application.Services
             {
                 customer.AddInvitation(email);
             }
+
+            await _unitOfWork.CommitAsync();
 
             return new CustomerInvitationsPostResponse();
         }
