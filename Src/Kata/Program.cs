@@ -83,6 +83,8 @@ namespace Kata
                     new KataStepDescriptor("ChangeUserCustomerStatus").AsUser("dennis"),
 
                     new KataStepDescriptor("GetUserInfo").AsUser("edward").WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.Any(x=>x.UserCustomerStatus!=0)),
+
+                    new KataStepDescriptor("SendInvitationEmails").AsUser("dennis"),
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)
