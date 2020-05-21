@@ -2,7 +2,7 @@
 using API.Shared.Services;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace API.Shared.Controllers
 {
@@ -26,7 +26,7 @@ namespace API.Shared.Controllers
         {
             var sub = _subManagementService.GetSub(User);
 
-            _logger.LogInformation("Reseeding database");
+            _logger.Information("Reseeding database");
             await _adminService.ResetSeedningAsync();
 
             return Ok(new DatabaseResetResponseDto());

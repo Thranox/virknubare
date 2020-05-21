@@ -36,9 +36,20 @@ namespace Application.Services
             };
         }
 
-        public Task<object> CreateInvitationsAsync(string sub, Guid customerId)
+        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(string sub, Guid customerId,
+            CustomerInvitationsPostDto customerInvitationsPostDto)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+
+            var customer = _unitOfWork.Repository.List(new CustomerById(customerId)).SingleOrDefault() ??
+                           throw new ArgumentException(nameof(customerId));
+
+            foreach (var email in customerInvitationsPostDto.Emails)
+            {
+                customer.AddInvitation(email);
+            }
+
+            return new CustomerInvitationsPostResponse();
         }
     }
 }

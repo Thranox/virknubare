@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -24,6 +25,24 @@ namespace Tests.ApplicationServices
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 Assert.That(actual.Users.Length, Is.EqualTo(TestData.GetTestUsers().Count()));
+            }
+        }
+
+        [Test]
+        public async Task CreateInvitationsAsync_AdminUserCallingWithExistingCustomer_ReturnsUsersWithStuff()
+        {
+            // Arrange
+            var customerInvitationsPostDto = new CustomerInvitationsPostDto { Emails = new[] { "user1@domain.com", "user2@domain.com" } };
+            using (var testContext = new IntegrationTestContext())
+            {
+                var sut = testContext.ServiceProvider.GetService<ICustomerUserService>();
+
+                // Act
+                var actual = await sut.CreateInvitationsAsync(TestData.DummyPolSubAlice, testContext.GetDummyCustomerId(), customerInvitationsPostDto);
+
+                // Assert
+                Assert.That(actual, Is.Not.Null);
+                //Assert.That(actual.Users.Length, Is.EqualTo(TestData.GetTestUsers().Count()));
             }
         }
     }
