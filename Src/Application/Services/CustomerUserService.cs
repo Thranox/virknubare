@@ -35,5 +35,10 @@ namespace Application.Services
                     .ToArray()
             };
         }
+
+        public Task<object> CreateInvitationsAsync(string sub, Guid customerId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

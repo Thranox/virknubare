@@ -27,7 +27,18 @@ namespace API.Shared.Controllers
 
             var customerUserGetResponse = await _customerUserService.GetAsync(sub, customerId);
 
-            return Ok( customerUserGetResponse);
+            return Ok(customerUserGetResponse);
+        }
+
+        [HttpPost("{customerId}/Invitations")]
+        public async Task<ActionResult<CustomerUserGetResponse>> PostInvitations(Guid customerId, CustomerInvitationsPostDto customerInvitationsPostDto)
+        {
+            throw new NotImplementedException();
+            //var sub = _subManagementService.GetSub(User);
+
+            //var customerUserGetResponse = await _customerUserService.CreateInvitationsAsync(sub, customerId);
+
+            //return Ok(customerUserGetResponse);
         }
 
     }

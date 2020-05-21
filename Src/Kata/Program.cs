@@ -82,8 +82,9 @@ namespace Kata
                     new KataStepDescriptor("GetCustomerUsers").AsUser("dennis"),
                     new KataStepDescriptor("ChangeUserCustomerStatus").AsUser("dennis"),
 
-                    new KataStepDescriptor("GetUserInfo").AsUser("edward").WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.Any(x=>x.UserCustomerStatus!=0)),
+                    new KataStepDescriptor("GetUserInfo").AsUser("edward").WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.All(x=>x.UserCustomerStatus!=0)),
 
+                    new KataStepDescriptor("GetUserInfo").AsUser("dennis"),//.WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.Any(x=>x.UserCustomerStatus!=0)),
                     new KataStepDescriptor("SendInvitationEmails").AsUser("dennis"),
                 };
 
@@ -113,6 +114,10 @@ namespace Kata
             catch (Exception e)
             {
                 _logger.Error(e,"During Kata steps...");
+
+                if (opts.UsePrompt)
+                    Console.ReadLine();
+
                 throw;
             }
 
