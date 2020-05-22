@@ -20,7 +20,7 @@ namespace SharedWouldBeNugets
 
             KataApiRetryPolicy = Policy
                 .Handle<Exception>()
-                .WaitAndRetryAsync(5, i => TimeSpan.FromSeconds(1), (exception, span,retryCount, context) =>
+                .WaitAndRetryAsync(15, i => TimeSpan.FromSeconds(2), (exception, span,retryCount, context) =>
                 {
                     logger.Warning($"Retry:{retryCount} of 5");
                 });

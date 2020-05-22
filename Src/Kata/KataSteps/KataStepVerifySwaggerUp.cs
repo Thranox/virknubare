@@ -33,13 +33,15 @@ namespace Kata.KataSteps
             await _kataApiRetryPolicy
                 .ExecuteAsync(async () =>
                     {
-                        _logger.Information("Trying to reach swagger page...");
+                        var apiEndpoint = _properties.ApiEndpoint + "/swagger/index.html";
+                        _logger.Information("Trying to reach swagger page at " +apiEndpoint);
 
-                        // Wait for max half a second each time.
-                        var cancellationTokenSource = new CancellationTokenSource(500);
+                        // Wait for max of 10 seconds each time.
+                        // It can seem like a long time, but the API takes time before being able to serve requests.
+                        var cancellationTokenSource = new CancellationTokenSource(10000);
 
                         var httpClient = new HttpClient();
-                        await httpClient.GetAsync(new Uri(_properties.ApiEndpoint + "/swagger/index.html"),
+                        await httpClient.GetAsync(new Uri(apiEndpoint),
                             cancellationTokenSource.Token);
                         _logger.Information("Done trying to reach swagger page...");
                     }
