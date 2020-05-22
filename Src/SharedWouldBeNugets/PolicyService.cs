@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Polly;
+using Polly.Retry;
 using Serilog;
 
 namespace SharedWouldBeNugets
@@ -19,14 +20,13 @@ namespace SharedWouldBeNugets
 
             KataApiRetryPolicy = Policy
                 .Handle<Exception>()
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(1),
-                    delegate(Exception exception, TimeSpan span, int arg3, Context arg4)
-                    {
-                        logger.Warning("Retrying");
-                    });
+                .WaitAndRetryAsync(5, i => TimeSpan.FromSeconds(1), (exception, span,retryCount, context) =>
+                {
+                    logger.Warning($"Retry:{retryCount} of 5");
+                });
         }
 
         public Policy DatabaseMigrationAndSeedingPolicy { get; }
-        public Policy KataApiRetryPolicy { get; }
+        public AsyncRetryPolicy KataApiRetryPolicy { get; }
     }
 }

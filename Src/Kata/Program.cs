@@ -45,6 +45,7 @@ namespace Kata
                     .AddScoped(s => _properties)
                     .AddScoped(s => _jwtUsers)
                     .AddScoped<IClientContext>(s => new ClientContext())
+                    .AddScoped<IPolicyService,PolicyService>()
                     .AddScoped<IKataStepProvider, KataStepProvider>();
                 Assembly
                     .GetAssembly(typeof(IKataStep))
