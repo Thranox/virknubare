@@ -12,10 +12,10 @@ using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
 using IdentityServer4.AccessTokenValidation;
-using IDP.Services;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
+using Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -45,6 +45,7 @@ namespace API.Shared
         }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
+            services.AddControllers().AddNewtonsoftJson();
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
             services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
@@ -59,8 +60,8 @@ namespace API.Shared
 
 
                     Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
-                })
-                ;
+                });
+
             var assembly = typeof(TravelExpenseController).Assembly;
             services.AddControllersWithViews(options =>
                 {
@@ -87,11 +88,7 @@ namespace API.Shared
 
             MapServices(services, enforceAuthenticated, configuration);
 
-            services.AddMvc(mvcOptions => mvcOptions.EnableEndpointRouting = false);
-
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            services.AddControllers();
         }
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
@@ -108,15 +105,23 @@ namespace API.Shared
             services.AddScoped<IGetTravelExpenseService, GetTravelExpenseService>();
             services.AddScoped<ICreateTravelExpenseService, CreateTravelExpenseService>();
             services.AddScoped<IUpdateTravelExpenseService, UpdateTravelExpenseService>();
-            services.AddScoped<IProcessStepTravelExpenseService, ProcessStepTravelExpenseService>();
+            services.AddScoped<IFlowStepTravelExpenseService, FlowStepTravelExpenseService>();
             services.AddScoped<IGetFlowStepService, GetFlowStepService>();
             services.AddScoped<ICreateSubmissionService, CreateSubmissionService>();
             services.AddScoped<IGetStatisticsService, GetStatisticsService>();
+            services.AddScoped<IUserCustomerStatusService, UserCustomerStatusService>();
+            services.AddScoped<IGetUserInfoService, GetUserInfoService>();
+            services.AddScoped<IAdminService, AdminService>();
 
             services.AddScoped<ICreateCustomerService, CreateCustomerService>();
             services.AddScoped<ICreateUserService, CreateUserService>();
             services.AddScoped<ITravelExpenseFactory, TravelExpenseFactory>();
             services.AddScoped<IStageService, StageService>();
+            services.AddScoped<IMessageBrokerService, MessageBrokerService>();
+            services.AddScoped<IMessageTemplateService, MessageTemplateService>();
+            services.AddScoped<IMessageFactory, MessageFactory>();
+            services.AddScoped<IUserStatusService, UserStatusService>();
+            services.AddScoped<ICustomerUserService, CustomerUserService>();
 
             if (enforceAuthenticated)
             {
@@ -128,13 +133,18 @@ namespace API.Shared
             }
 
             Assembly
-                .GetAssembly(typeof(IProcessFlowStep))
+                .GetAssembly(typeof(ProcessFlowStepAssignedForPaymentFinal))
                 .GetTypesAssignableFrom<IProcessFlowStep>()
                 .ForEach(t => { services.AddScoped(typeof(IProcessFlowStep), t); });
 
+            Assembly
+                .GetAssembly(typeof(EmailMessageSenderService))
+                .GetTypesAssignableFrom<IMessageSenderService>()
+                .ForEach(t => { services.AddScoped(typeof(IMessageSenderService), t); });
+
             // Domain event handlers
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
+            services.AddScoped<IHandle<TravelExpenseChangedStateDomainEvent>, TravelExpenseChangedStateDomainEventHandler>();
         }
     }
-
 }

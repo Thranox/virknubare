@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using Domain;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
-using SharedWouldBeNugets;
 
 namespace Infrastructure.Data
 {
@@ -24,9 +25,9 @@ namespace Infrastructure.Data
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<StageEntity> Stages { get; set; }
 
-        public override int SaveChanges()
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            var result = base.SaveChanges();
+            var result = await base.SaveChangesAsync(cancellationToken);
 
             // dispatch events only if save was successful
             var entitiesWithEvents = ChangeTracker.Entries<BaseEntity>()
@@ -38,10 +39,21 @@ namespace Infrastructure.Data
             {
                 var events = entity.Events.ToArray();
                 entity.Events.Clear();
-                foreach (var domainEvent in events) _dispatcher?.Dispatch(domainEvent);
+                foreach (var domainEvent in events)
+                {
+                    if (_dispatcher != null)
+                    {
+                        await _dispatcher.Dispatch(domainEvent);
+                    }
+                }
             }
 
             return result;
+        }
+
+        public override int SaveChanges()
+        {
+            throw new NotImplementedException();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

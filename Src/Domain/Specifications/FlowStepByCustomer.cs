@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 
 namespace Domain.Specifications
 {

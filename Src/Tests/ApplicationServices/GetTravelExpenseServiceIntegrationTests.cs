@@ -6,6 +6,7 @@ using Application.Interfaces;
 using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
+using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;
@@ -28,10 +29,11 @@ namespace Tests.ApplicationServices
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 var v = actual.Result.ToArray();
-                Assert.That(v.Length, Is.EqualTo(3));
+                Assert.That(v.Length, Is.EqualTo(TestData.GetNumberOfTestDataTravelExpenses()));
 
                 var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
-
+                var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
+                var flowStepId = flowSteps.Single(x => x.From.Value == TravelExpenseStage.Initial).Id;
 
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
@@ -39,7 +41,8 @@ namespace Tests.ApplicationServices
                         Description = testContext.TravelExpenseEntity1.Description,
                         Id = testContext.TravelExpenseEntity1.Id,
                         StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
-                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
@@ -47,7 +50,8 @@ namespace Tests.ApplicationServices
                         Description = testContext.TravelExpenseEntity2.Description,
                         Id = testContext.TravelExpenseEntity2.Id,
                         StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
-                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                     }));
                 Assert.That(v,
                     Has.One.EqualTo(new TravelExpenseDto
@@ -55,7 +59,8 @@ namespace Tests.ApplicationServices
                         Description = testContext.TravelExpenseEntity3.Description,
                         Id = testContext.TravelExpenseEntity3.Id,
                         StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
-                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                        StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                        AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                     }));
             }
         }
@@ -89,12 +94,16 @@ namespace Tests.ApplicationServices
                 Assert.That(actual, Is.Not.Null);
 
                 var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
+                var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
+                var flowStepId = flowSteps.Single(x => x.From.Value == TravelExpenseStage.Initial).Id;
+
                 Assert.That(actual.Result, Is.EqualTo(new TravelExpenseDto
                 {
                     Description = testContext.TravelExpenseEntity1.Description,
                     Id = testContext.TravelExpenseEntity1.Id,
                     StageId = stageEntities.Single(x => x.Value == TravelExpenseStage.Initial).Id.ToString(),
-                    StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial]
+                    StageText = Globals.StageNamesDanish[TravelExpenseStage.Initial],
+                    AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                 }));
             }
         }

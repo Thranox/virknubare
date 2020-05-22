@@ -7,6 +7,7 @@ using AutoFixture;
 using Domain;
 using Domain.Entities;
 using Domain.Specifications;
+using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;

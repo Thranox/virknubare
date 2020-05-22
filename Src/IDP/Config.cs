@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using SharedWouldBeNugets;
 
 namespace IdentityServerAspNetIdentit
 {
@@ -20,7 +21,8 @@ namespace IdentityServerAspNetIdentit
                     "Your roles(s)",
                     new List<string>
                     {
-                        "role"
+                        "role",
+                        ImproventoGlobals.ImproventoSubClaimName
                     }
                 )
             };
@@ -36,7 +38,8 @@ namespace IdentityServerAspNetIdentit
                     JwtClaimTypes.EmailVerified,
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
-                    JwtClaimTypes.Role
+                    JwtClaimTypes.Role,
+                    ImproventoGlobals.ImproventoSubClaimName
                 })
             };
 
@@ -47,7 +50,7 @@ namespace IdentityServerAspNetIdentit
                 {
                     AlwaysIncludeUserClaimsInIdToken = true,
                     ClientName = "Politikerafregning (Angular)",
-                    ClientId = "polangularclient",
+                    ClientId = ImproventoGlobals.AngularClientId,
                     ClientSecrets = new List<Secret> {new Secret("secret".Sha256())},
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
@@ -58,15 +61,18 @@ namespace IdentityServerAspNetIdentit
                         "https://localhost:44324/signin-redirect-callback",
                         "http://localhost:44324/signin-redirect-callback",
                         "http://localhost:4200/signin-redirect-callback",
-                        "http://localhost:50627/signin-redirect-callback"
+                        "http://localhost:50627/signin-redirect-callback",
+                        
+                        ImproventoGlobals.LocalKataRedirect
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
                         "https://localhost:44324/signout-redirect-callback",
                         "http://localhost:44324/signout-redirect-callback",
                         "http://localhost:4200/signout-redirect-callback",
-                        "http://localhost:50627/signout-redirect-callback"
+                        "http://localhost:50627/signout-redirect-callback",
 
+                        ImproventoGlobals.LocalKataRedirect
                     },
                     AllowedScopes =
                     {
@@ -84,6 +90,7 @@ namespace IdentityServerAspNetIdentit
                     },
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 15 * 60 * 60 // 15 hrs
+                    //AccessTokenLifetime = 730*24 * 60 * 60 // 2 yrs
                 }
             };
     }

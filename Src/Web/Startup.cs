@@ -1,5 +1,5 @@
 using API.Shared;
-using IDP.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,7 +56,7 @@ namespace Web
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
-                dbSeeder.Seed();
+                dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 

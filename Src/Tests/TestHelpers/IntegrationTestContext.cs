@@ -1,18 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Threading.Tasks;
 using API.Shared;
 using API.Shared.Controllers;
+using API.Shared.Services;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Services;
 using Domain.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using SharedWouldBeNugets;
 
 namespace Tests.TestHelpers
@@ -35,32 +37,31 @@ namespace Tests.TestHelpers
 
             ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
             
-            serviceCollection.AddScoped(x => Serilog.Log.Logger);
+            serviceCollection.AddScoped<ILogger>(x =>Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
-
-            serviceCollection.AddScoped<IStageService, StageService>();
+            serviceCollection.AddScoped<IMessageSenderService, MemoryListMessageSenderService>();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            SeedDb();
+            SeedDb().Wait();
         }
 
         public DbContextOptions<PolDbContext> DbContextOptions { get; }
         public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
 
-        private void SeedDb()
+        private async Task SeedDb()
         {
             var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
-            dbSeeder.Seed();
+            await dbSeeder.SeedAsync();
 
             using (var unitOfWork=ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
             {
                 var customer = unitOfWork
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName))
+                    .List(new CustomerByName(TestData.DummyCustomerName1))
                     .SingleOrDefault();
 
                 var travelExpenseEntities = customer.TravelExpenses.ToList();
@@ -68,23 +69,41 @@ namespace Tests.TestHelpers
                 TravelExpenseEntity2 = travelExpenseEntities[1];
                 TravelExpenseEntity3 = travelExpenseEntities[2];
 
-                unitOfWork.Commit();
+                await unitOfWork.CommitAsync();
             }
         }
 
         public IUnitOfWork CreateUnitOfWork()
         {
-            var context = new PolDbContext(DbContextOptions);
+            var domainEventDispatcher = ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
+            var context = new PolDbContext(DbContextOptions, domainEventDispatcher);
             return new UnitOfWork(new EfRepository(context));
         }
 
         public Guid GetDummyCustomerId()
         {
-            return CreateUnitOfWork().
-                Repository.
-                List(new CustomerByName(TestData.DummyCustomerName)).
-                Single().
-                Id;
+            return GetDummyCustomer().Id;
+        }
+
+        public CustomerEntity GetDummyCustomer()
+        {
+            return CreateUnitOfWork()
+                .Repository.
+                List(new CustomerByName(TestData.DummyCustomerName1))
+                .Single();
+        }
+
+        public List<StageEntity> GetStages()
+        {
+            return CreateUnitOfWork()
+                .Repository
+                .List<StageEntity>();
+        }
+
+        public void SetCallingUserBySub(string sub)
+        {
+            (ServiceProvider.GetRequiredService<ISubManagementService>() as FakeSubManagementService)
+                .Sub = sub;
         }
     }
 }

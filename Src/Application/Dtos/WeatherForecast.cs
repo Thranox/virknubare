@@ -1,6 +1,6 @@
 using System;
 
-namespace API
+namespace Application.Dtos
 {
     public class WeatherForecast
     {

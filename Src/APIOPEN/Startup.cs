@@ -1,5 +1,5 @@
 using API.Shared;
-using IDP.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +43,8 @@ namespace APIOPEN
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 polDbContext.Database.Migrate();
-                dbSeeder.Seed();
+                dbSeeder.RemoveTestDataAsync().Wait();
+                dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 
@@ -57,7 +58,7 @@ namespace APIOPEN
             });
 
             app.UseHttpsRedirection();
-
+            app.UseMiddleware<ErrorWrappingMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI(
                 c =>
@@ -70,7 +71,7 @@ namespace APIOPEN
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
 
             logger.Information("TravelExpense APIOPEN started. Version=" + _configuration.GetValue<string>("Version"));
         }

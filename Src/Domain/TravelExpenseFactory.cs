@@ -2,6 +2,7 @@
 using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 
 namespace Domain
 {
@@ -17,7 +18,7 @@ namespace Domain
 
         public TravelExpenseEntity Create(string description, UserEntity userEntityPol, CustomerEntity customer)
         {
-            if (_stages==null) _stages = _unitOfWork.Repository.List<StageEntity>();
+            if (_stages == null) _stages = _unitOfWork.Repository.List<StageEntity>();
 
             return new TravelExpenseEntity(description, userEntityPol, customer,
                 _stages.Single(x => x.Value == TravelExpenseStage.Initial));

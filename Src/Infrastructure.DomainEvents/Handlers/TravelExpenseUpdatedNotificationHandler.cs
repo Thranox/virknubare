@@ -1,4 +1,5 @@
-﻿using Domain.Events;
+﻿using System.Threading.Tasks;
+using Domain.Events;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Serilog;
@@ -8,17 +9,17 @@ namespace Infrastructure.DomainEvents.Handlers
     public class TravelExpenseUpdatedNotificationHandler : IHandle<TravelExpenseUpdatedDomainEvent>
     {
         private readonly ILogger _logger;
-        private readonly IRepository _repository;
 
-        public TravelExpenseUpdatedNotificationHandler(IRepository repository, ILogger logger)
+        public TravelExpenseUpdatedNotificationHandler(ILogger logger)
         {
-            _repository = repository;
             _logger = logger;
         }
 
-        public void Handle(TravelExpenseUpdatedDomainEvent travelExpenseUpdatedDomainEvent)
+        public async Task HandleAsync(TravelExpenseUpdatedDomainEvent travelExpenseChangedStateDomainEvent)
         {
-            _logger.Information("Handling " + travelExpenseUpdatedDomainEvent.GetType().Name);
+            _logger.Information("Handling " + travelExpenseChangedStateDomainEvent.GetType().Name);
+
+            await Task.CompletedTask;
         }
     }
 }
