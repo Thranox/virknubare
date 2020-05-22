@@ -59,7 +59,7 @@ namespace Kata
                 {
                     new KataStepDescriptor("VerifySwaggerUp"),
 
-                    new KataStepDescriptor("ResetTestData").AsUser("alice"),
+                    new KataStepDescriptor("ResetTestData").AsUser("alice").WithVerification(c=>c.DatabaseResetResponse!=null),
 
                     new KataStepDescriptor("GetUserInfo").AsUser("alice").WithVerification(c=>c.UserInfoGetResponse!=null),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==TestData.GetNumberOfTestDataTravelExpenses()),

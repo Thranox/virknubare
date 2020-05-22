@@ -36,11 +36,8 @@ namespace Kata.KataSteps
                     new Uri("admin/databasereset", UriKind.Relative)
                 )
                 ;
-            var databaseResetResponseDto = await restClient.PostAsync<DatabaseResetResponseDto>(restRequest);
-
-            //var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
-            //var postAsync = await restClient.PostAsync<object>(new RestRequest(new Uri("Admin/DatabaseReset", UriKind.Relative)));
-            //if(postAsync.)
+            var databaseResetResponseDto = await restClient.PostAsync<DatabaseResetResponse>(restRequest);
+            ClientContext.DatabaseResetResponse = databaseResetResponseDto;
             _logger.Debug("Database reset.");
         }
     }

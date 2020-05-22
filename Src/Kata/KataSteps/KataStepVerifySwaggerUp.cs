@@ -40,6 +40,7 @@ namespace Kata.KataSteps
                 catch (TaskCanceledException)
                 {
                     _logger.Debug("Timeout");
+                    throw;
                 }
             });
         }

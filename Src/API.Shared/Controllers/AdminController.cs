@@ -22,18 +22,18 @@ namespace API.Shared.Controllers
         }
 
         [HttpPost("databasereset")]
-        public async Task<ActionResult<DatabaseResetResponseDto>> DatabaseReset()
+        public async Task<ActionResult<DatabaseResetResponse>> DatabaseReset()
         {
             var sub = _subManagementService.GetSub(User);
 
             _logger.Information("Reseeding database");
             await _adminService.ResetSeedningAsync();
 
-            return Ok(new DatabaseResetResponseDto());
+            return Ok(new DatabaseResetResponse());
         }
     }
 
-    public class DatabaseResetResponseDto
+    public class DatabaseResetResponse
     {
     }
 }

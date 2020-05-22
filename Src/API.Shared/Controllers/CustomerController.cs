@@ -39,7 +39,5 @@ namespace API.Shared.Controllers
 
             return Ok(customerUserGetResponse);
         }
-
     }
-
 }
