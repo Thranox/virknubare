@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using API.Shared.Services;
+using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -31,9 +32,5 @@ namespace API.Shared.Controllers
 
             return Ok(new DatabaseResetResponse());
         }
-    }
-
-    public class DatabaseResetResponse
-    {
     }
 }

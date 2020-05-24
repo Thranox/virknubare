@@ -1,6 +1,5 @@
 using API.Shared;
 using Domain.Interfaces;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -37,7 +36,7 @@ namespace Web
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            IConfiguration configuration, IDbSeeder dbSeeder, PolDbContext polDbContext, IPolicyService policyService)
+            IConfiguration configuration, IDbSeeder dbSeeder, IPolicyService policyService)
         {
             logger.Information("Starting Politikerafregning Web...");
             if (env.IsDevelopment())

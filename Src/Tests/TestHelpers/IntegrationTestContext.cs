@@ -39,6 +39,7 @@ namespace Tests.TestHelpers
             
             serviceCollection.AddScoped<ILogger>(x =>Log.Logger);
             serviceCollection.AddScoped(x => CreateUnitOfWork());
+            serviceCollection.AddTransient(x => new PolDbContext(DbContextOptions, x.GetRequiredService<IDomainEventDispatcher>()));
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
             serviceCollection.AddScoped<IMessageSenderService, MemoryListMessageSenderService>();
@@ -75,8 +76,7 @@ namespace Tests.TestHelpers
 
         public IUnitOfWork CreateUnitOfWork()
         {
-            var domainEventDispatcher = ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
-            var context = new PolDbContext(DbContextOptions, domainEventDispatcher);
+            var context = ServiceProvider.GetRequiredService<PolDbContext>();
             return new UnitOfWork(new EfRepository(context));
         }
 
