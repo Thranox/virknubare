@@ -12,7 +12,7 @@ namespace Kata.KataSteps
     {
         private readonly ILogger _logger;
         private readonly Properties _properties;
-        private AsyncRetryPolicy _kataApiRetryPolicy;
+        private readonly AsyncRetryPolicy _kataApiRetryPolicy;
 
         public KataStepVerifySwaggerUp(ILogger logger, IClientContext clientContext, Properties properties, IPolicyService policyService) : base(
             clientContext)

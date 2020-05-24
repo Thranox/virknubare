@@ -39,12 +39,11 @@ namespace APIOPEN
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
+            policyService.DatabaseMigrationAndSeedingPolicy.ExecuteAsync(async () =>
             {
                 logger.Information("Starting Db Migration and Seeding...");
-                polDbContext.Database.Migrate();
-                dbSeeder.RemoveTestDataAsync().Wait();
-                dbSeeder.SeedAsync();
+                await polDbContext.Database.MigrateAsync();
+                await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 

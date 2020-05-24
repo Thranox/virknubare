@@ -29,14 +29,16 @@ namespace Domain.Entities
 
         public Dictionary<string,string> GetMessageValues()
         {
-            return new Dictionary<string, string>();
+            return new Dictionary<string, string>
+            {
+                {KeyMessagesConst.Name, Name} 
+            };
         }
 
         public bool IsUserAdminForCustomer(Guid customerId)
         {
             return CustomerUserPermissions
                 .Any(x => x.CustomerId == customerId && x.UserStatus == UserStatus.UserAdministrator);
-
         }
     }
 }

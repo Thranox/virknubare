@@ -1,8 +1,9 @@
 ﻿using System;
+using Domain;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 
-namespace Domain.Services
+namespace Infrastructure.Messaging
 {
     public class MessageTemplateService : IMessageTemplateService
     {
@@ -14,13 +15,13 @@ namespace Domain.Services
                     return new MessageTemplate()
                     {
                         Subject = "Rejseafregning klar til behandling",
-                        Body = "Hej $$firstname$$, en rejseafregning er klar til behandling på https://wwww.politikerafregning.dk/stuff?id=abc"
+                        Body = $"Hej {KeyMessagesConst.Name}, en rejseafregning er klar til behandling på https://wwww.politikerafregning.dk/stuff?id=abc"
                     };
                 case MessageKind.YourTravelExpenseHasChangedState:
                     return new MessageTemplate()
                     {
                         Subject = "Din rejseafregning har skiftet tilstand",
-                        Body = "Hej $$firstname$$, din rejseafregning er behandlet af en medarbejder. Følg den på https://wwww.politikerafregning.dk/stuff?id=abc"
+                        Body = $"Hej {KeyMessagesConst.Name}, din rejseafregning er behandlet af en medarbejder. Følg den på https://wwww.politikerafregning.dk/stuff?id=abc"
                     };
                 default:
                     throw new NotImplementedException();
