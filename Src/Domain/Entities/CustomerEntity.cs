@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Events;
 using Domain.Exceptions;
 using Domain.SharedKernel;
 using Domain.ValueObjects;
@@ -64,7 +65,17 @@ namespace Domain.Entities
 
         public void AddInvitation(string email)
         {
-            Invitations.Add(new InvitationEntity(email));
+            var invitationEntity = new InvitationEntity(email);
+            invitationEntity.Events.Add(new InvitationAddedDomainEvent(this, invitationEntity));
+            Invitations.Add(invitationEntity);
+        }
+
+        public Dictionary<string, string> GetValues()
+        {
+            return new Dictionary<string, string>
+            {
+                {KeyMessagesConst.CustomerName, Name }
+            };
         }
     }
 }

@@ -27,5 +27,7 @@ namespace Domain
                 {UserStatus.Registered, "Registreret og godkendt"},
                 {UserStatus.UserAdministrator, "Administrator"}
             };
+
+        public const string EmailPrefix = "[POL] ";
     }
 }

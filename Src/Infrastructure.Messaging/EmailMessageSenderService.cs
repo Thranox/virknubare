@@ -6,11 +6,16 @@ namespace Infrastructure.Messaging
 {
     public class EmailMessageSenderService : IMessageSenderService
     {
+        private readonly IEmailSenderService _emailSenderService;
+
+        public EmailMessageSenderService(IEmailSenderService emailSenderService)
+        {
+            _emailSenderService = emailSenderService;
+        }
+
         public async Task SendMessageAsync(IMessage message, UserEntity userEntity)
         {
-            // TODO
-
-            await Task.CompletedTask;
+            await _emailSenderService.SendEmailAsync(message, userEntity.Email);
         }
     }
 }

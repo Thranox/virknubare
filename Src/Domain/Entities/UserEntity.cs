@@ -23,6 +23,7 @@ namespace Domain.Entities
 
         public string Name { get; set; }
         public string Subject { get; set; }
+        public string Email { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
         public ICollection<CustomerUserPermissionEntity>  CustomerUserPermissions { get; set; }
         public ICollection<TravelExpenseEntity> TravelExpenses { get; set; }

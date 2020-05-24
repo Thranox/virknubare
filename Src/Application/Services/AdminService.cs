@@ -18,6 +18,9 @@ namespace Application.Services
 
         public async Task ResetSeedningAsync()
         {
+            _logger.Information("Migrating database...");
+            await _dbSeeder.MigrateAsync();
+
             _logger.Information("Removing test data...");
             await _dbSeeder.RemoveTestDataAsync();
 

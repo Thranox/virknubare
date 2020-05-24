@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     {
         Task SeedAsync();
         Task RemoveTestDataAsync();
+        Task MigrateAsync();
     }
 }

@@ -8,5 +8,6 @@ namespace Domain.Interfaces
     public interface IMessageBrokerService 
     {
         Task<int> SendMessageAsync(IEnumerable<UserEntity> userEntities, TravelExpenseEntity travelExpenseEntity, MessageKind messageKind);
+        Task SendEmailAsync(string email, MessageKind messageKind, CustomerEntity customer);
     }
 }

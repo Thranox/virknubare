@@ -122,7 +122,8 @@ namespace API.Shared
             services.AddScoped<IMessageFactory, MessageFactory>();
             services.AddScoped<IUserStatusService, UserStatusService>();
             services.AddScoped<ICustomerUserService, CustomerUserService>();
-
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
+            
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
@@ -145,6 +146,7 @@ namespace API.Shared
             // Domain event handlers
             services.AddScoped<IHandle<TravelExpenseUpdatedDomainEvent>, TravelExpenseUpdatedNotificationHandler>();
             services.AddScoped<IHandle<TravelExpenseChangedStateDomainEvent>, TravelExpenseChangedStateDomainEventHandler>();
+            services.AddScoped<IHandle<InvitationAddedDomainEvent>, InvitationAddedDomainEventEventHandler>();
         }
     }
 }

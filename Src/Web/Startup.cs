@@ -55,7 +55,7 @@ namespace Web
             policyService.DatabaseMigrationAndSeedingPolicy.ExecuteAsync(async() =>
             {
                 logger.Information("Starting Db Migration and Seeding...");
-                await polDbContext.Database.MigrateAsync();
+                await dbSeeder.MigrateAsync();
                 await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
