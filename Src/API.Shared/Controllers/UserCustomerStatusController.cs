@@ -25,7 +25,7 @@ namespace API.Shared.Controllers
         [Route("{userId}/{customerId}/{userStatus}")]
         public async Task<ActionResult<UserCustomerPutResponse>> Put(Guid userId, Guid customerId, int userStatus)
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
 
             var flowStepGetResponse = await _userCustomerStatusService.PutAsync(sub, userId, customerId, userStatus);
 
