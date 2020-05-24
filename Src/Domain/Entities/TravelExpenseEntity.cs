@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.Events;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -7,7 +8,7 @@ using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
-    public class TravelExpenseEntity : BaseEntity
+    public class TravelExpenseEntity : BaseEntity, IMessageValueEnricher
     {
         private TravelExpenseEntity()
         {
@@ -48,6 +49,10 @@ namespace Domain.Entities
             Stage = travelExpenseStage;
 
             Events.Add(new TravelExpenseUpdatedDomainEvent());
+        }
+
+        public void Enrich(Dictionary<string, string> messageValues)
+        {
         }
     }
 }

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Events;
 using Domain.Exceptions;
+using Domain.Interfaces;
 using Domain.SharedKernel;
 using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
-    public class CustomerEntity : BaseEntity
+    public class CustomerEntity : BaseEntity, IMessageValueEnricher
     {
         private CustomerEntity()
         {
@@ -70,12 +71,9 @@ namespace Domain.Entities
             Invitations.Add(invitationEntity);
         }
 
-        public Dictionary<string, string> GetValues()
+        public void Enrich(Dictionary<string, string> messageValues)
         {
-            return new Dictionary<string, string>
-            {
-                {KeyMessagesConst.CustomerName, Name }
-            };
+            messageValues.Add(KeyMessagesConst.CustomerName, Name);
         }
     }
 }

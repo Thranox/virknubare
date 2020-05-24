@@ -15,14 +15,14 @@ namespace Infrastructure.Messaging
                     return new MessageTemplate()
                     {
                         Subject = "Rejseafregning klar til behandling",
-                        Body = $"Hej {KeyMessagesConst.Name},<br/>" +
+                        Body = $"Hej {KeyMessagesConst.UserName},<br/>" +
                                $"En rejseafregning er klar til behandling på https://wwww.politikerafregning.dk/stuff?id=abc"
                     };
                 case MessageKind.YourTravelExpenseHasChangedState:
                     return new MessageTemplate()
                     {
                         Subject = "Din rejseafregning har skiftet tilstand",
-                        Body = $"Hej {KeyMessagesConst.Name},<br/>" +
+                        Body = $"Hej {KeyMessagesConst.UserName},<br/>" +
                                $"Din rejseafregning er behandlet af en medarbejder.<br/>" +
                                $"Følg den på https://wwww.politikerafregning.dk/stuff?id=abc"
                     };

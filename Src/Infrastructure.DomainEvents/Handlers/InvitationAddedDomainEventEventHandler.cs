@@ -21,7 +21,7 @@ namespace Infrastructure.DomainEvents.Handlers
 
         public async Task HandleAsync(InvitationAddedDomainEvent invitationAddedDomainEvent)
         {
-            if(invitationAddedDomainEvent==null)
+            if (invitationAddedDomainEvent == null)
                 throw new ArgumentNullException(nameof(invitationAddedDomainEvent));
 
             _logger.Information("Handling " + invitationAddedDomainEvent.GetType().Name);
@@ -30,10 +30,10 @@ namespace Infrastructure.DomainEvents.Handlers
             // Send message to invitee
 
             await _messageBrokerService
-                .SendEmailAsync(
-                    invitationAddedDomainEvent.Invitation.Email,
+                .SendMessageAsync(
+                    new[] {new AnonymousMessageReceiver(invitationAddedDomainEvent.Invitation.Email)},
                     MessageKind.YouHaveReceivedInvitation,
-                    invitationAddedDomainEvent.Customer);
+                    new IMessageValueEnricher[]{ invitationAddedDomainEvent.Customer });
         }
     }
 }
