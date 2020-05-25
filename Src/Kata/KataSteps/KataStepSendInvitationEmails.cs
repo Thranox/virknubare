@@ -39,12 +39,12 @@ namespace Kata.KataSteps
             restRequest.AddParameter("application/json; charset=utf-8", jsonToSend, ParameterType.RequestBody);
             restRequest.RequestFormat = DataFormat.Json;
             
-            var result = await restClient.ExecuteAsync<CustomerUserGetResponse>(restRequest);
+            var result = await restClient.ExecuteAsync<CustomerInvitationsPostResponse>(restRequest);
 
-            var customerUserGetResponse = JsonConvert.DeserializeObject<CustomerUserGetResponse>(result.Content);
-            _logger.Debug("customerUserGetResponse - {customerUserGetResponse}",
-                JsonConvert.SerializeObject(customerUserGetResponse));
-            ClientContext.CustomerUserGetResponse = customerUserGetResponse;
+            var customerInvitationsPostResponse = JsonConvert.DeserializeObject<CustomerInvitationsPostResponse>(result.Content);
+            _logger.Debug("customerInvitationsPostResponse - {customerInvitationsPostResponse}",
+                JsonConvert.SerializeObject(customerInvitationsPostResponse));
+            ClientContext.CustomerInvitationsPostResponse = customerInvitationsPostResponse;
         }
     }
 }
