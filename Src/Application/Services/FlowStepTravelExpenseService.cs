@@ -49,11 +49,11 @@ namespace Application.Services
 
             travelExpenseEntity.ApplyProcessStep(processFlowStep);
 
+            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, polApiContext.CallingUser, polApiContext.RequestedUrl));
+
             _unitOfWork
                 .Repository
                 .Update(travelExpenseEntity);
-
-            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, polApiContext.CallingUser));
 
             await _unitOfWork.CommitAsync();
 

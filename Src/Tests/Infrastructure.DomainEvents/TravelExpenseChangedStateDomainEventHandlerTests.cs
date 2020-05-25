@@ -24,7 +24,7 @@ namespace Tests.Infrastructure.DomainEvents
                 var userEntities = repository.List<UserEntity>();
                 var stageBefore = stageEntities.Single(x=>x.Value==TravelExpenseStage.ReportedDone);
                 var userEntityBob = userEntities.Single(x => x.Subject == TestData.DummySekSubBob);
-                var travelExpenseChangedStateDomainEvent = new TravelExpenseChangedStateDomainEvent(stageBefore,testContext.TravelExpenseEntity1, userEntityBob);
+                var travelExpenseChangedStateDomainEvent = new TravelExpenseChangedStateDomainEvent(stageBefore,testContext.TravelExpenseEntity1, userEntityBob, "http://nowhere.com");
                 var sut = testContext.ServiceProvider.GetRequiredService<IHandle<TravelExpenseChangedStateDomainEvent>>();
 
                 // Act

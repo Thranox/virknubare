@@ -11,7 +11,7 @@ namespace Domain.Events
         public UserEntity UserEntityMakingChange { get; }
 
         public TravelExpenseChangedStateDomainEvent(StageEntity stageBefore,
-            TravelExpenseEntity travelExpenseEntity, UserEntity userEntityMakingChange)
+            TravelExpenseEntity travelExpenseEntity, UserEntity userEntityMakingChange, string requestedUrl)
         {
             StageBefore = stageBefore??throw new ArgumentNullException(nameof(stageBefore));
             TravelExpenseEntity = travelExpenseEntity ?? throw new ArgumentNullException(nameof(travelExpenseEntity));

@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Application.Interfaces;
-using Domain;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SharedWouldBeNugets;

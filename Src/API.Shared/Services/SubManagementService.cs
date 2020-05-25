@@ -29,7 +29,7 @@ namespace API.Shared.Services
             var userEntity = _unitOfWork.Repository.List(new UserBySub(sub)).SingleOrDefault();
             if (userEntity == null)
             {
-                userEntity = new UserEntity(claims.Single(x => x.Type == ClaimTypes.Name).Value, sub);
+                userEntity = new UserEntity(claims.Single(x => x.Type == "name").Value, sub);
                 _unitOfWork.Repository.Add(userEntity);
             }
             else

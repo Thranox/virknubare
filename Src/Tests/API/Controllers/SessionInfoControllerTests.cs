@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
@@ -34,7 +36,11 @@ namespace Tests.API.Controllers
 
                 // Act
                 var actual = await sut.Get();
-
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var okObjectResult = actual.Result as OkObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as UserInfoGetResponse;
+                Assert.That(value, Is.Not.Null);
             }
         }
 

@@ -43,7 +43,11 @@ namespace Domain.Entities
 
         public void UpdateWithClaims(IEnumerable<Claim> claims)
         {
-            throw new NotImplementedException();
+            var emailClaim = claims.FirstOrDefault(x => x.Type == "email");
+            if (emailClaim != null) Email = emailClaim.Value;
+
+            var nameClaim = claims.FirstOrDefault(x => x.Type == "name");
+            if (nameClaim != null) Name= nameClaim.Value;
         }
     }
 }

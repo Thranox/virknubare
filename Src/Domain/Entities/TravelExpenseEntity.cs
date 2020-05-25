@@ -45,6 +45,7 @@ namespace Domain.Entities
 
         public void ApplyProcessStep(IProcessFlowStep processFlowStep)
         {
+            var stageBefore = Stage;
             var travelExpenseStage = processFlowStep.GetResultingStage(this);
             Stage = travelExpenseStage;
 
