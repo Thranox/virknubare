@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -16,7 +17,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task<SubmissionPostResponse> CreateAsync(string sub)
+        public Task<SubmissionPostResponse> CreateAsync(PolApiContext polApiContext)
         {
             var travelExpenses = _unitOfWork.Repository.List(new TravelExpensesReadyToSend());
             throw new NotImplementedException();

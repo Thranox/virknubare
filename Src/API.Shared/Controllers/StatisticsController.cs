@@ -23,8 +23,9 @@ namespace API.Shared.Controllers
         [HttpPost]
         public async Task<ActionResult<SubmissionPostResponse>> Post()
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var statisticsGetResponse = await _getStatisticsService.GetAsync(sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var statisticsGetResponse = await _getStatisticsService.GetAsync(polApiContext);
 
             return Ok(statisticsGetResponse);
         }

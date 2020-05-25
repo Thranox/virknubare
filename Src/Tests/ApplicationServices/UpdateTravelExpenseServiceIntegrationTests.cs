@@ -25,7 +25,7 @@ namespace Tests.ApplicationServices
             {
                 Guid existingId;
                 var newDescription = testContext.Fixture.Create<string>();
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.GetUnitOfWork())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
@@ -34,13 +34,13 @@ namespace Tests.ApplicationServices
                     var sut = testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>();
 
                     // Act
-                    var actual = await sut.UpdateAsync(existingId, travelExpenseUpdateDto, TestData.DummyPolSubAlice);
+                    var actual = await sut.UpdateAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), existingId, travelExpenseUpdateDto);
 
                     // Assert
                     Assert.That(actual, Is.Not.Null);
                 }
 
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.GetUnitOfWork())
                 {
                     var travelExpenseEntity = unitOfWork
                         .Repository.List(new TravelExpenseById(existingId))

@@ -20,7 +20,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<ICustomerUserService>();
 
                 // Act
-                var actual = await sut.GetAsync(TestData.DummyPolSubAlice, testContext.GetDummyCustomerId());
+                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), testContext.GetDummyCustomerId());
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -32,13 +32,15 @@ namespace Tests.ApplicationServices
         public async Task CreateInvitationsAsync_AdminUserCallingWithExistingCustomer_ReturnsUsersWithStuff()
         {
             // Arrange
-            var customerInvitationsPostDto = new CustomerInvitationsPostDto { Emails = new[] { "user1@domain.com", "user2@domain.com" } };
+            var customerInvitationsPostDto = new CustomerInvitationsPostDto
+                {Emails = new[] {"user1@domain.com", "user2@domain.com"}};
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = testContext.ServiceProvider.GetService<ICustomerUserService>();
 
                 // Act
-                var actual = await sut.CreateInvitationsAsync(TestData.DummyPolSubAlice, testContext.GetDummyCustomerId(), customerInvitationsPostDto);
+                var actual = await sut.CreateInvitationsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice),
+                    testContext.GetDummyCustomerId(), customerInvitationsPostDto);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

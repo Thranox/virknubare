@@ -8,6 +8,7 @@ using Application.MapperProfiles;
 using Application.Services;
 using AutoMapper;
 using Domain;
+using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
@@ -129,7 +130,9 @@ namespace API.Shared
             }
             else
             {
-                services.AddScoped<ISubManagementService>(x=>new FakeSubManagementService(configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")) );
+                services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
+                    new PolApiContext(
+                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),"http://nowhere.com" )));
             }
 
             Assembly

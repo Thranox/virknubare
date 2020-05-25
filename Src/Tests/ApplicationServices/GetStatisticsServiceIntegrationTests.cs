@@ -20,7 +20,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<IGetStatisticsService>();
 
                 // Act
-                var actual = await sut.GetAsync(TestData.DummyPolSubAlice);
+                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

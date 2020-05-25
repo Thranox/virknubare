@@ -40,7 +40,7 @@ namespace Infrastructure.Messaging
             var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
 
             var json = JsonConvert.SerializeObject(msg, Formatting.Indented);
-            _logger.Information("Sending email: {emailMessage}", msg);
+            _logger.Information("Sending email: {emailMessage}", json);
 
             var fullPathJson = Path.Combine(Path.GetTempPath(), filenameJson);
             File.WriteAllText(fullPathJson, json);

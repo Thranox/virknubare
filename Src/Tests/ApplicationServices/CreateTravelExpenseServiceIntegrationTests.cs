@@ -28,13 +28,13 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
                 // Act
-                var actual = await sut.CreateAsync(travelExpenseCreateDto, TestData.DummyPolSubAlice);
+                var actual = await sut.CreateAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), travelExpenseCreateDto);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 Assert.That(actual.Id, Is.Not.EqualTo(Guid.Empty));
 
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.GetUnitOfWork())
                 {
                     var travelExpenseEntity = unitOfWork
                         .Repository.List(new TravelExpenseById(actual.Id))

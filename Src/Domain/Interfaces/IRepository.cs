@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.Entities;
 using Domain.SharedKernel;
 
 namespace Domain.Interfaces
@@ -13,5 +14,6 @@ namespace Domain.Interfaces
         void Update<T>(T entity) where T : BaseEntity;
         void Delete<T>(T entity) where T : BaseEntity;
         Task CommitAsync();
+        void Attach<T>(T entity) where T : BaseEntity;
     }
 }

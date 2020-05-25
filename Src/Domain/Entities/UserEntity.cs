@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Domain.ValueObjects;
@@ -38,6 +39,11 @@ namespace Domain.Entities
         public void Enrich(Dictionary<string, string> messageValues)
         {
             messageValues.Add(KeyMessagesConst.UserName, Name);
+        }
+
+        public void UpdateWithClaims(IEnumerable<Claim> claims)
+        {
+            throw new NotImplementedException();
         }
     }
 }

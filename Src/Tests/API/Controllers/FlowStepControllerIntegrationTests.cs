@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -33,10 +32,11 @@ namespace Tests.API.Controllers
         public async Task Get_NoParameters_ReturnsTravelExpenses()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 var sut = GetSut(testContext);
 
                 // Act
@@ -51,37 +51,37 @@ namespace Tests.API.Controllers
                 var flowStepDtoArray = value.Result.ToArray();
                 Assert.That(flowStepDtoArray.Length, Is.EqualTo(4));
                 var customer = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single();
 
                 var stageEntityInitial = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.Initial))
                     .Single();
 
                 var stageEntityReportedDone = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.ReportedDone))
                     .Single();
 
                 var stageEntityCertified = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.Certified))
                     .Single();
 
                 var stageEntityAssignedForPayment = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.AssignedForPayment))
                     .Single();
 
                 //var stageEntityFinal = testContext
-                //    .CreateUnitOfWork()
+                //    .GetUnitOfWork()
                 //    .Repository
                 //    .List(new StageByValue(TravelExpenseStage.Final))
                 //    .Single();

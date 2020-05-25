@@ -130,6 +130,11 @@ namespace Infrastructure.Data
             await _dbContext.SaveChangesAsync();
         }
 
+        public void Attach<T>(T entity) where T : BaseEntity
+        {
+            _dbContext.Attach(entity);
+        }
+
         public void Update<T>(T entity) where T : BaseEntity
         {
             _dbContext.Entry(entity).State = EntityState.Modified;

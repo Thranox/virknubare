@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain;
@@ -26,18 +27,8 @@ namespace Application.Services
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
-            TravelExpenseFlowStepDto travelExpenseFlowStepDto, string sub)
+            TravelExpenseFlowStepDto travelExpenseFlowStepDto, PolApiContext polApiContext)
         {
-            // Get user by sub
-            var userEntities = _unitOfWork
-                .Repository
-                .List(new UserBySub(sub));
-            var userEntity = userEntities
-                .SingleOrDefault();
-
-            if (userEntity == null)
-                throw new ItemNotFoundException(sub, "UserEntity");
-
             var travelExpenseEntity = _unitOfWork
                 .Repository
                 .List(new TravelExpenseById( travelExpenseFlowStepDto.TravelExpenseId))
@@ -62,7 +53,7 @@ namespace Application.Services
                 .Repository
                 .Update(travelExpenseEntity);
 
-            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, userEntity));
+            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, polApiContext.CallingUser));
 
             await _unitOfWork.CommitAsync();
 

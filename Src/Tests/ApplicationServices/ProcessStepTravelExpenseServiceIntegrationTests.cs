@@ -1,10 +1,7 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
-using Domain;
-using Domain.Exceptions;
 using Domain.Specifications;
 using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,29 +14,13 @@ namespace Tests.ApplicationServices
     public class ProcessStepTravelExpenseServiceIntegrationTests
     {
         [Test]
-        public void ProcessStepAsync_InvalidUser_Throws()
-        {
-            // Arrange
-            using (var testContext = new IntegrationTestContext())
-            {
-                var sut = testContext.ServiceProvider.GetService<IFlowStepTravelExpenseService>();
-
-                // Act & Assert
-                var itemNotFoundException =
-                    Assert.ThrowsAsync<ItemNotFoundException>(() => sut.ProcessStepAsync(new TravelExpenseFlowStepDto(),  Guid.Empty.ToString()));
-                Assert.That(itemNotFoundException.Id, Is.EqualTo(Guid.Empty.ToString()));
-                Assert.That(itemNotFoundException.Item, Is.EqualTo("UserEntity"));
-            }
-        }
-
-        [Test]
         public async Task ProcessStepAsync_ValidTravelExpenseAndStep_Returns()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var flowStepId= testContext
-                    .CreateUnitOfWork()
+                var flowStepId = testContext
+                    .GetUnitOfWork()
                     .Repository
                     .List(
                         new FlowStepByCustomerAndStage(
@@ -56,11 +37,11 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<IFlowStepTravelExpenseService>();
 
                 // Act
-                var travelExpenseProcessStepResponse =await sut.ProcessStepAsync(travelExpenseProcessStepDto,  TestData.DummyPolSubAlice);
+                var travelExpenseProcessStepResponse =await sut.ProcessStepAsync(travelExpenseProcessStepDto, testContext.GetPolApiContext(TestData.DummyPolSubAlice));
 
                 // Assert
                 Assert.That(travelExpenseProcessStepResponse, Is.Not.Null);
-                var travelExpenseEntityFromDb = testContext.CreateUnitOfWork()
+                var travelExpenseEntityFromDb = testContext.GetUnitOfWork()
                     .Repository
                     .List(new TravelExpenseById(testContext.TravelExpenseEntity1.Id))
                     .SingleOrDefault();

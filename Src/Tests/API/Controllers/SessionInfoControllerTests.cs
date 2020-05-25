@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -26,10 +25,11 @@ namespace Tests.API.Controllers
         public async Task Get_NoParameters_ReturnsInfoForUser()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 var sut = GetSut(testContext);
 
                 // Act
@@ -40,7 +40,8 @@ namespace Tests.API.Controllers
 
         private UserInfoController GetSut(IntegrationTestContext testContext)
         {
-            return new UserInfoController(_subManagementService.Object,
+            return new UserInfoController(
+                _subManagementService.Object,
                 testContext.ServiceProvider.GetService<IGetUserInfoService>());
         }
     }

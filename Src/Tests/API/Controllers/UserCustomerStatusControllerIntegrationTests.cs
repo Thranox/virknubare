@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -31,14 +30,16 @@ namespace Tests.API.Controllers
         public async Task Put_ExistingUser_IsSuccess()
         {
             // Arrange
-            // Set executing user to be Dennis -- he is admin
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyAdminSubDennis);
+
             using (var testContext = new IntegrationTestContext())
             {
-                testContext.SetCallingUserBySub(TestData.DummyAdminSubDennis);
+                // Set executing user to be Dennis -- he is admin
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyAdminSubDennis));
+
+                //testContext.SetCallingUserBySub(TestData.DummyAdminSubDennis);
                 var userEntityEdward = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new UserBySub(TestData.DummyInitialSubEdward))
                     .SingleOrDefault();

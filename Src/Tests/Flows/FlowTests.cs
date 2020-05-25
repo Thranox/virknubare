@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
-using API.Shared.Services;
 using Application.Dtos;
 using AutoFixture;
 using Domain.Interfaces;
@@ -124,7 +123,7 @@ namespace Tests.Flows
                     .ToArray();
 
                 var customer = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single();
@@ -140,7 +139,7 @@ namespace Tests.Flows
                     Console.WriteLine("Stage: " + newTe.Stage);
 
                     var nextFlowSteps = testContext
-                        .CreateUnitOfWork()
+                        .GetUnitOfWork()
                         .Repository
                         .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
                         .First();

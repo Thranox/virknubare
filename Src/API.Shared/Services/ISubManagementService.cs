@@ -1,10 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace API.Shared.Services
 {
     public interface ISubManagementService
     {
-        string GetSub(ClaimsPrincipal userIdentity, HttpContext httpContext);
+        Task<PolApiContext> GetPolApiContext(HttpContext httpContext);
     }
 }

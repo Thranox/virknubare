@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -29,8 +28,8 @@ namespace Tests.API.Controllers
         public async Task GetCustomerUsers_ExistingCustomer_ReturnsUsersWithStatus()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
+            //_subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+            //    .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = GetSut(testContext);
@@ -52,8 +51,8 @@ namespace Tests.API.Controllers
         {
             // Arrange
             var customerInvitationsPostDto = new CustomerInvitationsPostDto { Emails = new[] { "user1@domain.com", "user2@domain.com" } };
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
+            //_subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+            //    .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = GetSut(testContext);

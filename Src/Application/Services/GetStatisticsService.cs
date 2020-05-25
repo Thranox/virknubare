@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -15,7 +16,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task<StatisticsGetResponse> GetAsync(string sub)
+        public Task<StatisticsGetResponse> GetAsync(PolApiContext polApiContext)
         {
             throw new NotImplementedException();
 

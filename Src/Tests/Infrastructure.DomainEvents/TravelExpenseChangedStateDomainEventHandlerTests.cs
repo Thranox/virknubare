@@ -19,7 +19,7 @@ namespace Tests.Infrastructure.DomainEvents
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var repository = testContext.CreateUnitOfWork().Repository;
+                var repository = testContext.GetUnitOfWork().Repository;
                 var stageEntities = repository.List<StageEntity>();
                 var userEntities = repository.List<UserEntity>();
                 var stageBefore = stageEntities.Single(x=>x.Value==TravelExpenseStage.ReportedDone);

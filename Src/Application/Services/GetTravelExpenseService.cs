@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoMapper;
-using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -17,9 +17,9 @@ namespace Application.Services
 {
     public class GetTravelExpenseService : IGetTravelExpenseService
     {
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
 
         public GetTravelExpenseService(IMapper mapper, IUnitOfWork unitOfWork, ILogger logger)
         {
@@ -28,24 +28,16 @@ namespace Application.Services
             _logger = logger;
         }
 
-        public async Task<TravelExpenseGetResponse> GetAsync(string sub)
+        public async Task<TravelExpenseGetResponse> GetAsync(PolApiContext polApiContext)
         {
             _logger.Debug("Getting em all");
-
-            // Get user by sub
-            var userEntities = _unitOfWork
-                .Repository
-                .List(new UserBySub(sub));
-            var userEntity = userEntities
-                .SingleOrDefault();
-
-            if (userEntity == null)
-                throw new ItemNotFoundException(sub, "UserEntity");
 
             // Users can access own travelexpenses plus those owned by others but in a state accessible for user.
 
             // First get the customers for which the user can see TravelExpenses
-            var customersVisibleByUser = userEntity.CustomerUserPermissions
+            var customersVisibleByUser = polApiContext
+                .CallingUser
+                .CustomerUserPermissions
                 .Where(x => x.UserStatus == UserStatus.Registered || x.UserStatus == UserStatus.UserAdministrator)
                 .Select(x => x.CustomerId)
                 .ToArray();
@@ -61,12 +53,12 @@ namespace Application.Services
                 .Select(x =>
                 {
                     var travelExpenseDto = _mapper.Map<TravelExpenseDto>(x);
-                    travelExpenseDto.AllowedFlows = GetAllowedFlows(x, userEntity).ToArray();
+                    travelExpenseDto.AllowedFlows = GetAllowedFlows(x, polApiContext.CallingUser).ToArray();
                     return travelExpenseDto;
                 })
-                .Where(x=>x.OwnedByUserId==userEntity.Id || x.AllowedFlows.Any())
+                .Where(x => x.OwnedByUserId == polApiContext.CallingUser.Id || x.AllowedFlows.Any())
                 .ToArray();
-            
+
             var travelExpenseGetResponse = new TravelExpenseGetResponse
             {
                 Result = travelExpenseDtos
@@ -74,48 +66,23 @@ namespace Application.Services
             return await Task.FromResult(travelExpenseGetResponse);
         }
 
-        private IEnumerable<AllowedFlowDto> GetAllowedFlows(TravelExpenseEntity travelExpenseEntity,
-            UserEntity userEntity)
+        public async Task<TravelExpenseGetByIdResponse> GetByIdAsync(PolApiContext polApiContext, Guid id)
         {
-            foreach (var flowStepUserPermissionEntity in userEntity.FlowStepUserPermissions.Where(x=>x.FlowStep.From==travelExpenseEntity.Stage && x.FlowStep.Customer==travelExpenseEntity.Customer ))
-            {
-                yield return new AllowedFlowDto()
-                {
-                    FlowStepId=flowStepUserPermissionEntity.FlowStepId,
-                    Description = flowStepUserPermissionEntity.FlowStep.Description
-                };
-               
-            }
-
-        }
-
-        public async Task<TravelExpenseGetByIdResponse> GetByIdAsync(Guid id, string sub)
-        {
-            // Get user by sub
-            var userEntities = _unitOfWork
-                .Repository
-                .List(new UserBySub(sub));
-            var userEntity = userEntities
-                .SingleOrDefault();
-
-            if (userEntity == null)
-                throw new ItemNotFoundException(sub,nameof(UserEntity));
-
             // Get the stages for which the user may manipulate travel expenses
             var travelExpenseStages =
-                userEntity.FlowStepUserPermissions.Select(x => x.FlowStep.From).Distinct().ToList();
+                polApiContext.CallingUser.FlowStepUserPermissions.Select(x => x.FlowStep.From).Distinct().ToList();
 
             var travelExpenseEntity = _unitOfWork.Repository.List(new TravelExpenseById(id)).SingleOrDefault();
 
-            if(travelExpenseEntity==null)
+            if (travelExpenseEntity == null)
                 throw new ItemNotFoundException(id.ToString(), nameof(TravelExpenseEntity));
 
-            var allowedFlowDtos = GetAllowedFlows(travelExpenseEntity, userEntity).ToArray();
+            var allowedFlowDtos = GetAllowedFlows(travelExpenseEntity, polApiContext.CallingUser).ToArray();
 
-            if(!allowedFlowDtos.Any() && travelExpenseEntity.OwnedByUser.Id!=userEntity.Id)
+            if (!allowedFlowDtos.Any() && travelExpenseEntity.OwnedByUser.Id != polApiContext.CallingUser.Id)
                 throw new ItemNotAllowedException(id.ToString(), nameof(TravelExpenseEntity));
 
-            var travelExpenseDto=_mapper.Map<TravelExpenseDto>(travelExpenseEntity);
+            var travelExpenseDto = _mapper.Map<TravelExpenseDto>(travelExpenseEntity);
             travelExpenseDto.AllowedFlows = allowedFlowDtos;
 
             return await Task.FromResult(
@@ -124,6 +91,17 @@ namespace Application.Services
                     Result = travelExpenseDto
                 });
         }
-    }
 
+        private IEnumerable<AllowedFlowDto> GetAllowedFlows(TravelExpenseEntity travelExpenseEntity,
+            UserEntity userEntity)
+        {
+            foreach (var flowStepUserPermissionEntity in userEntity.FlowStepUserPermissions.Where(x =>
+                x.FlowStep.From == travelExpenseEntity.Stage && x.FlowStep.Customer == travelExpenseEntity.Customer))
+                yield return new AllowedFlowDto
+                {
+                    FlowStepId = flowStepUserPermissionEntity.FlowStepId,
+                    Description = flowStepUserPermissionEntity.FlowStep.Description
+                };
+        }
+    }
 }

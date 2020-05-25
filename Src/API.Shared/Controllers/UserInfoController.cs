@@ -23,10 +23,12 @@ namespace API.Shared.Controllers
         [HttpGet]
         public async Task<ActionResult<UserInfoGetResponse>> Get()
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var userInfoGetResponse = await _getUserInfoService.GetAsync(sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var userInfoGetResponse = await _getUserInfoService.GetAsync(polApiContext);
 
             return Ok(userInfoGetResponse);
         }
     }
+
 }

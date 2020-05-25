@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoMapper;
@@ -20,7 +21,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<CustomerUserGetResponse> GetAsync(string sub, Guid customerId)
+        public async Task<CustomerUserGetResponse> GetAsync(PolApiContext sub, Guid customerId)
         {
             await Task.CompletedTask;
 
@@ -36,7 +37,7 @@ namespace Application.Services
             };
         }
 
-        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(string sub, Guid customerId,
+        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(PolApiContext sub, Guid customerId,
             CustomerInvitationsPostDto customerInvitationsPostDto)
         {
             var customer = _unitOfWork.Repository.List(new CustomerById(customerId)).SingleOrDefault() ??

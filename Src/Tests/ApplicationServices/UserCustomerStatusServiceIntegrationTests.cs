@@ -21,16 +21,16 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IUserCustomerStatusService>();
 
-                var userEntity = testContext.CreateUnitOfWork().Repository
+                var userEntity = testContext.GetUnitOfWork().Repository
                     .List(new UserBySub(TestData.DummyInitialSubEdward))
                     .Single();
 
                 // Act
-                var actual = await sut.PutAsync(TestData.DummyAdminSubDennis, userEntity
+                var actual = await sut.PutAsync(testContext.GetPolApiContext(TestData.DummyAdminSubDennis), userEntity
                     .Id,testContext.GetDummyCustomerId(),(int)UserStatus.UserAdministrator);
 
                 // Assert
-                var userAfterChange = testContext.CreateUnitOfWork().Repository.List(new UserBySub(userEntity.Subject)).Single();
+                var userAfterChange = testContext.GetUnitOfWork().Repository.List(new UserBySub(userEntity.Subject)).Single();
                 var customerUserPermissionEntityAfterChange = userAfterChange.CustomerUserPermissions.Single(x=>x.CustomerId==testContext.GetDummyCustomerId());
                 Assert.That(customerUserPermissionEntityAfterChange.UserStatus==UserStatus.UserAdministrator);
             }
