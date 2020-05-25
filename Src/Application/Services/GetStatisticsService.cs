@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Interfaces;

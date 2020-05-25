@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Exceptions;

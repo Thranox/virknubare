@@ -3,6 +3,7 @@ using System.Reflection;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application;
 using Application.Interfaces;
 using Application.MapperProfiles;
 using Application.Services;
@@ -132,7 +133,9 @@ namespace API.Shared
             {
                 services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
                     new PolApiContext(
-                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),"http://nowhere.com" )));
+                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),
+                        "http://nowhere.com",new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
+                        )));
             }
 
             Assembly

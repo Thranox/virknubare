@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Shared;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
@@ -120,7 +121,8 @@ namespace Tests.TestHelpers
                 GetUnitOfWork()
                     .Repository
                     .List(new UserBySub(sub)).Single(),
-                "http://nowhere.com"
+                "http://nowhere.com",
+                new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
             );
         }
     }

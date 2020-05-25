@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain;
@@ -17,13 +16,11 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEnumerable<IProcessFlowStep> _processFlowSteps;
-        private readonly IMessageBrokerService _messageBrokerService;
 
-        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps, IMessageBrokerService messageBrokerService)
+        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps)
         {
             _unitOfWork = unitOfWork;
             _processFlowSteps = processFlowSteps;
-            _messageBrokerService = messageBrokerService;
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(

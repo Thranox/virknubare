@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoMapper;
@@ -37,7 +36,7 @@ namespace Application.Services
             };
         }
 
-        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(PolApiContext sub, Guid customerId,
+        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(PolApiContext polApiContext, Guid customerId,
             CustomerInvitationsPostDto customerInvitationsPostDto)
         {
             var customer = _unitOfWork.Repository.List(new CustomerById(customerId)).SingleOrDefault() ??
@@ -45,7 +44,12 @@ namespace Application.Services
 
             foreach (var email in customerInvitationsPostDto.Emails)
             {
-                customer.AddInvitation(email);
+                customer.AddInvitation(
+                    email,
+                    new IMessageValueEnricher[]
+                    {
+                        new EmailStuffieEnricher(polApiContext.System.AppUrl)
+                    });
             }
 
             await _unitOfWork.CommitAsync();

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
@@ -21,9 +20,6 @@ namespace Application.Services
         public async Task<TravelExpenseCreateResponse> CreateAsync(PolApiContext polApiContext,
             TravelExpenseCreateDto travelExpenseCreateDto)
         {
-            //if(travelExpenseCreateDto.CustomerId==Guid.Empty)
-            //    throw new BusinessRuleViolationException(Guid.Empty, "CustomerId can't be empty when creating TravelExpense");
-
             var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
             var travelExpenseEntity = _travelExpenseFactory.Create(travelExpenseCreateDto.Description,
                 polApiContext.CallingUser, owningCustomer);

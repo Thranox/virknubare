@@ -51,10 +51,10 @@ namespace Tests.API.Controllers
         {
             // Arrange
             var customerInvitationsPostDto = new CustomerInvitationsPostDto { Emails = new[] { "user1@domain.com", "user2@domain.com" } };
-            //_subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
-            //    .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
                 var sut = GetSut(testContext);
 
                 // Act
