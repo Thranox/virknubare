@@ -102,6 +102,28 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("FlowStepUserPermissions");
                 });
 
+            modelBuilder.Entity("Domain.Entities.InvitationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CustomerEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerEntityId");
+
+                    b.ToTable("Invitations");
+                });
+
             modelBuilder.Entity("Domain.Entities.StageEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -150,6 +172,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -201,6 +226,13 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.InvitationEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.CustomerEntity", null)
+                        .WithMany("Invitations")
+                        .HasForeignKey("CustomerEntityId");
                 });
 
             modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>

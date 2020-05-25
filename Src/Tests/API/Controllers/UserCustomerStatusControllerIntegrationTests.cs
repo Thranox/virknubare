@@ -7,6 +7,7 @@ using Application.Dtos;
 using Application.Interfaces;
 using Domain.Specifications;
 using Domain.ValueObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -31,10 +32,11 @@ namespace Tests.API.Controllers
         {
             // Arrange
             // Set executing user to be Dennis -- he is admin
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>()))
+            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
                 .Returns(TestData.DummyAdminSubDennis);
             using (var testContext = new IntegrationTestContext())
             {
+                testContext.SetCallingUserBySub(TestData.DummyAdminSubDennis);
                 var userEntityEdward = testContext
                     .CreateUnitOfWork()
                     .Repository

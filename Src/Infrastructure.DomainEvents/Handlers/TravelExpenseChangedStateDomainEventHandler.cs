@@ -36,8 +36,8 @@ namespace Infrastructure.DomainEvents.Handlers
             await _messageBrokerService
                 .SendMessageAsync(
                     usersAbleToProcessNewStage,
-                    travelExpenseChangedStateDomainEvent.TravelExpenseEntity,
-                    MessageKind.YouCanNowProcessTravelExpense);
+                    MessageKind.YouCanNowProcessTravelExpense,
+                    new IMessageValueEnricher[] { travelExpenseChangedStateDomainEvent.TravelExpenseEntity,travelExpenseChangedStateDomainEvent.TravelExpenseEntity.Customer });
 
             // ------------------------------------------------------
             // Send message to owner that his/her travel expense has changed state
@@ -47,8 +47,8 @@ namespace Infrastructure.DomainEvents.Handlers
                 await _messageBrokerService
                     .SendMessageAsync(
                         new[] {travelExpenseChangedStateDomainEvent.TravelExpenseEntity.OwnedByUser},
-                        travelExpenseChangedStateDomainEvent.TravelExpenseEntity,
-                        MessageKind.YourTravelExpenseHasChangedState);
+                        MessageKind.YourTravelExpenseHasChangedState,
+                        new IMessageValueEnricher[] { travelExpenseChangedStateDomainEvent.TravelExpenseEntity, travelExpenseChangedStateDomainEvent.TravelExpenseEntity.Customer });
         }
     }
 }

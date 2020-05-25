@@ -4,6 +4,7 @@ using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -15,11 +16,21 @@ namespace Tests.API.Controllers
 {
     public class StatisticsControllerIntegrationTests
     {
+        private static Mock<ISubManagementService> _subManagementService;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _subManagementService = new Mock<ISubManagementService>();
+        }
+
         [Test]
         [Explicit("Awaits 2020-46")]
         public async Task Get_NoParameters_ReturnsTravelExpenses()
         {
             // Arrange
+            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
+                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = GetSut(testContext);
@@ -38,10 +49,7 @@ namespace Tests.API.Controllers
 
         private static StatisticsController GetSut(IntegrationTestContext testContext)
         {
-            var subManagementService = new Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
-
-            return new StatisticsController(subManagementService.Object,
+            return new StatisticsController(_subManagementService.Object,
                 testContext.ServiceProvider.GetService<IGetStatisticsService>());
         }
     }

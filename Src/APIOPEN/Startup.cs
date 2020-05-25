@@ -1,6 +1,5 @@
 using API.Shared;
 using Domain.Interfaces;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,19 +31,17 @@ namespace APIOPEN
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, IDbSeeder dbSeeder, IPolicyService policyService)
         {
             logger.Information("Starting Politikerafregning APIOPEN...");
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
+            policyService.DatabaseMigrationAndSeedingPolicy.ExecuteAsync(async () =>
             {
                 logger.Information("Starting Db Migration and Seeding...");
-                polDbContext.Database.Migrate();
-                dbSeeder.RemoveTestDataAsync().Wait();
-                dbSeeder.SeedAsync();
+                await dbSeeder.MigrateAsync();
+                await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
 

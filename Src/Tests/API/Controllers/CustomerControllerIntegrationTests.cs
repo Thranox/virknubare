@@ -5,6 +5,7 @@ using API.Shared.Controllers;
 using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -16,10 +17,20 @@ namespace Tests.API.Controllers
 {
     public class CustomerControllerIntegrationTests
     {
+        private static Mock<ISubManagementService> _subManagementService;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _subManagementService = new Mock<ISubManagementService>();
+        }
+
         [Test]
         public async Task GetCustomerUsers_ExistingCustomer_ReturnsUsersWithStatus()
         {
             // Arrange
+            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
+                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = GetSut(testContext);
@@ -36,12 +47,32 @@ namespace Tests.API.Controllers
             }
         }
 
+        [Test]
+        public async Task PostInvitations_ExistingCustomer_ReturnsUsersWithStatus()
+        {
+            // Arrange
+            var customerInvitationsPostDto = new CustomerInvitationsPostDto { Emails = new[] { "user1@domain.com", "user2@domain.com" } };
+            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
+                .Returns(TestData.DummyPolSubAlice);
+            using (var testContext = new IntegrationTestContext())
+            {
+                var sut = GetSut(testContext);
+
+                // Act
+                var actual = await sut.PostInvitations(testContext.GetDummyCustomerId(), customerInvitationsPostDto);
+
+                // Assert
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var okObjectResult = actual.Result as OkObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as CustomerInvitationsPostResponse;
+                Assert.That(value, Is.Not.Null);
+            }
+        }
+
         private static CustomerController GetSut(IntegrationTestContext testContext)
         {
-            var subManagementService = new Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
-
-            return new CustomerController(subManagementService.Object,
+            return new CustomerController(_subManagementService.Object,
                 testContext.ServiceProvider.GetService<ICustomerUserService>());
         }
     }

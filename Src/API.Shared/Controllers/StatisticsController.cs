@@ -23,7 +23,7 @@ namespace API.Shared.Controllers
         [HttpPost]
         public async Task<ActionResult<SubmissionPostResponse>> Post()
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
             var statisticsGetResponse = await _getStatisticsService.GetAsync(sub);
 
             return Ok(statisticsGetResponse);

@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using API.Shared.Controllers;
+using Application.Dtos;
 
 namespace Kata
 {
@@ -11,5 +12,7 @@ namespace Kata
         public TravelExpenseProcessStepResponse TravelExpenseProcessStepResponse { get; set; }
         public CustomerUserGetResponse CustomerUserGetResponse { get; set; }
         public UserCustomerPutResponse UserCustomerPutResponse { get; set; }
+        public DatabaseResetResponse DatabaseResetResponse { get; set; }
+        public CustomerInvitationsPostResponse CustomerInvitationsPostResponse { get; set; }
     }
 }

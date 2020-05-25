@@ -1,4 +1,3 @@
-using System;
 using API.Shared;
 using Domain.Interfaces;
 using Infrastructure.Data;
@@ -40,14 +39,14 @@ namespace PolAPI
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            policyService.DatabaseMigrationAndSeedingPolicy.Execute(() =>
+            policyService.DatabaseMigrationAndSeedingPolicy.ExecuteAsync(async () =>
             {
                 logger.Information("Starting Db Migration and Seeding...");
-                polDbContext.Database.Migrate();
-                dbSeeder.SeedAsync();
+                await dbSeeder.MigrateAsync();
+                await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
-           
+
             app.UseCors(options =>
             {
                 options

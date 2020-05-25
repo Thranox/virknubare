@@ -23,13 +23,20 @@ namespace API.Shared.Controllers
         [HttpGet("{customerId}/Users")]
         public async Task<ActionResult<CustomerUserGetResponse>> GetCustomerUsers(Guid customerId)
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
 
             var customerUserGetResponse = await _customerUserService.GetAsync(sub, customerId);
 
-            return Ok( customerUserGetResponse);
+            return Ok(customerUserGetResponse);
         }
 
-    }
+        [HttpPost("{customerId}/Invitations")]
+        public async Task<ActionResult<CustomerInvitationsPostResponse>> PostInvitations(Guid customerId, CustomerInvitationsPostDto customerInvitationsPostDto)
+        {
+            var sub = _subManagementService.GetSub(User, HttpContext);
+            var customerUserGetResponse = await _customerUserService.CreateInvitationsAsync(sub, customerId, customerInvitationsPostDto);
 
+            return Ok(customerUserGetResponse);
+        }
+    }
 }

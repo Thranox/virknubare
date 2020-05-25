@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Interfaces;
 using Domain.SharedKernel;
 using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
-    public class UserEntity : BaseEntity
+    public class UserEntity : BaseEntity, IMessageReceiver
     {
         private UserEntity()
         {
@@ -23,20 +24,20 @@ namespace Domain.Entities
 
         public string Name { get; set; }
         public string Subject { get; set; }
+        public string Email { get; set; }
         public ICollection<FlowStepUserPermissionEntity> FlowStepUserPermissions { get; set; }
         public ICollection<CustomerUserPermissionEntity>  CustomerUserPermissions { get; set; }
         public ICollection<TravelExpenseEntity> TravelExpenses { get; set; }
-
-        public Dictionary<string,string> GetMessageValues()
-        {
-            return new Dictionary<string, string>();
-        }
 
         public bool IsUserAdminForCustomer(Guid customerId)
         {
             return CustomerUserPermissions
                 .Any(x => x.CustomerId == customerId && x.UserStatus == UserStatus.UserAdministrator);
+        }
 
+        public void Enrich(Dictionary<string, string> messageValues)
+        {
+            messageValues.Add(KeyMessagesConst.UserName, Name);
         }
     }
 }

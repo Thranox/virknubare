@@ -35,5 +35,21 @@ namespace Application.Services
                     .ToArray()
             };
         }
+
+        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(string sub, Guid customerId,
+            CustomerInvitationsPostDto customerInvitationsPostDto)
+        {
+            var customer = _unitOfWork.Repository.List(new CustomerById(customerId)).SingleOrDefault() ??
+                           throw new ArgumentException(nameof(customerId));
+
+            foreach (var email in customerInvitationsPostDto.Emails)
+            {
+                customer.AddInvitation(email);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return new CustomerInvitationsPostResponse();
+        }
     }
 }
