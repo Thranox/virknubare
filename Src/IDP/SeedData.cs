@@ -44,6 +44,7 @@ namespace IDP
                     GetOrCreateUser(userMgr, "charlie");
                     GetOrCreateUser(userMgr, "dennis");
                     GetOrCreateUser(userMgr, "edward");
+                    GetOrCreateUser(userMgr, "freddie");
                 }
             }
         }
