@@ -1,6 +1,12 @@
 <div class="row">
-    <div class="col-12">
+    <div class="col-12" *ngIf="travelExpense$ | async as travelExpense; else loading">
+        <h2>Vis afregning: {{travelExpense.id | slice:0:8}}..</h2>
+        <app-travel-expense-form [travelExpense]="travelExpense"></app-travel-expense-form>
 
-        <pre>{{ travelExpense$ | async | json}}</pre>
+        <div>
+            Fejlfinding:
+            <pre>{{ travelExpense | json}}</pre>
+        </div>
     </div>
+    <ng-template #loading>Henter data</ng-template>
 </div>
