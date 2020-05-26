@@ -1,66 +1,65 @@
 import {Injectable} from '@angular/core';
 import {UserManager, User, UserManagerSettings} from 'oidc-client';
-import {Constants} from '../../constants';
 import {Subject, from} from 'rxjs';
 import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class AuthService {
-    private _userManager: UserManager;
-    private _user: User;
-    private _loginChangedSubject = new Subject<boolean>();
+    private userManager: UserManager;
+    private user: User;
+    private loginChangedSubject = new Subject<boolean>();
 
-    loginChanged = this._loginChangedSubject.asObservable();
+    loginChanged = this.loginChangedSubject.asObservable();
 
     constructor() {
         const stsSettings = {
             authority: environment.stsAuthorityUrl,
             client_id: environment.stsClientId,
 
-            redirect_uri: `${Constants.clientRoot}signin-redirect-callback`,
+            redirect_uri: `${window.location.origin}/signin-redirect-callback`,
             scope: 'openid profile roles teapi',
             response_type: 'code',
-            post_logout_redirect_uri: `${Constants.clientRoot}signout-redirect-callback`,
-            // automaticSilentRenew: true,
-            // loadUserInfo: true
+            post_logout_redirect_uri: `${window.location.origin}/signout-redirect-callback`,
+            automaticSilentRenew: true,
+            loadUserInfo: true
         } as UserManagerSettings;
-        this._userManager = new UserManager(stsSettings);
+        this.userManager = new UserManager(stsSettings);
     }
 
     login() {
-        return this._userManager.signinRedirect();
+        return this.userManager.signinRedirect();
     }
 
     isLoggedIn(): Promise<boolean> {
-        return this._userManager.getUser().then(user => {
+        return this.userManager.getUser().then(user => {
             const userCurrent = !!user && !user.expired;
-            if (this._user !== user) {
-                this._loginChangedSubject.next(userCurrent);
+            if (this.user !== user) {
+                this.loginChangedSubject.next(userCurrent);
             }
-            this._user = user;
+            this.user = user;
             return userCurrent;
         });
     }
 
     completeLogin() {
-        return this._userManager.signinRedirectCallback().then(user => {
-            this._user = user;
-            this._loginChangedSubject.next(!!user && !user.expired);
+        return this.userManager.signinRedirectCallback().then(user => {
+            this.user = user;
+            this.loginChangedSubject.next(!!user && !user.expired);
             return user;
         });
     }
 
     logout() {
-        this._userManager.signoutRedirect();
+        this.userManager.signoutRedirect();
     }
 
     completeLogout() {
-        this._user = null;
-        return this._userManager.signoutRedirectCallback();
+        this.user = null;
+        return this.userManager.signoutRedirectCallback();
     }
 
     getAccessToken() {
-        return this._userManager.getUser().then(user => {
+        return this.userManager.getUser().then(user => {
             if (!!user && !user.expired) {
                 return user.access_token;
             } else {
@@ -70,6 +69,6 @@ export class AuthService {
     }
 
     getUser() {
-        return from(this._userManager.getUser());
+        return from(this.userManager.getUser());
     }
 }
