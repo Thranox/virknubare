@@ -2,6 +2,7 @@
     <p class="float-right"><a href="#">Tilbage til toppen</a></p>
     <p>&copy; 2020 Improvento. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
     <p><img src="assets/logo.png" alt="Images path test"></p>
-    <small><pre>User Info:
-{{ user | async | json }}</pre></small>
+    <button class="btn btn-sm btn-outline-primary" (click)="showUserInfo = !showUserInfo">Show user info</button>
+    <small [hidden]="!showUserInfo">
+        <pre>{{ user | async | json }}</pre></small>
 </footer>

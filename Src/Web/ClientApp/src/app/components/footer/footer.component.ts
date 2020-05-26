@@ -11,6 +11,7 @@ import {User} from "oidc-client";
 })
 export class FooterComponent implements OnInit {
     user: Observable<User | null>;
+    showUserInfo = false;
 
     constructor(private authService: AuthService) {
     }
