@@ -14,18 +14,27 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let travelExpense of travelExpenses$ | async">
-                <td>{{ travelExpense.description }}</td>
-                <td>{{ travelExpense.id | slice:0:8 }}..</td>
-                <td>{{ travelExpense.isAssignedPayment }}</td>
-                <td>{{ travelExpense.isCertified }}</td>
-                <td>{{ travelExpense.isReportedDone }}</td>
-                <td>{{ travelExpense.stageText }}</td>
-                <td>
-                    <a [routerLink]="'/travel-expenses/' + travelExpense.id">Show/edit</a>
-                </td>
-            </tr>
+            <ng-container *ngIf="travelExpenses$ | async as travelExpenses; else loading">
+                <tr *ngFor="let travelExpense of travelExpenses">
+                    <td>{{ travelExpense.description }}</td>
+                    <td>{{ travelExpense.id | slice:0:8 }}..</td>
+                    <td>{{ travelExpense.isAssignedPayment }}</td>
+                    <td>{{ travelExpense.isCertified }}</td>
+                    <td>{{ travelExpense.isReportedDone }}</td>
+                    <td>{{ travelExpense.stageText }}</td>
+                    <td>
+                        <a [routerLink]="'/travel-expenses/' + travelExpense.id">Show/edit</a>
+                    </td>
+                </tr>
+            </ng-container>
+
             </tbody>
         </table>
     </div>
 </div>
+
+<ng-template #loading>
+    <tr>
+        <td colspan="7">Henter data...</td>
+    </tr>
+</ng-template>
