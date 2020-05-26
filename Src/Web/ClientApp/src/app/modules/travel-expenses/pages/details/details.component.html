@@ -3,10 +3,14 @@
         <h2>Vis afregning: {{travelExpense.id | slice:0:8}}..</h2>
         <app-travel-expense-form [travelExpense]="travelExpense"></app-travel-expense-form>
 
-        <div>
-            Fejlfinding:
-            <pre>{{ travelExpense | json}}</pre>
-        </div>
+        <small>
+            <div>
+                Info til fejlfinding:
+                <pre>{{ travelExpense | json}}</pre>
+            </div>
+        </small>
     </div>
-    <ng-template #loading>Henter data</ng-template>
 </div>
+
+
+<ng-template #loading>Henter data</ng-template>

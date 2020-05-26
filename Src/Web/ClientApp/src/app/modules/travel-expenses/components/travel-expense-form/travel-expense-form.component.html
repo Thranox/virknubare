@@ -1,5 +1,13 @@
 <form [formGroup]="travelExpenseFormGroup">
-    <input type="text" class="form-control" formControlName="description">
+    <div class="row">
+        <div class="col-2 col-form-label">Beskrivelse</div>
+        <div class="col"><input type="text" class="form-control" formControlName="description"></div>
+    </div>
+    <div class="row pt-3">
+        <div class="col text-right">
+            <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
+        </div>
+    </div>
 </form>
 
-<button class="btn btn-primary" (click)="save()">Gem</button>
+
