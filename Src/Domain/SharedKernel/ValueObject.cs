@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-
-namespace CSharpFunctionalExtensions
+namespace Domain.SharedKernel
 {
     /// <summary>
     /// Use non-generic ValueObject whenever possible: http://bit.ly/vo-new
