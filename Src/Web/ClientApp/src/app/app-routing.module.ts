@@ -11,7 +11,7 @@ const routes: Routes = [
   {path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent},
   {path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent},
   {path: 'unauthorized', component: UnauthorizedComponent},
-  //{path: 'travel-expense', loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule)},
+  {path: 'travel-expenses', loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule)},
 ];
 
 @NgModule({

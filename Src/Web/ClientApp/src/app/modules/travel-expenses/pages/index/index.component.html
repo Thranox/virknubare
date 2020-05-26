@@ -1,1 +1,9 @@
-<p>index works!</p>
+<div class="row">
+    <div class="col-12">
+        <ul>
+            <li *ngFor="let travelExpense of travelExpenses$ | async">
+                <a [routerLink]="'/travel-expenses/' + travelExpense.id">{{ travelExpense.description }} ({{ travelExpense.stageText }})</a>
+            </li>
+        </ul>
+    </div>
+</div>

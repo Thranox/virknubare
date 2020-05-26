@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {TravelExpense} from '../../../../shared/model/travel-expense.model';
+import {from, Observable} from 'rxjs';
+import {TravelExpenseService} from '../../../../shared/services/travel-expense.service';
 
 @Component({
   selector: 'app-index',
@@ -6,10 +9,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit {
+    travelExpenses$: Observable<TravelExpense[]> = from([]);
 
-  constructor() { }
+  constructor(private travelExpenseService: TravelExpenseService) {}
 
   ngOnInit(): void {
+      this.travelExpenses$ = this.travelExpenseService.getTravelExpenses();
   }
 
 }
