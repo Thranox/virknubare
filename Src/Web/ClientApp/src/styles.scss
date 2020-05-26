@@ -2,3 +2,40 @@
 
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+
+
+/**
+ Forms
+ */
+
+.invalid-feedback {
+    display: none;
+    font-size: small;
+}
+
+.form-control {
+    border: 1px solid $blue;
+}
+
+.form-control.ng-invalid.ng-touched~.invalid-feedback {
+    display: block;
+}
+
+input, select, textarea {
+
+    &.ng-invalid.ng-touched {
+        border: 1px solid red !important;
+    }
+}
+
+ngb-timepicker {
+    &.ng-invalid.ng-touched input {
+        border: 1px solid red !important;
+    }
+}
+
+
+.form-control.disabled {
+    background-color: $input-disabled-bg;
+    opacity: 1;
+}
