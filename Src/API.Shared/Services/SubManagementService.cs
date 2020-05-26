@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Application;
 using Domain.Entities;
@@ -29,7 +28,7 @@ namespace API.Shared.Services
             var system = Systems.FirstOrDefault(x => fullUrl.Contains(x.ApiUrl));
 
             var userIdentity =httpContext.User.Identity;
-            var claims = (userIdentity as ClaimsIdentity).Claims;
+            var claims = (userIdentity as ClaimsIdentity).Claims.ToArray();
             var sub = claims.Single(x => x.Type == ImproventoGlobals.ImproventoSubClaimName).Value;
 
             var userEntity = _unitOfWork.Repository.List(new UserBySub(sub)).SingleOrDefault();
@@ -38,10 +37,9 @@ namespace API.Shared.Services
                 userEntity = new UserEntity(claims.Single(x => x.Type == "name").Value, sub);
                 _unitOfWork.Repository.Add(userEntity);
             }
-            else
-            {
-                userEntity.UpdateWithClaims(claims);
-            }
+
+            userEntity.UpdateWithClaims(claims);
+
             await _unitOfWork.CommitAsync();
 
             return new PolApiContext(userEntity, fullUrl, system);

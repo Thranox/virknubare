@@ -9,6 +9,7 @@ namespace Domain.Entities
         public DateTime CreationTime { get; set; }
         public string Email { get; set; }
         public InvitationState InvitationState { get; set; }
+        public CustomerEntity Customer { get; set; }
 
         private InvitationEntity()
         {

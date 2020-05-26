@@ -12,12 +12,14 @@ namespace API.Shared.Controllers
     {
         private readonly IGetUserInfoService _getUserInfoService;
         private readonly ISubManagementService _subManagementService;
+        private readonly IInvitationService _invitationService;
 
         public UserInfoController(ISubManagementService subManagementService,
-            IGetUserInfoService getUserInfoService)
+            IGetUserInfoService getUserInfoService, IInvitationService invitationService)
         {
             _subManagementService = subManagementService;
             _getUserInfoService = getUserInfoService;
+            _invitationService = invitationService;
         }
 
         [HttpGet]
@@ -25,10 +27,11 @@ namespace API.Shared.Controllers
         {
             var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
 
+            var acceptWaitingInvitations = await _invitationService.AcceptWaitingInvitations(polApiContext);
+            
             var userInfoGetResponse = await _getUserInfoService.GetAsync(polApiContext);
 
             return Ok(userInfoGetResponse);
         }
     }
-
 }

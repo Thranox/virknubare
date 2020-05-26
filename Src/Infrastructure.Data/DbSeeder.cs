@@ -53,11 +53,11 @@ namespace Infrastructure.Data
             
             // -----------------------------------
             // Dummy Users
-            var userEntityPol = GetOrCreateTestUser(customer1, TestData.DummyPolSubAlice, "dummy pol Alice", UserStatus.Registered);
-            var userEntitySek = GetOrCreateTestUser(customer1, TestData.DummySekSubBob, "dummy sek Bob", UserStatus.Registered);
-            var userEntityLed = GetOrCreateTestUser(customer1, TestData.DummyLedSubCharlie, "dummy led Charlie", UserStatus.Registered);
-            var userEntityAdm = GetOrCreateTestUser(customer1, TestData.DummyAdminSubDennis, "dummy adm Dennis", UserStatus.UserAdministrator);
-            var userEntityInit = GetOrCreateTestUser(customer1, TestData.DummyInitialSubEdward, "dummy Init Edward", UserStatus.Initial);
+            var userEntityPol = GetOrCreateTestUser(customer1, TestData.DummyPolSubAlice, "alice", UserStatus.Registered);
+            var userEntitySek = GetOrCreateTestUser(customer1, TestData.DummySekSubBob, "bob", UserStatus.Registered);
+            var userEntityLed = GetOrCreateTestUser(customer1, TestData.DummyLedSubCharlie, "charlie", UserStatus.Registered);
+            var userEntityAdm = GetOrCreateTestUser(customer1, TestData.DummyAdminSubDennis, "dennis", UserStatus.UserAdministrator);
+            var userEntityInit = GetOrCreateTestUser(customer1, TestData.DummyInitialSubEdward, "edward", UserStatus.Initial);
 
 
 
@@ -218,6 +218,9 @@ namespace Infrastructure.Data
             if (user == null)
             {
                 user = new UserEntity(userName, sub);
+                var claims = TestData.GetClaimsByUserName(userName);
+                user.UpdateWithClaims(claims);
+
                 _unitOfWork.Repository.Add(user);
                 customer.AddUser(user, userStatus);
             }

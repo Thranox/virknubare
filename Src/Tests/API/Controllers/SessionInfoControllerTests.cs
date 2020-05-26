@@ -48,7 +48,8 @@ namespace Tests.API.Controllers
         {
             return new UserInfoController(
                 _subManagementService.Object,
-                testContext.ServiceProvider.GetService<IGetUserInfoService>());
+                testContext.ServiceProvider.GetService<IGetUserInfoService>(),
+                testContext.ServiceProvider.GetService<IInvitationService>());
         }
     }
 
