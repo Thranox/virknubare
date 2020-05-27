@@ -5,6 +5,10 @@ import {FlowStepService} from "./services/flow-step.service";
 import {FlowStepResource} from "./resources/flow-step.resource";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import {NgbDateAdapter, NgbDateParserFormatter, NgbTimeAdapter} from "@ng-bootstrap/ng-bootstrap";
+import {NgbDateDayjsAdapter} from "./others/datepicker-adapter";
+import {DanishDateParserFormatter} from "./others/datepicker-custom-formatter";
+import {NgbTimeStringAdapter} from "./others/timepicker-adapter";
 
 
 
@@ -36,7 +40,9 @@ const PROVIDERS = [
     // FullcalendarConfigurator,
 
     // others
-    // {provide: NgbTimeAdapter, useClass: NgbTimeStringAdapter},
+    {provide: NgbTimeAdapter, useClass: NgbTimeStringAdapter},
+    {provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter},
+    {provide: NgbDateParserFormatter, useClass: DanishDateParserFormatter}
 ];
 
 @NgModule({

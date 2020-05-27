@@ -1,13 +1,43 @@
 <form [formGroup]="travelExpenseFormGroup">
     <div class="row">
+        <div class="col-2 col-form-label">ID på afregning</div>
+        <div class="col col-form-label">{{ travelExpense.id }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 col-form-label">Fra</div>
+        <div class="col-2">
+            <input class="form-control" formControlName="startDate" placement="bottom"
+                   ngbDatepicker [showWeekNumbers]="true" (click)="datepickerStart.toggle()"
+                   #datepickerStart="ngbDatepicker">
+        </div>
+        <div class="col-2">
+            <ngb-timepicker [spinners]="false"  formControlName="startTime"></ngb-timepicker>
+        </div>
+        <div class="col"></div>
+        <div class="col-1 col-form-label">Til</div>
+        <div class="col-2">
+            <input class="form-control" formControlName="endDate" placement="bottom"
+                   ngbDatepicker [showWeekNumbers]="true" (click)="datepickerEnd.toggle()"
+                   #datepickerEnd="ngbDatepicker">
+        </div>
+        <div class="col-2">
+            <ngb-timepicker [spinners]="false"  formControlName="endTime"></ngb-timepicker>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-2 col-form-label">Beskrivelse</div>
         <div class="col"><input type="text" class="form-control" formControlName="description"></div>
     </div>
+
     <div class="row pt-3">
         <div class="col text-right">
             <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
         </div>
     </div>
+
+    <pre class="mt-5">{{ travelExpenseFormGroup.getRawValue() | json }}</pre>
 </form>
 
 

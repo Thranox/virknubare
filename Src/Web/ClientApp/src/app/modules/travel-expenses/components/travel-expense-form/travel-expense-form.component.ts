@@ -3,6 +3,7 @@ import {TravelExpense} from '../../../../shared/model/travel-expense.model';
 import {TravelExpenseService} from "../../../../shared/services/travel-expense.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {catchError, switchMap, tap} from "rxjs/operators";
+import * as dayjs from 'dayjs';
 
 @Component({
     selector: 'app-travel-expense-form',
@@ -22,9 +23,7 @@ export class TravelExpenseFormComponent implements OnInit {
 
     ngOnInit(): void {
         this.initReactiveForm();
-        this.travelExpenseService.getTravelExpenseById(this.travelExpense.id).subscribe((travelExpense) => {
-            this.prefillFormFromTravelExpense(travelExpense);
-        });
+        this.prefillFormFromTravelExpense(this.travelExpense);
     }
 
     private prefillFormFromTravelExpense(travelExpense: TravelExpense) {
@@ -33,7 +32,11 @@ export class TravelExpenseFormComponent implements OnInit {
 
     private initReactiveForm() {
         this.travelExpenseFormGroup = this.fb.group({
-            description: ['', Validators.required],
+            description: [null, Validators.required],
+            startDate: [dayjs(), Validators.required],
+            startTime: ['08:00', Validators.required],
+            endDate: [dayjs(), Validators.required],
+            endTime: ['16:00', Validators.required],
         });
     }
 

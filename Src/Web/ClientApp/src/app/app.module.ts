@@ -12,6 +12,10 @@ import { FooterComponent } from './components/footer/footer.component';
 import {FetchDataComponent} from './modules/fetch-data/fetch-data.component';
 import {FormsModule} from '@angular/forms';
 import {SharedModule} from './shared/shared.module';
+import localeDa from '@angular/common/locales/da';
+import localeExtraDa from '@angular/common/locales/extra/da';
+import {registerLocaleData} from '@angular/common';
+registerLocaleData(localeDa, 'da', localeExtraDa);
 
 dayjs.locale('da');
 
