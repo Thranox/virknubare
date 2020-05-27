@@ -13,6 +13,8 @@
     <Compile Remove="Migrations\20200517130649_added-description-to-flowstep.Designer.cs" />
     <Compile Remove="Migrations\20200526181355_aaaa.cs" />
     <Compile Remove="Migrations\20200526181355_aaaa.Designer.cs" />
+    <Compile Remove="Migrations\20200527205321_added-submission.cs" />
+    <Compile Remove="Migrations\20200527205321_added-submission.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

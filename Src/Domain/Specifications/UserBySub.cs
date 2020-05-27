@@ -10,7 +10,6 @@ namespace Domain.Specifications
         public UserBySub(string sub)
         {
             Criteria = e => e.Subject == sub;
-
         }
 
         public Expression<Func<UserEntity, bool>> Criteria { get; }

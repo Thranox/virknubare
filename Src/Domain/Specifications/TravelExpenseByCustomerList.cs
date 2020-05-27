@@ -11,7 +11,7 @@ namespace Domain.Specifications
     {
         public TravelExpenseByCustomerList(IEnumerable<Guid> customersVisibleByUser)
         {
-            Criteria = e => customersVisibleByUser.Contains( e.Customer.Id);
+            Criteria = e => customersVisibleByUser.Contains(e.Customer.Id);
         }
 
         public Expression<Func<TravelExpenseEntity, bool>> Criteria { get; }

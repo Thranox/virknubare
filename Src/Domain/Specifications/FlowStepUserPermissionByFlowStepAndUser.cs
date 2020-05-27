@@ -9,7 +9,7 @@ namespace Domain.Specifications
     {
         public FlowStepUserPermissionByFlowStepAndUser(FlowStepEntity flowStepEntity, UserEntity userEntity)
         {
-            Criteria = e => e.FlowStep==flowStepEntity && e.User==userEntity;
+            Criteria = e => e.FlowStep == flowStepEntity && e.User == userEntity;
         }
 
         public Expression<Func<FlowStepUserPermissionEntity, bool>> Criteria { get; }

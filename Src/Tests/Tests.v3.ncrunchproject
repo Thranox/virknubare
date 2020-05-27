@@ -16,6 +16,9 @@
       <NamedTestSelector>
         <TestName>Tests.Web.MailSendingTests.SendEmail</TestName>
       </NamedTestSelector>
+      <NamedTestSelector>
+        <TestName>Tests.ApplicationServices.SubmitSubmissionServiceIntegrationTests.SubmitAsync_NoParameters_SubmitsAll</TestName>
+      </NamedTestSelector>
     </IgnoredTests>
   </Settings>
 </ProjectConfiguration>

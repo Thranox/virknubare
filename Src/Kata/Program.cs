@@ -37,6 +37,8 @@ namespace Kata
             var propertiesJson = File.ReadAllText(Path.Combine(expectedDir, "properties.json"));
             _properties = JsonConvert.DeserializeObject<Properties>(propertiesJson);
 
+            var startTime = DateTime.Now;
+
             try
             {
                 var serviceCollection = new ServiceCollection()
@@ -61,6 +63,8 @@ namespace Kata
                     new KataStepDescriptor("VerifySwaggerUp"),
 
                     new KataStepDescriptor("ResetTestData").AsUser("alice").WithVerification(c=>c.DatabaseResetResponse!=null),
+
+                    new KataStepDescriptor("SendWaitingSubmissions").AsUser("alice"),
 
                     new KataStepDescriptor("GetUserInfo").AsUser("freddie").WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.All(x=>x.UserCustomerStatus!=0)),
 
@@ -91,20 +95,29 @@ namespace Kata
                     new KataStepDescriptor("SendInvitationEmails").AsUser("dennis").WithVerification(c=>c.CustomerInvitationsPostResponse!=null ),
 
                     new KataStepDescriptor("GetUserInfo").AsUser("edward").WithVerification(c=>c.UserInfoGetResponse!=null && c.UserInfoGetResponse.UserCustomerInfo.All(x=>x.UserCustomerStatus!=0)),
+
                 };
 
                 foreach (var kataStepDescriptor in kataStepDescriptors)
                 {
+                    var stepStart = DateTime.Now;
                     var step = kataStepProvider.GetStep(kataStepDescriptor.Identifier);
 
                     try
                     {
-                        var logMessage = $"About to execute step: {kataStepDescriptor.Identifier}, {step.GetType().Name}, executing as {kataStepDescriptor.NameOfLoggedInUser}";
-                        _logger.Information(logMessage);
+                        if(step==null)
+                            throw new InvalidOperationException("No kata step matches descriptor: " + kataStepDescriptor.Identifier);
+
+                        _logger.Information("About to execute step: {kataStepIdentifier}, {kataStepType}, executing as {userName}",
+                            kataStepDescriptor.Identifier, step.GetType().Name, kataStepDescriptor.NameOfLoggedInUser);
 
                         await step.ExecuteAndVerifyAsync(
                             kataStepDescriptor.NameOfLoggedInUser,
                             kataStepDescriptor.VerificationFunc);
+                        var stepEnd= DateTime.Now;
+
+                        _logger.Information("Done executing step: {kataStepIdentifier}, {kataStepType}, executing as {userName}, {secondsElapsed}",
+                            kataStepDescriptor.Identifier, step.GetType().Name, kataStepDescriptor.NameOfLoggedInUser, stepEnd.Subtract(stepStart).TotalSeconds);
                     }
                     catch (Exception)
                     {
@@ -126,7 +139,9 @@ namespace Kata
                 throw;
             }
 
-            _logger.Information("Kata executed without errors on {system}!", opts.SutName);
+            var endTime = DateTime.Now;
+
+            _logger.Information("Kata executed without errors after {secondsElapsed}s on {system}!", endTime.Subtract(startTime).TotalSeconds, opts.SutName);
 
             if (opts.UsePrompt)
             {
