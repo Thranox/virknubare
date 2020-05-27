@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Shared.Services;
 using Application.Dtos;
@@ -37,10 +36,11 @@ namespace API.Shared.Controllers
             var travelExpenseProcessStepDto = new TravelExpenseFlowStepDto
                 {TravelExpenseId = id, FlowStepId = flowStepId};
 
-            var sub = _subManagementService.GetSub(User, HttpContext);
+            var polApiContext = await _subManagementService
+                .GetPolApiContext(HttpContext);
 
-            var travelExpenseProcessStepResponse =
-                await _flowStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
+            var travelExpenseProcessStepResponse = await _flowStepTravelExpenseService
+                .ProcessStepAsync(travelExpenseProcessStepDto, polApiContext);
 
             return Ok(travelExpenseProcessStepResponse);
         }
@@ -48,8 +48,9 @@ namespace API.Shared.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TravelExpenseGetByIdResponse>> GetById(Guid id)
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var travelExpenseDto = await _getTravelExpenseService.GetByIdAsync(id, sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var travelExpenseDto = await _getTravelExpenseService.GetByIdAsync(polApiContext, id);
 
             return Ok(travelExpenseDto);
         }
@@ -57,8 +58,9 @@ namespace API.Shared.Controllers
         [HttpGet]
         public async Task<ActionResult<TravelExpenseGetResponse>> Get()
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var travelExpenseDtos = await _getTravelExpenseService.GetAsync(sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var travelExpenseDtos = await _getTravelExpenseService.GetAsync(polApiContext);
 
             return Ok(travelExpenseDtos);
         }
@@ -67,9 +69,9 @@ namespace API.Shared.Controllers
         public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id,
             [FromBody] TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
             var travelExpenseDtos =
-                await _updateTravelExpenseService.UpdateAsync(id, travelExpenseUpdateDto, sub);
+                await _updateTravelExpenseService.UpdateAsync(polApiContext, id, travelExpenseUpdateDto);
 
             return Ok(travelExpenseDtos);
         }
@@ -77,8 +79,8 @@ namespace API.Shared.Controllers
         [HttpPost]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var travelExpenseCreateResponse = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto, sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+            var travelExpenseCreateResponse = await _createTravelExpenseService.CreateAsync(polApiContext, travelExpenseCreateDto);
 
             return Created(nameof(GetById), travelExpenseCreateResponse);
         }

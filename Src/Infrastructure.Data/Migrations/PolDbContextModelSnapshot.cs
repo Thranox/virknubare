@@ -111,15 +111,18 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("CustomerEntityId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("InvitationState")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerEntityId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Invitations");
                 });
@@ -230,9 +233,9 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.InvitationEntity", b =>
                 {
-                    b.HasOne("Domain.Entities.CustomerEntity", null)
+                    b.HasOne("Domain.Entities.CustomerEntity", "Customer")
                         .WithMany("Invitations")
-                        .HasForeignKey("CustomerEntityId");
+                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("Domain.Entities.TravelExpenseEntity", b =>

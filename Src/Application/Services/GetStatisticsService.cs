@@ -15,7 +15,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task<StatisticsGetResponse> GetAsync(string sub)
+        public Task<StatisticsGetResponse> GetAsync(PolApiContext polApiContext)
         {
             throw new NotImplementedException();
 

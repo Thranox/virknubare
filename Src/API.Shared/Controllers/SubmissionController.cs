@@ -23,8 +23,9 @@ namespace API.Shared.Controllers
         [HttpPost]
         public async Task<ActionResult<SubmissionPostResponse>> Post()
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var travelExpenseDtos = await _createSubmissionService.CreateAsync(sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var travelExpenseDtos = await _createSubmissionService.CreateAsync(polApiContext);
 
             return Ok(travelExpenseDtos);
         }

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Interfaces;
 using Domain.SharedKernel;
 
 namespace Domain.Events
@@ -7,11 +8,14 @@ namespace Domain.Events
     {
         public CustomerEntity Customer { get; }
         public InvitationEntity Invitation { get; }
+        public IMessageValueEnricher[] MessageValueEnrichers { get; }
 
-        public InvitationAddedDomainEvent(CustomerEntity customer, InvitationEntity invitation)
+        public InvitationAddedDomainEvent(CustomerEntity customer, InvitationEntity invitation,
+            IMessageValueEnricher[] messageValueEnrichers)
         {
             Customer = customer;
             Invitation = invitation;
+            MessageValueEnrichers = messageValueEnrichers;
         }
     }
 }

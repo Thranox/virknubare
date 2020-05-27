@@ -53,11 +53,11 @@ namespace Infrastructure.Data
             
             // -----------------------------------
             // Dummy Users
-            var userEntityPol = GetOrCreateTestUser(customer1, TestData.DummyPolSubAlice, "dummy pol Alice", UserStatus.Registered);
-            var userEntitySek = GetOrCreateTestUser(customer1, TestData.DummySekSubBob, "dummy sek Bob", UserStatus.Registered);
-            var userEntityLed = GetOrCreateTestUser(customer1, TestData.DummyLedSubCharlie, "dummy led Charlie", UserStatus.Registered);
-            var userEntityAdm = GetOrCreateTestUser(customer1, TestData.DummyAdminSubDennis, "dummy adm Dennis", UserStatus.UserAdministrator);
-            var userEntityInit = GetOrCreateTestUser(customer1, TestData.DummyInitialSubEdward, "dummy Init Edward", UserStatus.Initial);
+            var userEntityPol = GetOrCreateTestUser(customer1, TestData.DummyPolSubAlice, "alice", UserStatus.Registered);
+            var userEntitySek = GetOrCreateTestUser(customer1, TestData.DummySekSubBob, "bob", UserStatus.Registered);
+            var userEntityLed = GetOrCreateTestUser(customer1, TestData.DummyLedSubCharlie, "charlie", UserStatus.Registered);
+            var userEntityAdm = GetOrCreateTestUser(customer1, TestData.DummyAdminSubDennis, "dennis", UserStatus.UserAdministrator);
+            var userEntityInit = GetOrCreateTestUser(customer1, TestData.DummyInitialSubEdward, "edward", UserStatus.Initial);
 
 
 
@@ -115,61 +115,90 @@ namespace Infrastructure.Data
             _logger.Information("Removing testdata from database. Deleting users");
 
             var polTestUsers = TestData.GetTestUsers();
+            var userEntities = _unitOfWork
+                .Repository
+                .List<UserEntity>();
+
             foreach (var polTestUser in polTestUsers)
             {
-                var userEntity = _unitOfWork
-                    .Repository
-                    .List(new UserBySub(polTestUser.ImproventoSub.ToString()))
-                    .SingleOrDefault();
+                _logger.Debug("Ensuring test user is deleted: " +polTestUser.UserName);
+                var userEntity = userEntities.SingleOrDefault(x => x.Subject.ToLower() == polTestUser.ImproventoSub.ToString().ToLower());
 
-                if(userEntity==null)
+                if (userEntity == null)
+                {
+                    _logger.Debug("Ensuring test user is not there, nothing to delete: " + polTestUser.UserName);
                     continue;
+                }
 
+                _logger.Debug("Ensuring test user CustomerUserPermissions is deleted: " + polTestUser.UserName);
                 foreach (var customerUserPermissionEntity in userEntity.CustomerUserPermissions)
                 {
                     _unitOfWork.Repository.Delete(customerUserPermissionEntity);
                 }
 
+                _logger.Debug("Ensuring test user FlowStepUserPermissions is deleted: " + polTestUser.UserName);
                 foreach (var flowStepUserPermissionEntity in userEntity.FlowStepUserPermissions)
                 {
                     _unitOfWork.Repository.Delete(flowStepUserPermissionEntity);
                 }
 
+                _logger.Debug("Ensuring test user TravelExpenses is deleted: " + polTestUser.UserName);
                 foreach (var travelExpenseEntity in userEntity.TravelExpenses)
                 {
                     _unitOfWork.Repository.Delete(travelExpenseEntity);
                 }
 
+                _logger.Debug("Ensuring test user itself is deleted: " + polTestUser.UserName);
                 _unitOfWork.Repository.Delete(userEntity);
             }
+
+            // Verify users gone!
+            var userEntitiesAfterDeleting = _unitOfWork
+                .Repository
+                .List<UserEntity>();
+            foreach (var polTestUser in polTestUsers)
+            {
+                _logger.Debug("Verifying test user is deleted: " + polTestUser.UserName);
+                var userEntity = userEntitiesAfterDeleting.SingleOrDefault(x => x.Subject == polTestUser.ImproventoSub.ToString());
+
+                if (userEntity != null)
+                    throw new InvalidOperationException("Was not able to delete test user: " +polTestUser.UserName);
+            }
+
 
             _logger.Information("Removing testdata from database. Users gone, deleting customers");
 
             var testCustomers = TestData.GetTestCustomers();
+            var customerEntities = _unitOfWork.Repository.List<CustomerEntity>();
             foreach (var testCustomer in testCustomers)
             {
-                var customerEntity = _unitOfWork.Repository.List(new CustomerByName(testCustomer.Name)).SingleOrDefault();
+                _logger.Debug("Ensuring test customer is deleted: " + testCustomer.Name);
+                var customerEntity = customerEntities.SingleOrDefault(x=>x.Name==testCustomer.Name);
 
                 if(customerEntity==null)
                     continue;
 
+                _logger.Debug("Ensuring test customer Invitations is deleted: " + testCustomer.Name);
                 foreach (var invitationEntity in customerEntity.Invitations)
                 {
                     _unitOfWork.Repository.Delete(invitationEntity);
                 }
 
+                _logger.Debug("Ensuring test customer FlowSteps is deleted: " + testCustomer.Name);
                 foreach (var flowStepEntity in customerEntity.FlowSteps)
                 {
                     _unitOfWork.Repository.Delete(flowStepEntity);
                 }
 
+                _logger.Debug("Ensuring test customer itself is deleted: " + testCustomer.Name);
                 _unitOfWork.Repository.Delete(customerEntity);
             }
 
             _logger.Information("Removing testdata from database. Done. Now committing.");
 
+            _logger.Debug("Committing removal of test data");
             await _unitOfWork.CommitAsync();
-
+            _logger.Debug("Done committing removal of test data");
         }
 
         public async Task MigrateAsync()
@@ -218,6 +247,9 @@ namespace Infrastructure.Data
             if (user == null)
             {
                 user = new UserEntity(userName, sub);
+                var claims = TestData.GetClaimsByUserName(userName);
+                user.UpdateWithClaims(claims);
+
                 _unitOfWork.Repository.Add(user);
                 customer.AddUser(user, userStatus);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.SharedKernel;
+using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
@@ -7,6 +8,8 @@ namespace Domain.Entities
     {
         public DateTime CreationTime { get; set; }
         public string Email { get; set; }
+        public InvitationState InvitationState { get; set; }
+        public CustomerEntity Customer { get; set; }
 
         private InvitationEntity()
         {
@@ -16,6 +19,7 @@ namespace Domain.Entities
         {
             Email = email;
             CreationTime=DateTime.Now;
+            InvitationState = InvitationState.Invited;
         }
     }
 }

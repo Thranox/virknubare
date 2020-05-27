@@ -16,28 +16,16 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEnumerable<IProcessFlowStep> _processFlowSteps;
-        private readonly IMessageBrokerService _messageBrokerService;
 
-        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps, IMessageBrokerService messageBrokerService)
+        public FlowStepTravelExpenseService(IUnitOfWork unitOfWork, IEnumerable<IProcessFlowStep> processFlowSteps)
         {
             _unitOfWork = unitOfWork;
             _processFlowSteps = processFlowSteps;
-            _messageBrokerService = messageBrokerService;
         }
 
         public async Task<TravelExpenseProcessStepResponse> ProcessStepAsync(
-            TravelExpenseFlowStepDto travelExpenseFlowStepDto, string sub)
+            TravelExpenseFlowStepDto travelExpenseFlowStepDto, PolApiContext polApiContext)
         {
-            // Get user by sub
-            var userEntities = _unitOfWork
-                .Repository
-                .List(new UserBySub(sub));
-            var userEntity = userEntities
-                .SingleOrDefault();
-
-            if (userEntity == null)
-                throw new ItemNotFoundException(sub, "UserEntity");
-
             var travelExpenseEntity = _unitOfWork
                 .Repository
                 .List(new TravelExpenseById( travelExpenseFlowStepDto.TravelExpenseId))
@@ -58,11 +46,11 @@ namespace Application.Services
 
             travelExpenseEntity.ApplyProcessStep(processFlowStep);
 
+            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, polApiContext.CallingUser, polApiContext.RequestedUrl));
+
             _unitOfWork
                 .Repository
                 .Update(travelExpenseEntity);
-
-            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, userEntity));
 
             await _unitOfWork.CommitAsync();
 

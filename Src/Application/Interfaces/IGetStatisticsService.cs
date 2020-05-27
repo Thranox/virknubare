@@ -5,6 +5,6 @@ namespace Application.Interfaces
 {
     public interface IGetStatisticsService
     {
-        Task<StatisticsGetResponse> GetAsync(string sub);
+        Task<StatisticsGetResponse> GetAsync(PolApiContext polApiContext);
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -37,10 +36,11 @@ namespace Tests.API.Controllers
         public async Task Get_NoParameters_ReturnsTravelExpenses()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 var sut = GetSut(testContext);
 
                 // Act
@@ -55,8 +55,8 @@ namespace Tests.API.Controllers
                 var v = value.Result.ToArray();
                 Assert.That(v.Length, Is.EqualTo(TestData.GetNumberOfTestDataTravelExpenses()));
 
-                var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
-                var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
+                var stageEntities = testContext.GetUnitOfWork().Repository.List<StageEntity>().ToArray();
+                var flowSteps = testContext.GetUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
                 var flowStepId = flowSteps.Single(x=>x.From.Value==TravelExpenseStage.Initial).Id;
 
                 Assert.That(v[0],Is.EqualTo(new TravelExpenseDto
@@ -97,7 +97,7 @@ namespace Tests.API.Controllers
                 ActionResult<TravelExpenseUpdateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
                 Guid existingId;
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.GetUnitOfWork())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
@@ -115,7 +115,7 @@ namespace Tests.API.Controllers
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as TravelExpenseUpdateResponse;
                 Assert.That(value, Is.Not.Null);
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.GetUnitOfWork())
                 {
                     var travelExpenseEntity = unitOfWork
                         .Repository
@@ -183,7 +183,7 @@ namespace Tests.API.Controllers
         //    {
         //        ActionResult<TravelExpenseCertifyResponse> actual;
         //        Guid existingId;
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
         //            //existing.ReportDone();
@@ -191,7 +191,7 @@ namespace Tests.API.Controllers
         //            unitOfWork.Commit();
         //        }
 
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseApproveDto = new TravelExpenseCertifyDto {Id = existingId};
         //            var sut = GetSut(testContext, unitOfWork);
@@ -206,7 +206,7 @@ namespace Tests.API.Controllers
         //        Assert.That(okObjectResult, Is.Not.Null);
         //        var value = okObjectResult.Value as TravelExpenseCertifyResponse;
         //        Assert.That(value, Is.Not.Null);
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseEntity = unitOfWork
         //                .Repository
@@ -224,7 +224,7 @@ namespace Tests.API.Controllers
         //    using (var testContext = new IntegrationTestContext())
         //    {
         //        var existingId = Guid.NewGuid();
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseCertifyDto = new TravelExpenseCertifyDto {Id = existingId};
         //            var sut = GetSut(testContext, unitOfWork);
@@ -243,7 +243,7 @@ namespace Tests.API.Controllers
         //    {
         //        ActionResult<TravelExpenseReportDoneResponse> actual;
         //        Guid existingId;
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
         //            existingId = existing.Id;
@@ -260,7 +260,7 @@ namespace Tests.API.Controllers
         //        Assert.That(okObjectResult, Is.Not.Null);
         //        var value = okObjectResult.Value as TravelExpenseReportDoneResponse;
         //        Assert.That(value, Is.Not.Null);
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseEntity = unitOfWork
         //                .Repository
@@ -303,7 +303,7 @@ namespace Tests.API.Controllers
         //    {
         //        ActionResult<TravelExpenseAssignPaymentResponse> actual;
         //        Guid existingId;
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
         //            //existing.ReportDone();
@@ -314,7 +314,7 @@ namespace Tests.API.Controllers
         //            unitOfWork.Commit();
         //        }
 
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseAssignPaymentDto = new TravelExpenseAssignPaymentDto {Id = existingId};
         //            var sut = GetSut(testContext, unitOfWork);
@@ -329,7 +329,7 @@ namespace Tests.API.Controllers
         //        Assert.That(okObjectResult, Is.Not.Null);
         //        var value = okObjectResult.Value as TravelExpenseAssignPaymentResponse;
         //        Assert.That(value, Is.Not.Null);
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseEntity = unitOfWork
         //                .Repository
@@ -347,7 +347,7 @@ namespace Tests.API.Controllers
         //    using (var testContext = new IntegrationTestContext())
         //    {
         //        var existingId = Guid.NewGuid();
-        //        using (var unitOfWork = testContext.CreateUnitOfWork())
+        //        using (var unitOfWork = testContext.GetUnitOfWork())
         //        {
         //            var travelExpenseReportDoneDto = new TravelExpenseAssignPaymentDto {Id = existingId};
         //            var sut = GetSut(testContext, unitOfWork);
@@ -362,15 +362,16 @@ namespace Tests.API.Controllers
         public async Task Post_ValidNewTravelExpense_ReturnsId()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 ActionResult<TravelExpenseCreateResponse> actual;
                 var newDescription = testContext.Fixture.Create<string>();
 
                 var customerId = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single()
@@ -393,7 +394,7 @@ namespace Tests.API.Controllers
                 Assert.That(value, Is.Not.Null);
                 Assert.That(value.Id, Is.Not.EqualTo(Guid.Empty));
 
-                using (var unitOfWork = testContext.CreateUnitOfWork())
+                using (var unitOfWork = testContext.GetUnitOfWork())
                 {
                     var travelExpenseEntity = unitOfWork
                         .Repository.List(new TravelExpenseById(value.Id))
@@ -408,15 +409,16 @@ namespace Tests.API.Controllers
         public async Task Process_ValidTravelExpenseAndStep_ReturnsOk()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 var sut = GetSut(testContext);
 
                 // Act
                 var actual = await sut.Process(testContext.TravelExpenseEntity1.Id,
-                    testContext.CreateUnitOfWork().Repository
+                    testContext.GetUnitOfWork().Repository
                         .List(new FlowStepByCustomerAndStage(testContext.GetDummyCustomerId(),
                             testContext.TravelExpenseEntity1.Stage.Value)).Single().Id); // Globals.InitialReporteddone);
 

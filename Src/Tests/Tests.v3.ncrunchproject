@@ -13,6 +13,9 @@
       <NamedTestSelector>
         <TestName>Tests.ApplicationServices.CreateSubmissionServiceIntegrationTests.GetAsync_NoParameters_ReturnsFlowSteps</TestName>
       </NamedTestSelector>
+      <NamedTestSelector>
+        <TestName>Tests.Web.MailSendingTests.SendEmail</TestName>
+      </NamedTestSelector>
     </IgnoredTests>
   </Settings>
 </ProjectConfiguration>

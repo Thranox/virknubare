@@ -29,6 +29,21 @@ namespace Infrastructure.Data
 
         public List<T> List<T>(ISpecification<T> spec = null) where T : BaseEntity
         {
+            if (typeof(T) == typeof(InvitationEntity))
+            {
+                IQueryable<InvitationEntity> includableQueryable = _dbContext
+                    .Set<InvitationEntity>()
+                    .Include(g => g.Customer);
+
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<InvitationEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+
+                return includableQueryable.ToList() as List<T>;
+            }
+
             if (typeof(T) == typeof(CustomerEntity))
             {
                 IQueryable<CustomerEntity> includableQueryable = _dbContext
@@ -128,6 +143,11 @@ namespace Infrastructure.Data
         public async Task CommitAsync()
         {
             await _dbContext.SaveChangesAsync();
+        }
+
+        public void Attach<T>(T entity) where T : BaseEntity
+        {
+            _dbContext.Attach(entity);
         }
 
         public void Update<T>(T entity) where T : BaseEntity

@@ -22,8 +22,9 @@ namespace API.Shared.Controllers
         [HttpGet]
         public async Task<ActionResult<FlowStepGetResponse>> Get()
         {
-            var sub = _subManagementService.GetSub(User, HttpContext);
-            var flowStepGetResponse = await _getFlowStepService.GetAsync(sub);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var flowStepGetResponse = await _getFlowStepService.GetAsync(polApiContext);
 
             return Ok(flowStepGetResponse);
         }

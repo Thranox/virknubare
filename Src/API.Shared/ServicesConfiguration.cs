@@ -3,11 +3,13 @@ using System.Reflection;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application;
 using Application.Interfaces;
 using Application.MapperProfiles;
 using Application.Services;
 using AutoMapper;
 using Domain;
+using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
@@ -122,14 +124,19 @@ namespace API.Shared
             services.AddScoped<IMessageFactory, MessageFactory>();
             services.AddScoped<IUserStatusService, UserStatusService>();
             services.AddScoped<ICustomerUserService, CustomerUserService>();
-            
+            services.AddScoped<IInvitationService,InvitationService>();
+
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
             }
             else
             {
-                services.AddScoped<ISubManagementService>(x=>new FakeSubManagementService(configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")) );
+                services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
+                    new PolApiContext(
+                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),
+                        "http://nowhere.com",new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
+                        )));
             }
 
             Assembly

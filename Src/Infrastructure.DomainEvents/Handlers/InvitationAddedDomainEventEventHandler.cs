@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Events;
 using Domain.Interfaces;
@@ -29,11 +30,13 @@ namespace Infrastructure.DomainEvents.Handlers
             // ------------------------------------------------------
             // Send message to invitee
 
+            var messageValueEnrichers = new List<IMessageValueEnricher>( invitationAddedDomainEvent.MessageValueEnrichers);
+            messageValueEnrichers.Add(invitationAddedDomainEvent.Customer);
             await _messageBrokerService
                 .SendMessageAsync(
                     new[] {new AnonymousMessageReceiver(invitationAddedDomainEvent.Invitation.Email)},
                     MessageKind.YouHaveReceivedInvitation,
-                    new IMessageValueEnricher[]{ invitationAddedDomainEvent.Customer });
+                    messageValueEnrichers.ToArray());
         }
     }
 }

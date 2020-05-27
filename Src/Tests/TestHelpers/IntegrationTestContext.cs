@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Shared;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application;
 using Application.MapperProfiles;
 using AutoMapper;
 using Domain.Entities;
@@ -19,8 +20,9 @@ using SharedWouldBeNugets;
 
 namespace Tests.TestHelpers
 {
-    public class IntegrationTestContext :BaseTestContext
+    public class IntegrationTestContext : BaseTestContext
     {
+        private PolDbContext _polDbContext;
         public TravelExpenseEntity TravelExpenseEntity1;
         public TravelExpenseEntity TravelExpenseEntity2;
         public TravelExpenseEntity TravelExpenseEntity3;
@@ -34,12 +36,13 @@ namespace Tests.TestHelpers
 
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddJsonFile("appsettings.json", false, true);
 
             ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
-            
-            serviceCollection.AddScoped<ILogger>(x =>Log.Logger);
-            serviceCollection.AddScoped(x => CreateUnitOfWork());
-            serviceCollection.AddTransient(x => new PolDbContext(DbContextOptions, x.GetRequiredService<IDomainEventDispatcher>()));
+
+            serviceCollection.AddScoped(x => Log.Logger);
+            serviceCollection.AddScoped(x => GetUnitOfWork());
+            serviceCollection.AddTransient(x => GetPolDbContext(x));
             serviceCollection.AddScoped<TravelExpenseController>();
             serviceCollection.AddScoped<FlowStepController>();
             serviceCollection.AddScoped<IMessageSenderService, MemoryListMessageSenderService>();
@@ -53,12 +56,19 @@ namespace Tests.TestHelpers
         public IMapper Mapper { get; }
         public IServiceProvider ServiceProvider { get; set; }
 
+        private PolDbContext GetPolDbContext(IServiceProvider x)
+        {
+            if (_polDbContext == null)
+                _polDbContext = new PolDbContext(DbContextOptions, x.GetRequiredService<IDomainEventDispatcher>());
+            return _polDbContext;
+        }
+
         private async Task SeedDb()
         {
             var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
             await dbSeeder.SeedAsync();
 
-            using (var unitOfWork=ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
+            using (var unitOfWork = ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
             {
                 var customer = unitOfWork
                     .Repository
@@ -74,7 +84,7 @@ namespace Tests.TestHelpers
             }
         }
 
-        public IUnitOfWork CreateUnitOfWork()
+        public IUnitOfWork GetUnitOfWork()
         {
             var context = ServiceProvider.GetRequiredService<PolDbContext>();
             return new UnitOfWork(new EfRepository(context));
@@ -87,15 +97,14 @@ namespace Tests.TestHelpers
 
         public CustomerEntity GetDummyCustomer()
         {
-            return CreateUnitOfWork()
-                .Repository.
-                List(new CustomerByName(TestData.DummyCustomerName1))
+            return GetUnitOfWork()
+                .Repository.List(new CustomerByName(TestData.DummyCustomerName1))
                 .Single();
         }
 
         public List<StageEntity> GetStages()
         {
-            return CreateUnitOfWork()
+            return GetUnitOfWork()
                 .Repository
                 .List<StageEntity>();
         }
@@ -103,7 +112,18 @@ namespace Tests.TestHelpers
         public void SetCallingUserBySub(string sub)
         {
             (ServiceProvider.GetRequiredService<ISubManagementService>() as FakeSubManagementService)
-                .Sub = sub;
+                .PolApiContext = GetPolApiContext(sub);
+        }
+
+        public PolApiContext GetPolApiContext(string sub)
+        {
+            return new PolApiContext(
+                GetUnitOfWork()
+                    .Repository
+                    .List(new UserBySub(sub)).Single(),
+                "http://nowhere.com",
+                new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
+            );
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CSharpFunctionalExtensions;
+using Domain.SharedKernel;
 using Newtonsoft.Json;
 
 namespace Application.Dtos

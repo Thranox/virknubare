@@ -18,8 +18,8 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<TravelExpenseUpdateResponse> UpdateAsync(Guid id,
-            TravelExpenseUpdateDto travelExpenseUpdateDto, string sub)
+        public async Task<TravelExpenseUpdateResponse> UpdateAsync(PolApiContext polApiContext, Guid id,
+            TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var travelExpenseEntity = _unitOfWork
                 .Repository
@@ -36,6 +36,7 @@ namespace Application.Services
                 .Update(travelExpenseEntity);
 
             await _unitOfWork.CommitAsync();
+
             return await Task.FromResult(new TravelExpenseUpdateResponse());
         }
     }

@@ -20,7 +20,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<CustomerUserGetResponse> GetAsync(string sub, Guid customerId)
+        public async Task<CustomerUserGetResponse> GetAsync(PolApiContext sub, Guid customerId)
         {
             await Task.CompletedTask;
 
@@ -36,7 +36,7 @@ namespace Application.Services
             };
         }
 
-        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(string sub, Guid customerId,
+        public async Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(PolApiContext polApiContext, Guid customerId,
             CustomerInvitationsPostDto customerInvitationsPostDto)
         {
             var customer = _unitOfWork.Repository.List(new CustomerById(customerId)).SingleOrDefault() ??
@@ -44,7 +44,12 @@ namespace Application.Services
 
             foreach (var email in customerInvitationsPostDto.Emails)
             {
-                customer.AddInvitation(email);
+                customer.AddInvitation(
+                    email,
+                    new IMessageValueEnricher[]
+                    {
+                        new EmailStuffieEnricher(polApiContext.System.AppUrl)
+                    });
             }
 
             await _unitOfWork.CommitAsync();

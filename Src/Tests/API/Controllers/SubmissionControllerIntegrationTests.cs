@@ -18,7 +18,7 @@ namespace Tests.API.Controllers
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
+                //testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
                 var sut = testContext.ServiceProvider.GetService<SubmissionController>();
 
                 // Act

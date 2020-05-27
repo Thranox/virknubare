@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoMapper;
-using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
 using Serilog;
@@ -13,9 +11,9 @@ namespace Application.Services
 {
     public class GetFlowStepService : IGetFlowStepService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public GetFlowStepService(IUnitOfWork unitOfWork, ILogger logger, IMapper mapper)
         {
@@ -24,20 +22,9 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<FlowStepGetResponse> GetAsync(string sub)
+        public async Task<FlowStepGetResponse> GetAsync(PolApiContext polApiContext)
         {
-            // Get user by sub
-            var userEntities = _unitOfWork
-                .Repository
-                .List(new UserBySub(sub));
-            var userEntity = userEntities
-                .SingleOrDefault();
-
-            if (userEntity == null)
-                throw new ItemNotFoundException(sub, "UserEntity");
-
-
-            var flowStepEntities = _unitOfWork.Repository.List(new AllFlowStepsByUserId(userEntity.Id));
+            var flowStepEntities = _unitOfWork.Repository.List(new AllFlowStepsByUserId(polApiContext.CallingUser.Id));
 
             return await Task.FromResult(new FlowStepGetResponse
             {

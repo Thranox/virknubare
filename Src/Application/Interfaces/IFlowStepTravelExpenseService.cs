@@ -6,6 +6,6 @@ namespace Application.Interfaces
     public interface IFlowStepTravelExpenseService
     {
         Task<TravelExpenseProcessStepResponse> ProcessStepAsync(TravelExpenseFlowStepDto travelExpenseFlowStepDto,
-            string sub);
+            PolApiContext polApiContext);
     }
 }

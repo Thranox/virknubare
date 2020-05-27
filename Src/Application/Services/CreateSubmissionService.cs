@@ -16,7 +16,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task<SubmissionPostResponse> CreateAsync(string sub)
+        public Task<SubmissionPostResponse> CreateAsync(PolApiContext polApiContext)
         {
             var travelExpenses = _unitOfWork.Repository.List(new TravelExpensesReadyToSend());
             throw new NotImplementedException();

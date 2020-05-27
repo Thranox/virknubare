@@ -6,7 +6,7 @@ namespace Application.Interfaces
 {
     public interface IUpdateTravelExpenseService
     {
-        Task<TravelExpenseUpdateResponse> UpdateAsync(Guid id, TravelExpenseUpdateDto travelExpenseUpdateDto,
-            string sub);
+        Task<TravelExpenseUpdateResponse> UpdateAsync(PolApiContext polApiContext, Guid id,
+            TravelExpenseUpdateDto travelExpenseUpdateDto);
     }
 }

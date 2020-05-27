@@ -5,6 +5,6 @@ namespace Application.Interfaces
 {
     public interface IGetFlowStepService
     {
-        Task<FlowStepGetResponse> GetAsync(string sub);
+        Task<FlowStepGetResponse> GetAsync(PolApiContext polApiContext);
     }
 }

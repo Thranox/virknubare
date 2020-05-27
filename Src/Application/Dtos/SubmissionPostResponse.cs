@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using CSharpFunctionalExtensions;
 using Domain.SharedKernel;
 
 namespace Application.Dtos

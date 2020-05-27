@@ -1,20 +1,21 @@
-﻿using System.Security.Claims;
+﻿using System.Threading.Tasks;
+using Application;
 using Microsoft.AspNetCore.Http;
 
 namespace API.Shared.Services
 {
     public class FakeSubManagementService : ISubManagementService
     {
-        public FakeSubManagementService(string sub)
+        public FakeSubManagementService(PolApiContext polApiContext)
         {
-            Sub = sub;
+            PolApiContext = polApiContext;
         }
 
-        public string GetSub(ClaimsPrincipal claimsPrincipal, HttpContext httpContext)
+        public async Task<PolApiContext> GetPolApiContext(HttpContext httpContext)
         {
-            return Sub;
+            return await Task.FromResult( PolApiContext);
         }
 
-        public string Sub { get; set; }
+        public PolApiContext PolApiContext { get; set; }
     }
 }

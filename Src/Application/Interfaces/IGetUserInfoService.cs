@@ -5,6 +5,6 @@ namespace Application.Interfaces
 {
     public interface IGetUserInfoService
     {
-        Task<UserInfoGetResponse> GetAsync(string sub);
+        Task<UserInfoGetResponse> GetAsync(PolApiContext polApiContext);
     }
 }

@@ -64,10 +64,10 @@ namespace Domain.Entities
                 any.UserStatus = userStatus;
         }
 
-        public void AddInvitation(string email)
+        public void AddInvitation(string email, IMessageValueEnricher[] messageValueEnrichers)
         {
             var invitationEntity = new InvitationEntity(email);
-            invitationEntity.Events.Add(new InvitationAddedDomainEvent(this, invitationEntity));
+            invitationEntity.Events.Add(new InvitationAddedDomainEvent(this, invitationEntity,messageValueEnrichers));
             Invitations.Add(invitationEntity);
         }
 

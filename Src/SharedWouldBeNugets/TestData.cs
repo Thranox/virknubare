@@ -17,6 +17,7 @@ namespace SharedWouldBeNugets
         public const string DummyLedSubCharlie = "6E9D6247-8436-420B-A542-55B97B8B05E2";
         public const string DummyAdminSubDennis = "6E9D6247-8436-420B-A542-55B97B8B05E3";
         public const string DummyInitialSubEdward = "6E9D6247-8436-420B-A542-55B97B8B05E4";
+        public const string DummyInitialSubFreddie = "6E9D6247-8436-420B-A542-55B97B8B05E5";
 
         private static readonly Dictionary<TravelExpenseStage, string> FlowStepDescriptionNameByStage =
             new Dictionary<TravelExpenseStage, string>
@@ -31,9 +32,10 @@ namespace SharedWouldBeNugets
         {
             yield return new PolTestUser("alice", new PolUserCapabilities().AddCanCreateTravelExpense());
             yield return new PolTestUser("bob", new PolUserCapabilities().AddCanCreateTravelExpense());
-            yield return new PolTestUser("charlie", new PolUserCapabilities().AddCanCreateTravelExpense()); 
+            yield return new PolTestUser("charlie", new PolUserCapabilities().AddCanCreateTravelExpense());
             yield return new PolTestUser("dennis", new PolUserCapabilities().AddCanCreateTravelExpense());
             yield return new PolTestUser("edward", new PolUserCapabilities().AddCanCreateTravelExpense());
+            yield return new PolTestUser("freddie", new PolUserCapabilities().AddCanCreateTravelExpense());
         }
 
         public static IEnumerable<Claim> GetClaimsByUserName(string userName)
@@ -112,13 +114,28 @@ namespace SharedWouldBeNugets
                         IdentityServerConstants.ClaimValueTypes.Json),
                     new Claim("location", "somewhere")
                 };
+            if (userName == "freddie")
+                return new[]
+                {
+                    new Claim(ImproventoGlobals.ImproventoSubClaimName, DummyInitialSubFreddie),
+                    new Claim(JwtClaimTypes.Name, "Freddie Mercury"),
+                    new Claim(JwtClaimTypes.GivenName, "Freddie"),
+                    new Claim(JwtClaimTypes.FamilyName, "Mercury"),
+                    new Claim(JwtClaimTypes.Email, "FreddieMercury@email.com"),
+                    new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                    new Claim(JwtClaimTypes.WebSite, "http://freddie.com"),
+                    new Claim(JwtClaimTypes.Address,
+                        @"{ 'street_address': 'One Great Singer', 'locality': 'Heaven', 'postal_code': 69118, 'country': 'Beyond' }",
+                        IdentityServerConstants.ClaimValueTypes.Json),
+                    new Claim("location", "somewhere")
+                };
             throw new NotImplementedException();
         }
 
         public static IEnumerable<TestCustomer> GetTestCustomers()
         {
-            yield return new TestCustomer { Name = DummyCustomerName1 };
-            yield return new TestCustomer { Name = DummyCustomerName2 };
+            yield return new TestCustomer {Name = DummyCustomerName1};
+            yield return new TestCustomer {Name = DummyCustomerName2};
         }
 
         public static string GetFlowStepDescription(TravelExpenseStage travelExpenseStage)

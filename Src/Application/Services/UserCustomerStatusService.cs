@@ -25,30 +25,23 @@ namespace Application.Services
             _userStatusService = userStatusService;
         }
 
-        public async Task<UserCustomerStatusPutResponse> PutAsync(string sub, Guid userId, Guid customerId,
+        public async Task<UserCustomerStatusPutResponse> PutAsync(PolApiContext polApiContext, Guid userId, Guid customerId,
             int userStatus)
         {
-            var callingUserEntity = _unitOfWork
-                                        .Repository
-                                        .List(new UserBySub(sub))
-                                        .SingleOrDefault() ??
-                                    throw new BusinessRuleViolationException(Guid.Empty,
-                                        "The calling user can't be found.");
-
             var customer = _unitOfWork
                                .Repository
                                .List(new CustomerById(customerId))
                                .SingleOrDefault() ??
                            throw new ArgumentException(nameof(customerId));
 
-            var callingUserIsAdmin = callingUserEntity.IsUserAdminForCustomer(customerId);
+            var callingUserIsAdmin = polApiContext.CallingUser.IsUserAdminForCustomer(customerId);
             if (!callingUserIsAdmin)
-                throw new BusinessRuleViolationException(callingUserEntity.Id,
+                throw new BusinessRuleViolationException(polApiContext.CallingUser.Id,
                     "Can't change as calling user is not admin (for customer).");
 
             var userToAdd = _unitOfWork.Repository.GetById<UserEntity>(userId);
 
-            _logger.Information("Admin=" + callingUserEntity.Name + " UserId=" + userId + " customer=" + customerId);
+            _logger.Information("Admin=" + polApiContext.CallingUser.Name + " UserId=" + userId + " customer=" + customerId);
 
             var status = _userStatusService.GetUserStatusFromInt(userStatus);
 

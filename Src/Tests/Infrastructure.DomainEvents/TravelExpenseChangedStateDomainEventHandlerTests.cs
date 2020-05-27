@@ -19,12 +19,12 @@ namespace Tests.Infrastructure.DomainEvents
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var repository = testContext.CreateUnitOfWork().Repository;
+                var repository = testContext.GetUnitOfWork().Repository;
                 var stageEntities = repository.List<StageEntity>();
                 var userEntities = repository.List<UserEntity>();
                 var stageBefore = stageEntities.Single(x=>x.Value==TravelExpenseStage.ReportedDone);
                 var userEntityBob = userEntities.Single(x => x.Subject == TestData.DummySekSubBob);
-                var travelExpenseChangedStateDomainEvent = new TravelExpenseChangedStateDomainEvent(stageBefore,testContext.TravelExpenseEntity1, userEntityBob);
+                var travelExpenseChangedStateDomainEvent = new TravelExpenseChangedStateDomainEvent(stageBefore,testContext.TravelExpenseEntity1, userEntityBob, "http://nowhere.com");
                 var sut = testContext.ServiceProvider.GetRequiredService<IHandle<TravelExpenseChangedStateDomainEvent>>();
 
                 // Act

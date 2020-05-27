@@ -25,44 +25,44 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<IGetFlowStepService>();
 
                 // Act
-                var actual = await sut.GetAsync(TestData.DummyPolSubAlice);
+                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 var resultArray = actual.Result.ToArray();
                 Assert.That(resultArray.Length, Is.EqualTo(4));
                 var customer = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single();
 
                 var stageEntityInitial = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.Initial))
                     .Single();
 
                 var stageEntityReportedDone = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.ReportedDone))
                     .Single();
 
                 var stageEntityCertified = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.Certified))
                     .Single();
 
                 var stageEntityAssignedForPayment = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.AssignedForPayment))
                     .Single();
 
                 var stageEntityFinal = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(new StageByValue(TravelExpenseStage.Final))
                     .Single();

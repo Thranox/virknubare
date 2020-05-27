@@ -6,8 +6,8 @@ namespace Application.Interfaces
 {
     public interface IGetTravelExpenseService
     {
-        Task<TravelExpenseGetResponse> GetAsync(string sub);
+        Task<TravelExpenseGetResponse> GetAsync(PolApiContext polApiContext);
 
-        Task<TravelExpenseGetByIdResponse> GetByIdAsync(Guid id, string sub);
+        Task<TravelExpenseGetByIdResponse> GetByIdAsync(PolApiContext polApiContext, Guid id);
     }
 }

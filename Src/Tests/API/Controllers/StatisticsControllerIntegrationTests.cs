@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -29,10 +28,11 @@ namespace Tests.API.Controllers
         public async Task Get_NoParameters_ReturnsTravelExpenses()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 var sut = GetSut(testContext);
 
                 // Act

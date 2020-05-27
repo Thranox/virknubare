@@ -23,16 +23,17 @@ namespace Tests.ApplicationServices
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
+
                 // Act
-                var actual = await sut.GetAsync(TestData.DummyPolSubAlice);
+                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 var v = actual.Result.ToArray();
                 Assert.That(v.Length, Is.EqualTo(TestData.GetNumberOfTestDataTravelExpenses()));
 
-                var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
-                var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
+                var stageEntities = testContext.GetUnitOfWork().Repository.List<StageEntity>().ToArray();
+                var flowSteps = testContext.GetUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
                 var flowStepId = flowSteps.Single(x => x.From.Value == TravelExpenseStage.Initial).Id;
 
                 Assert.That(v,
@@ -66,21 +67,6 @@ namespace Tests.ApplicationServices
         }
 
         [Test]
-        public void GetAsync_NonExistingUser_Throws()
-        {
-            // Arrange
-            using (var testContext = new IntegrationTestContext())
-            {
-                var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
-                
-                // Act
-                var itemNotFoundException = Assert.ThrowsAsync<ItemNotFoundException>(() => sut.GetAsync(Guid.Empty.ToString()));
-                Assert.That(itemNotFoundException.Id, Is.EqualTo(Guid.Empty.ToString()));
-                Assert.That(itemNotFoundException.Item, Is.EqualTo("UserEntity"));
-            }
-        }
-
-        [Test]
         public async Task GetByIdAsync_IdOfExisting_ReturnsTravelExpense()
         {
             // Arrange
@@ -88,13 +74,13 @@ namespace Tests.ApplicationServices
             {
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act
-                var actual = await sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, TestData.DummyPolSubAlice);
+                var actual = await sut.GetByIdAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), testContext.TravelExpenseEntity1.Id);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
 
-                var stageEntities = testContext.CreateUnitOfWork().Repository.List<StageEntity>().ToArray();
-                var flowSteps = testContext.CreateUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
+                var stageEntities = testContext.GetUnitOfWork().Repository.List<StageEntity>().ToArray();
+                var flowSteps = testContext.GetUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
                 var flowStepId = flowSteps.Single(x => x.From.Value == TravelExpenseStage.Initial).Id;
 
                 Assert.That(actual.Result, Is.EqualTo(new TravelExpenseDto
@@ -109,21 +95,6 @@ namespace Tests.ApplicationServices
         }
 
         [Test]
-        public void GetByIdAsync_IdOfNonExistingUser_Throws()
-        {
-            // Arrange
-            using (var testContext = new IntegrationTestContext())
-            {
-                var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
-                // Act & Assert
-                var itemNotFoundException = Assert.ThrowsAsync<ItemNotFoundException>(() =>
-                    sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, Guid.Empty.ToString()));
-                Assert.That(itemNotFoundException.Id, Is.EqualTo(Guid.Empty.ToString()));
-                Assert.That(itemNotFoundException.Item, Is.EqualTo("UserEntity"));
-            }
-        }
-
-        [Test]
         public void GetByIdAsync_IdOfNonExistingTravelExpense_Throws()
         {
             // Arrange
@@ -132,7 +103,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<IGetTravelExpenseService>();
                 // Act & Assert
                 var itemNotFoundException = Assert.ThrowsAsync<ItemNotFoundException>(() =>
-                    sut.GetByIdAsync(Guid.Empty, TestData.DummyPolSubAlice));
+                    sut.GetByIdAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), Guid.Empty));
                 Assert.That(itemNotFoundException.Id, Is.EqualTo(Guid.Empty.ToString()));
                 Assert.That(itemNotFoundException.Item, Is.EqualTo("TravelExpenseEntity"));
             }
@@ -148,7 +119,7 @@ namespace Tests.ApplicationServices
 
                 // Act & Assert
                 var itemNotAllowedException = Assert.ThrowsAsync<ItemNotAllowedException>(() =>
-                    sut.GetByIdAsync(testContext.TravelExpenseEntity1.Id, TestData.DummySekSubBob));
+                    sut.GetByIdAsync(testContext.GetPolApiContext(TestData.DummySekSubBob), testContext.TravelExpenseEntity1.Id));
                 Assert.That(itemNotAllowedException.Id, Is.EqualTo(testContext.TravelExpenseEntity1.Id.ToString()));
                 Assert.That(itemNotAllowedException.Item, Is.EqualTo("TravelExpenseEntity"));
             }

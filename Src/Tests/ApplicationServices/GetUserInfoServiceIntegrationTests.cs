@@ -22,14 +22,14 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<IGetUserInfoService>();
 
                 // Act
-                var actual = await sut.GetAsync(TestData.DummyPolSubAlice);
+                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
                 Assert.That(actual.UserCustomerInfo.Count(), Is.EqualTo(1));
                 var userCustomerInfo = actual.UserCustomerInfo.Single();
                 var customerEntity = testContext
-                    .CreateUnitOfWork()
+                    .GetUnitOfWork()
                     .Repository
                     .List(
                         new CustomerByName(TestData.DummyCustomerName1)

@@ -1,9 +1,10 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
 using API.Shared.Services;
+using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
@@ -26,22 +27,29 @@ namespace Tests.API.Controllers
         public async Task Get_NoParameters_ReturnsInfoForUser()
         {
             // Arrange
-            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
-                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
+                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+
                 var sut = GetSut(testContext);
 
                 // Act
                 var actual = await sut.Get();
-
+                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+                var okObjectResult = actual.Result as OkObjectResult;
+                Assert.That(okObjectResult, Is.Not.Null);
+                var value = okObjectResult.Value as UserInfoGetResponse;
+                Assert.That(value, Is.Not.Null);
             }
         }
 
         private UserInfoController GetSut(IntegrationTestContext testContext)
         {
-            return new UserInfoController(_subManagementService.Object,
-                testContext.ServiceProvider.GetService<IGetUserInfoService>());
+            return new UserInfoController(
+                _subManagementService.Object,
+                testContext.ServiceProvider.GetService<IGetUserInfoService>(),
+                testContext.ServiceProvider.GetService<IInvitationService>());
         }
     }
 

@@ -6,6 +6,6 @@ namespace Application.Interfaces
 {
     public interface IUserCustomerStatusService
     {
-        Task<UserCustomerStatusPutResponse> PutAsync(string sub, Guid userId, Guid customerId, int userStatus);
+        Task<UserCustomerStatusPutResponse> PutAsync(PolApiContext polApiContext, Guid userId, Guid customerId, int userStatus);
     }
 }

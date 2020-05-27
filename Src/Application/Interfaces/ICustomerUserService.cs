@@ -6,8 +6,8 @@ namespace Application.Interfaces
 {
     public interface ICustomerUserService
     {
-        Task<CustomerUserGetResponse> GetAsync(string sub, Guid customerId);
-        Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(string sub, Guid customerId,
+        Task<CustomerUserGetResponse> GetAsync(PolApiContext sub, Guid customerId);
+        Task<CustomerInvitationsPostResponse> CreateInvitationsAsync(PolApiContext polApiContext, Guid customerId,
             CustomerInvitationsPostDto customerInvitationsPostDto);
     }
 }
