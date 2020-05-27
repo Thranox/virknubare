@@ -12,6 +12,7 @@ namespace Domain.Specifications
         {
             Criteria = e => customerIds.Contains(e.Customer.Id);
         }
+
         public Expression<Func<TravelExpenseEntity, bool>> Criteria { get; }
     }
 }

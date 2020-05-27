@@ -24,6 +24,7 @@ namespace Infrastructure.Data
 
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<StageEntity> Stages { get; set; }
+        public DbSet<SubmissionEntity> Submissions { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -77,6 +78,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<TravelExpenseEntity>().ToTable("TravelExpenses");
             modelBuilder.Entity<CustomerUserPermissionEntity>().ToTable("CustomerUserPermissions");
             modelBuilder.Entity<InvitationEntity>().ToTable("Invitations");
+            modelBuilder.Entity<SubmissionEntity>().ToTable("Submissions");
         }
     }
 }

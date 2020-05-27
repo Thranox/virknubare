@@ -11,7 +11,6 @@ namespace Domain.Specifications
         public StageByValue(TravelExpenseStage value)
         {
             Criteria = e => e.Value == value;
-
         }
 
         public Expression<Func<StageEntity, bool>> Criteria { get; }

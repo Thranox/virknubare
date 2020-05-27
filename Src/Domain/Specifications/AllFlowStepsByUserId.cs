@@ -10,16 +10,17 @@ namespace Domain.Specifications
     {
         public CustomerById(Guid customerId)
         {
-            Criteria = e => e.Id== customerId;
+            Criteria = e => e.Id == customerId;
         }
 
         public Expression<Func<CustomerEntity, bool>> Criteria { get; }
     }
-    public class AllFlowStepsByUserId: ISpecification<FlowStepEntity>
+
+    public class AllFlowStepsByUserId : ISpecification<FlowStepEntity>
     {
         public AllFlowStepsByUserId(Guid userId)
         {
-            Criteria = e => e.FlowStepUserPermissions.Any(x=>x.UserId==userId);
+            Criteria = e => e.FlowStepUserPermissions.Any(x => x.UserId == userId);
         }
 
         public Expression<Func<FlowStepEntity, bool>> Criteria { get; }

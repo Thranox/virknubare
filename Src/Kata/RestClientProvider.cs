@@ -17,7 +17,7 @@ namespace Kata
 
         public IRestClient GetRestClient(string jwtUserName)
         {
-            IRestClient restClient = new RestClient(new Uri(_properties.ApiEndpoint));
+            IRestClient restClient = new RestClient(new Uri(_properties.ApiEndpoint)){Timeout = 200*1000};
             var jwtUser = _jwtUsers.SingleOrDefault(x => x.Name == jwtUserName);
             if (jwtUser == null)
                 throw new ArgumentException("Jwt not found in list", nameof(jwtUserName));

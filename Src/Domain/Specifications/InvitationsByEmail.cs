@@ -11,7 +11,7 @@ namespace Domain.Specifications
         public InvitationsByEmail(string email)
         {
             var lowerCaseEmail = email.ToLower();
-            Criteria = e =>e.InvitationState == InvitationState.Invited && e.Email == lowerCaseEmail;
+            Criteria = e => e.InvitationState == InvitationState.Invited && e.Email == lowerCaseEmail;
         }
 
         public Expression<Func<InvitationEntity, bool>> Criteria { get; }
