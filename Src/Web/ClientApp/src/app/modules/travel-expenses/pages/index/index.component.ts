@@ -9,7 +9,7 @@ import {TravelExpenseService} from '../../../../shared/services/travel-expense.s
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit {
-    travelExpenses$: Observable<TravelExpense[]> = from([]);
+    travelExpenses$: Observable<TravelExpense[]>;
 
   constructor(private travelExpenseService: TravelExpenseService) {}
 

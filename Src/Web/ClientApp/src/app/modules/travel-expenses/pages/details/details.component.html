@@ -1,6 +1,10 @@
 <div class="row">
     <div class="col-12" *ngIf="travelExpense$ | async as travelExpense; else loading">
+
+
         <h2>Vis afregning: {{travelExpense.id | slice:0:8}}..</h2>
+
+
         <app-travel-expense-form [travelExpense]="travelExpense"></app-travel-expense-form>
 
         <small>
@@ -9,6 +13,8 @@
                 <pre>{{ travelExpense | json}}</pre>
             </div>
         </small>
+
+
     </div>
 </div>
 
