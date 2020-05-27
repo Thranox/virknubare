@@ -1,10 +1,9 @@
-﻿using IDP;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using SharedWouldBeNugets;
 
-namespace IdentityServerAspNetIdentit
+namespace IDP
 {
     public class Program
     {

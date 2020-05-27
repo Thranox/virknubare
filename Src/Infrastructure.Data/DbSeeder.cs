@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Specifications;
 using Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -17,11 +18,15 @@ namespace Infrastructure.Data
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITravelExpenseFactory _travelExpenseFactory;
         private readonly Dictionary<TravelExpenseStage, string> _dictionary;
+        private readonly ILogger _logger;
+        private readonly PolDbContext _polDbContext;
 
-        public DbSeeder(IUnitOfWork unitOfWork, ITravelExpenseFactory travelExpenseFactory)
+        public DbSeeder(IUnitOfWork unitOfWork, ITravelExpenseFactory travelExpenseFactory, ILogger logger, PolDbContext polDbContext)
         {
             _unitOfWork = unitOfWork;
             _travelExpenseFactory = travelExpenseFactory;
+            _logger = logger;
+            _polDbContext = polDbContext;
             _dictionary = new Dictionary<TravelExpenseStage, string>()
             {
                 {TravelExpenseStage.Initial, Globals.InitialReporteddone
@@ -107,6 +112,8 @@ namespace Infrastructure.Data
 
         public async Task RemoveTestDataAsync()
         {
+            _logger.Information("Removing testdata from database. Deleting users");
+
             var polTestUsers = TestData.GetTestUsers();
             foreach (var polTestUser in polTestUsers)
             {
@@ -136,6 +143,8 @@ namespace Infrastructure.Data
                 _unitOfWork.Repository.Delete(userEntity);
             }
 
+            _logger.Information("Removing testdata from database. Users gone, deleting customers");
+
             var testCustomers = TestData.GetTestCustomers();
             foreach (var testCustomer in testCustomers)
             {
@@ -143,6 +152,11 @@ namespace Infrastructure.Data
 
                 if(customerEntity==null)
                     continue;
+
+                foreach (var invitationEntity in customerEntity.Invitations)
+                {
+                    _unitOfWork.Repository.Delete(invitationEntity);
+                }
 
                 foreach (var flowStepEntity in customerEntity.FlowSteps)
                 {
@@ -152,9 +166,15 @@ namespace Infrastructure.Data
                 _unitOfWork.Repository.Delete(customerEntity);
             }
 
+            _logger.Information("Removing testdata from database. Done. Now committing.");
+
             await _unitOfWork.CommitAsync();
 
-            await Task.CompletedTask;
+        }
+
+        public async Task MigrateAsync()
+        {
+            await _polDbContext.Database.MigrateAsync();
         }
 
         private CustomerEntity GetOrCreateTestCustomer(string customerName)

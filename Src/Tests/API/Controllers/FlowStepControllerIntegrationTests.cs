@@ -8,6 +8,7 @@ using Application.Interfaces;
 using Domain;
 using Domain.Specifications;
 using Domain.ValueObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -19,10 +20,21 @@ namespace Tests.API.Controllers
 {
     public class FlowStepControllerIntegrationTests
     {
+        private static Mock<ISubManagementService> _subManagementService;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _subManagementService = new Mock<ISubManagementService>();
+        }
+
+
         [Test]
         public async Task Get_NoParameters_ReturnsTravelExpenses()
         {
             // Arrange
+            _subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>(), It.IsAny<HttpContext>()))
+                .Returns(TestData.DummyPolSubAlice);
             using (var testContext = new IntegrationTestContext())
             {
                 var sut = GetSut(testContext);
@@ -115,10 +127,7 @@ namespace Tests.API.Controllers
 
         private static FlowStepController GetSut(IntegrationTestContext testContext)
         {
-            var subManagementService = new Mock<ISubManagementService>();
-            subManagementService.Setup(x => x.GetSub(It.IsAny<ClaimsPrincipal>())).Returns(TestData.DummyPolSubAlice);
-
-            return new FlowStepController(subManagementService.Object,
+            return new FlowStepController(_subManagementService.Object,
                 testContext.ServiceProvider.GetService<IGetFlowStepService>());
         }
     }

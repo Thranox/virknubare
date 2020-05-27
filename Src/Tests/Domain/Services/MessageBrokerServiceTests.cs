@@ -32,7 +32,7 @@ namespace Tests.Domain.Services
                 var sut = testContext.ServiceProvider.GetRequiredService<IMessageBrokerService>();
 
                 // Act
-                var actual = await sut.SendMessageAsync(receivingUserEntities,travelExpenseEntity, MessageKind.YourTravelExpenseHasChangedState);
+                var actual = await sut.SendMessageAsync(receivingUserEntities, MessageKind.YourTravelExpenseHasChangedState, new IMessageValueEnricher[] { travelExpenseEntity, customerEntity });
 
                 // Assert
                 Assert.That(actual, Is.EqualTo(1));

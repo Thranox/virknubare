@@ -2,8 +2,9 @@
 {
     public enum MessageKind
     {
-        None=0,
-        YouCanNowProcessTravelExpense=1,
-        YourTravelExpenseHasChangedState=2
+        None = 0,
+        YouCanNowProcessTravelExpense = 1,
+        YourTravelExpenseHasChangedState = 2,
+        YouHaveReceivedInvitation = 3
     }
 }

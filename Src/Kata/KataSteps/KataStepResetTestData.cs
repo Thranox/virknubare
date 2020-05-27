@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using API.Shared.Controllers;
+using Application.Dtos;
+using Domain.ValueObjects;
 using RestSharp;
 using Serilog;
 
@@ -26,8 +30,14 @@ namespace Kata.KataSteps
         {
             // Reset test data in database. This requires God access.
             _logger.Debug("Resetting Database...");
+            
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
-            await restClient.PostAsync<object>(new RestRequest(new Uri("/Admin/DatabaseReset", UriKind.Relative)));
+            var restRequest = new RestRequest(
+                    new Uri("admin/databasereset", UriKind.Relative)
+                )
+                ;
+            var databaseResetResponseDto = await restClient.PostAsync<DatabaseResetResponse>(restRequest);
+            ClientContext.DatabaseResetResponse = databaseResetResponseDto;
             _logger.Debug("Database reset.");
         }
     }

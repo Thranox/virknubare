@@ -30,9 +30,7 @@ namespace Tests.Flows
                 var flowStepController = testContext.ServiceProvider.GetRequiredService<FlowStepController>();
 
                 // Set the calling user to be Alice
-                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub = TestData.DummyPolSubAlice;
-
+                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
 
                 // ** Create TravelExpense
                 var actionResultTePost = await travelExpenseController.Post(
@@ -68,9 +66,7 @@ namespace Tests.Flows
 
 
                 // Set the calling user to be Bob
-                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub = TestData.DummySekSubBob;
-
+                testContext.SetCallingUserBySub(TestData.DummySekSubBob);
 
                 actionResulltFsGet = await flowStepController.Get();
                 okObjectResult = actionResulltFsGet.Result as OkObjectResult;
@@ -82,8 +78,10 @@ namespace Tests.Flows
                 await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After certifying");
-                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub = TestData.DummyPolSubAlice;
+
+                // Set the calling user to be Alice
+                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
+
                 Console.WriteLine(JsonConvert.SerializeObject(
                     ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
                     TravelExpenseGetByIdResponse, Formatting.Indented));
@@ -93,9 +91,7 @@ namespace Tests.Flows
 
 
                 // Set the calling user to be Charlie
-                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub = TestData.DummyLedSubCharlie;
-
+                testContext.SetCallingUserBySub(TestData.DummyLedSubCharlie);
 
                 actionResulltFsGet = await flowStepController.Get();
                 okObjectResult = actionResulltFsGet.Result as OkObjectResult;
@@ -107,8 +103,9 @@ namespace Tests.Flows
                 await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
                 Console.WriteLine("After Assigning Payment");
-                ((FakeSubManagementService) testContext.ServiceProvider.GetRequiredService<ISubManagementService>())
-                    .Sub = TestData.DummyPolSubAlice;
+
+                // Set the calling user to be Alice
+                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
                 Console.WriteLine(JsonConvert.SerializeObject(
                     ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
                     TravelExpenseGetByIdResponse, Formatting.Indented));
@@ -155,6 +152,7 @@ namespace Tests.Flows
 
                     newTe.ApplyProcessStep(processFlowStep);
 
+                    // Guard -- should this test not come to a natural ending, it should fail, not continue forever.
                     if (iterations > 10)
                         throw new InvalidOperationException();
                 } while (newTe.Stage.Value != TravelExpenseStage.Final);

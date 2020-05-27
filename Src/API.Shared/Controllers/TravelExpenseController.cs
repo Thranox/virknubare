@@ -37,7 +37,7 @@ namespace API.Shared.Controllers
             var travelExpenseProcessStepDto = new TravelExpenseFlowStepDto
                 {TravelExpenseId = id, FlowStepId = flowStepId};
 
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
 
             var travelExpenseProcessStepResponse =
                 await _flowStepTravelExpenseService.ProcessStepAsync(travelExpenseProcessStepDto, sub);
@@ -48,7 +48,7 @@ namespace API.Shared.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TravelExpenseGetByIdResponse>> GetById(Guid id)
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
             var travelExpenseDto = await _getTravelExpenseService.GetByIdAsync(id, sub);
 
             return Ok(travelExpenseDto);
@@ -57,7 +57,7 @@ namespace API.Shared.Controllers
         [HttpGet]
         public async Task<ActionResult<TravelExpenseGetResponse>> Get()
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
             var travelExpenseDtos = await _getTravelExpenseService.GetAsync(sub);
 
             return Ok(travelExpenseDtos);
@@ -67,7 +67,7 @@ namespace API.Shared.Controllers
         public async Task<ActionResult<TravelExpenseUpdateResponse>> Put(Guid id,
             [FromBody] TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
             var travelExpenseDtos =
                 await _updateTravelExpenseService.UpdateAsync(id, travelExpenseUpdateDto, sub);
 
@@ -77,7 +77,7 @@ namespace API.Shared.Controllers
         [HttpPost]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
-            var sub = _subManagementService.GetSub(User);
+            var sub = _subManagementService.GetSub(User, HttpContext);
             var travelExpenseCreateResponse = await _createTravelExpenseService.CreateAsync(travelExpenseCreateDto, sub);
 
             return Created(nameof(GetById), travelExpenseCreateResponse);

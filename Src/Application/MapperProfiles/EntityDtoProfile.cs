@@ -22,6 +22,11 @@ namespace Application.MapperProfiles
                 .ForMember(x => x.FromStageText, xx => xx.MapFrom(xxx => Globals.StageNamesDanish[xxx.From.Value]))
                 .ForMember(x => x.FlowStepId, xx => xx.MapFrom(xxx => xxx.Id))
                 ;
+
+            CreateMap<CustomerUserPermissionEntity, UserPermissionDto>()
+                .ForMember(x => x.UserId, xx => xx.MapFrom(xxx => xxx.UserId))
+                .ForMember(x => x.UserStatus, xx => xx.MapFrom(xxx => (int)xxx.UserStatus))
+                ;
         }
     }
 }

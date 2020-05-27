@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Infrastructure.Data
 {
@@ -36,14 +34,16 @@ namespace Infrastructure.Data
                 IQueryable<CustomerEntity> includableQueryable = _dbContext
                     .Set<CustomerEntity>()
                     .Include(g => g.FlowSteps).ThenInclude(gg => gg.FlowStepUserPermissions)
-                    .Include(g => g.TravelExpenses).ThenInclude(gg=>gg.Stage)
-                    .Include(g => g.CustomerUserPermissions).ThenInclude(gg => gg.User);
+                    .Include(g => g.TravelExpenses).ThenInclude(gg => gg.Stage)
+                    .Include(g => g.CustomerUserPermissions).ThenInclude(gg => gg.User)
+                    .Include(g => g.Invitations);
 
                 if (spec != null)
                 {
                     var castedSpec = spec as ISpecification<CustomerEntity>;
                     includableQueryable = includableQueryable.Where(castedSpec.Criteria);
                 }
+
                 return includableQueryable.ToList() as List<T>;
             }
 
@@ -52,33 +52,35 @@ namespace Infrastructure.Data
                 IQueryable<TravelExpenseEntity> includableQueryable = _dbContext
                     .Set<TravelExpenseEntity>()
                     .Include(g => g.Stage)
-                    .Include(g=>g.OwnedByUser);
+                    .Include(g => g.OwnedByUser);
 
                 if (spec != null)
                 {
                     var castedSpec = spec as ISpecification<TravelExpenseEntity>;
                     includableQueryable = includableQueryable.Where(castedSpec.Criteria);
                 }
+
                 return includableQueryable.ToList() as List<T>;
             }
 
             if (typeof(T) == typeof(UserEntity))
             {
                 IQueryable<UserEntity> includableQueryable = _dbContext
-                    .Set<UserEntity>()
-                    .Include(g => g.FlowStepUserPermissions)
-                    .ThenInclude(gg => gg.FlowStep)
-                    .ThenInclude(ggg=>ggg.From)
-                    .Include(g=>g.CustomerUserPermissions)
-                    .ThenInclude(gg=>gg.Customer)
-                    .Include(g=>g.TravelExpenses)
-                    .ThenInclude(gg=>gg.Stage)
+                        .Set<UserEntity>()
+                        .Include(g => g.FlowStepUserPermissions)
+                        .ThenInclude(gg => gg.FlowStep)
+                        .ThenInclude(ggg => ggg.From)
+                        .Include(g => g.CustomerUserPermissions)
+                        .ThenInclude(gg => gg.Customer)
+                        .Include(g => g.TravelExpenses)
+                        .ThenInclude(gg => gg.Stage)
                     ;
                 if (spec != null)
                 {
                     var castedSpec = spec as ISpecification<UserEntity>;
                     includableQueryable = includableQueryable.Where(castedSpec.Criteria);
                 }
+
                 return includableQueryable.ToList() as List<T>;
             }
 
@@ -96,21 +98,19 @@ namespace Infrastructure.Data
                     var castedSpec = spec as ISpecification<FlowStepEntity>;
                     includableQueryable = includableQueryable.Where(castedSpec.Criteria);
                 }
+
                 return includableQueryable.ToList() as List<T>;
             }
 
             var query = _dbContext.Set<T>().AsQueryable();
-            if (spec != null)
-            {
-                query = query.Where(spec.Criteria);
-            }
+            if (spec != null) query = query.Where(spec.Criteria);
             return query.ToList();
         }
 
         public T Add<T>(T entity) where T : BaseEntity
         {
-            var baseEntity = (entity as BaseEntity);
-            if(baseEntity.Id!=Guid.Empty)
+            var baseEntity = entity as BaseEntity;
+            if (baseEntity.Id != Guid.Empty)
                 throw new ArgumentException("Id can't be set on entity before calling Add (is this already added?)");
 
             baseEntity.Id = Guid.NewGuid();

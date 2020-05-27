@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Shared.Services
 {
@@ -9,7 +10,7 @@ namespace API.Shared.Services
             Sub = sub;
         }
 
-        public string GetSub(ClaimsPrincipal claimsPrincipal)
+        public string GetSub(ClaimsPrincipal claimsPrincipal, HttpContext httpContext)
         {
             return Sub;
         }

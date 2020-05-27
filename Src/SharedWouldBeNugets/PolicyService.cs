@@ -1,11 +1,14 @@
 ﻿using System;
 using Polly;
+using Polly.Retry;
 using Serilog;
 
 namespace SharedWouldBeNugets
 {
     public class PolicyService : IPolicyService
     {
+        private readonly int _retriesKatas = 15;
+
         public PolicyService(ILogger logger)
         {
             DatabaseMigrationAndSeedingPolicy = Policy
@@ -14,18 +17,17 @@ namespace SharedWouldBeNugets
                     logger.Warning(e, "During DatabaseMigrationAndSeedingPolicy");
                     return true;
                 })
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
             KataApiRetryPolicy = Policy
-                .Handle<Exception>(e =>
+                .Handle<Exception>()
+                .WaitAndRetryAsync(_retriesKatas, i => TimeSpan.FromSeconds(2), (exception, span,retryCount, context) =>
                 {
-                    logger.Warning(e, "During KataApiRetryPolicy ");
-                    return true;
-                })
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(1));
+                    logger.Warning($"Retry:{retryCount} of {_retriesKatas}");
+                });
         }
 
-        public Policy DatabaseMigrationAndSeedingPolicy { get; }
-        public Policy KataApiRetryPolicy { get; }
+        public AsyncRetryPolicy DatabaseMigrationAndSeedingPolicy { get; }
+        public AsyncRetryPolicy KataApiRetryPolicy { get; }
     }
 }
