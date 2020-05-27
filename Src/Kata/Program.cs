@@ -62,6 +62,8 @@ namespace Kata
 
                     new KataStepDescriptor("ResetTestData").AsUser("alice").WithVerification(c=>c.DatabaseResetResponse!=null),
 
+                    new KataStepDescriptor("GetUserInfo").AsUser("freddie").WithVerification(c=>c.UserInfoGetResponse!=null),
+
                     new KataStepDescriptor("GetUserInfo").AsUser("alice").WithVerification(c=>c.UserInfoGetResponse!=null),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==TestData.GetNumberOfTestDataTravelExpenses()),
                     new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseCreateResponse!=null && c.TravelExpenseCreateResponse.Id!=Guid.Empty),

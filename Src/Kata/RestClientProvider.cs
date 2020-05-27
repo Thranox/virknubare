@@ -18,8 +18,12 @@ namespace Kata
         public IRestClient GetRestClient(string jwtUserName)
         {
             IRestClient restClient = new RestClient(new Uri(_properties.ApiEndpoint));
+            var jwtUser = _jwtUsers.SingleOrDefault(x => x.Name == jwtUserName);
+            if (jwtUser == null)
+                throw new ArgumentException("Jwt not found in list", nameof(jwtUserName));
+            var accessToken = jwtUser.AccessToken;
             restClient.AddDefaultHeader("Authorization",
-                $"Bearer {_jwtUsers.Single(x => x.Name == jwtUserName).AccessToken}");
+                $"Bearer {accessToken}");
             return restClient;
         }
     }

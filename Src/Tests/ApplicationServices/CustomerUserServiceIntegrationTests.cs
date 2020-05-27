@@ -24,7 +24,7 @@ namespace Tests.ApplicationServices
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
-                Assert.That(actual.Users.Length, Is.EqualTo(TestData.GetTestUsers().Count()));
+                Assert.That(actual.Users.Length, Is.EqualTo(5));
             }
         }
 

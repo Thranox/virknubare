@@ -35,6 +35,7 @@ namespace SharedWouldBeNugets
             yield return new PolTestUser("charlie", new PolUserCapabilities().AddCanCreateTravelExpense());
             yield return new PolTestUser("dennis", new PolUserCapabilities().AddCanCreateTravelExpense());
             yield return new PolTestUser("edward", new PolUserCapabilities().AddCanCreateTravelExpense());
+            yield return new PolTestUser("freddie", new PolUserCapabilities().AddCanCreateTravelExpense());
         }
 
         public static IEnumerable<Claim> GetClaimsByUserName(string userName)

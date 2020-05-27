@@ -42,7 +42,7 @@ namespace Tests.API.Controllers
                 var okObjectResult = actual.Result as OkObjectResult;
                 Assert.That(okObjectResult, Is.Not.Null);
                 var value = okObjectResult.Value as CustomerUserGetResponse;
-                Assert.That(value.Users.Length, Is.EqualTo(TestData.GetTestUsers().Count()));
+                Assert.That(value.Users.Length, Is.EqualTo(5));
             }
         }
 

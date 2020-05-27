@@ -29,7 +29,7 @@ namespace Application.Services
 
         public async Task<TravelExpenseGetResponse> GetAsync(PolApiContext polApiContext)
         {
-            _logger.Debug("Getting em all");
+            _logger.Debug("GetTravelExpenseService.GetAsync()");
 
             // Users can access own travelexpenses plus those owned by others but in a state accessible for user.
 
@@ -62,6 +62,7 @@ namespace Application.Services
             {
                 Result = travelExpenseDtos
             };
+            _logger.Debug("GetTravelExpenseService.GetAsync() - "+travelExpenseDtos.Length);
             return await Task.FromResult(travelExpenseGetResponse);
         }
 

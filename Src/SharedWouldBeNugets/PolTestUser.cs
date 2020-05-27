@@ -16,10 +16,12 @@ namespace SharedWouldBeNugets
             }
         }
 
+        public string UserName { get; }
         public PolUserCapabilities PolUserCapabilities { get; }
 
         public PolTestUser(string userName, PolUserCapabilities polUserCapabilities)
         {
+            UserName = userName;
             PolUserCapabilities = polUserCapabilities;
             Claims = TestData.GetClaimsByUserName(userName);
         }
