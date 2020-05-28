@@ -19,6 +19,9 @@
       <NamedTestSelector>
         <TestName>Tests.ApplicationServices.SubmitSubmissionServiceIntegrationTests.SubmitAsync_NoParameters_SubmitsAll</TestName>
       </NamedTestSelector>
+      <NamedTestSelector>
+        <TestName>Tests.API.Controllers.SubmissionControllerIntegrationTests.PostTbd_NoParameters_SendsSubmissions</TestName>
+      </NamedTestSelector>
     </IgnoredTests>
   </Settings>
 </ProjectConfiguration>

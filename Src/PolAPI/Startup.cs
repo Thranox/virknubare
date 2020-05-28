@@ -43,6 +43,10 @@ namespace PolAPI
             {
                 logger.Information("Starting Db Migration and Seeding...");
                 await dbSeeder.MigrateAsync();
+
+                logger.Information("Removing test data...");
+                await dbSeeder.RemoveTestDataAsync();
+
                 await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
             });
