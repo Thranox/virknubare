@@ -46,6 +46,10 @@ export class AuthService {
             this.user = user;
             this.loginChangedSubject.next(!!user && !user.expired);
             return user;
+        }, (error) => {
+            console.log('login error, session might have expired', error);
+            this.user = null;
+            this.userManager.removeUser();
         });
     }
 
