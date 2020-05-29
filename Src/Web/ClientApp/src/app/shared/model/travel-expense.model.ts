@@ -6,4 +6,6 @@ export class TravelExpense {
   isReportedDone: boolean;
   stageId: string | null;
   stageText: string | null;
+  ownedByUserId: string;
+  allowedFlows: {flowStepId: string, description: string}[];
 }

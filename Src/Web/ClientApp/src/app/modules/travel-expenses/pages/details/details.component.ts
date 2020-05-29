@@ -4,6 +4,7 @@ import {from, Observable} from 'rxjs';
 import {TravelExpenseService} from '../../../../shared/services/travel-expense.service';
 import {ActivatedRoute} from '@angular/router';
 import {map, switchMap} from "rxjs/operators";
+import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
 
 @Component({
     selector: 'app-index',
@@ -14,7 +15,7 @@ export class DetailsComponent implements OnInit {
     travelExpense$: Observable<TravelExpense> = from([]);
 
     constructor(
-        private travelExpenseService: TravelExpenseService,
+        private travelExpenseService: MockTravelExpenseService,
         private activatedRoute: ActivatedRoute,
     ) {
     }

@@ -4,6 +4,7 @@ import {TravelExpenseService} from "../../../../shared/services/travel-expense.s
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {catchError, switchMap, tap} from "rxjs/operators";
 import * as dayjs from 'dayjs';
+import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
 
 @Component({
     selector: 'app-travel-expense-form',
@@ -16,7 +17,7 @@ export class TravelExpenseFormComponent implements OnInit {
     travelExpenseFormGroup: FormGroup;
 
     constructor(
-        private travelExpenseService: TravelExpenseService,
+        private travelExpenseService: MockTravelExpenseService,
         private fb: FormBuilder,
     ) {
     }
@@ -37,6 +38,7 @@ export class TravelExpenseFormComponent implements OnInit {
             startTime: ['08:00', Validators.required],
             endDate: [dayjs(), Validators.required],
             endTime: ['16:00', Validators.required],
+            purpose: [null, Validators.required],
         });
     }
 

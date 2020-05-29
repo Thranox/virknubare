@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {UserManager, User, UserManagerSettings} from 'oidc-client';
 import {Subject, from} from 'rxjs';
-import {environment} from "../../../environments/environment";
+import {environment} from '../../../environments/environment';
 
 @Injectable()
 export class AuthService {

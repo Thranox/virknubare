@@ -1,43 +1,119 @@
-<form [formGroup]="travelExpenseFormGroup">
-    <div class="row">
-        <div class="col-2 col-form-label">ID på afregning</div>
-        <div class="col col-form-label">{{ travelExpense.id }}</div>
-    </div>
 
-    <div class="row">
-        <div class="col-2 col-form-label">Fra</div>
-        <div class="col-2">
-            <input class="form-control" formControlName="startDate" placement="bottom"
-                   ngbDatepicker [showWeekNumbers]="true" (click)="datepickerStart.toggle()"
-                   #datepickerStart="ngbDatepicker">
-        </div>
-        <div class="col-2">
-            <ngb-timepicker [spinners]="false"  formControlName="startTime"></ngb-timepicker>
-        </div>
-        <div class="col"></div>
-        <div class="col-1 col-form-label">Til</div>
-        <div class="col-2">
-            <input class="form-control" formControlName="endDate" placement="bottom"
-                   ngbDatepicker [showWeekNumbers]="true" (click)="datepickerEnd.toggle()"
-                   #datepickerEnd="ngbDatepicker">
-        </div>
-        <div class="col-2">
-            <ngb-timepicker [spinners]="false"  formControlName="endTime"></ngb-timepicker>
-        </div>
-    </div>
+<div class="card">
+    <div class="card-body">
+        <form [formGroup]="travelExpenseFormGroup">
+            <div class="row">
+                <div class="col-2 col-form-label">ID på afregning</div>
+                <div class="col col-form-label">{{ travelExpense.id }}</div>
+            </div>
 
-    <div class="row">
-        <div class="col-2 col-form-label">Beskrivelse</div>
-        <div class="col"><input type="text" class="form-control" formControlName="description"></div>
-    </div>
+            <div class="row">
+                <div class="col-2 col-form-label">Udrejsetidspunkt</div>
+                <div class="col-2">
+                    <input class="form-control" formControlName="startDate" placement="bottom"
+                           ngbDatepicker [showWeekNumbers]="true" (click)="datepickerStart.toggle()"
+                           #datepickerStart="ngbDatepicker">
+                </div>
+                <div class="col-2">
+                    <ngb-timepicker [spinners]="false"  formControlName="startTime"></ngb-timepicker>
+                </div>
+                <div class="col-2 col-form-label">Hjemkomsttidspunkt</div>
+                <div class="col-2">
+                    <input class="form-control" formControlName="endDate" placement="bottom"
+                           ngbDatepicker [showWeekNumbers]="true" (click)="datepickerEnd.toggle()"
+                           #datepickerEnd="ngbDatepicker">
+                </div>
+                <div class="col-2">
+                    <ngb-timepicker [spinners]="false"  formControlName="endTime"></ngb-timepicker>
+                </div>
+            </div>
 
-    <div class="row pt-3">
-        <div class="col text-right">
-            <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
+            <div class="row">
+                <div class="col-2 col-form-label">Udrejsested</div>
+                <div class="col">
+                    <select class="form-control">
+                        <option [value]="1">Hjem</option>
+                        <option [value]="2">Arbejde</option>
+                        <option [value]="3">Andet</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input class="form-control" type="text" placeholder="Adresse">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 col-form-label">Hjemkomststed</div>
+                <div class="col">
+                    <select class="form-control">
+                        <option [value]="1">Hjem</option>
+                        <option [value]="2">Arbejde</option>
+                        <option [value]="3">Andet</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input class="form-control" type="text" placeholder="Adresse">
+                </div>
         </div>
-    </div>
 
-    <pre class="mt-5">{{ travelExpenseFormGroup.getRawValue() | json }}</pre>
-</form>
+            <div class="row">
+                <div class="col-2 col-form-label">Beskrivelse</div>
+                <div class="col"><input type="text" class="form-control" formControlName="description"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 col-form-label">Udvalg</div>
+                <div class="col">
+                    <select class="form-control">
+                        <option disabled></option>
+                        <option [value]="1">Mulighed 1</option>
+                        <option [value]="2">Mulighed 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 col-form-label">Kørsel i egen bil</div>
+                <div class="col">
+                    <select class="form-control">
+                        <option [value]="null"></option>
+                        <option [value]="true">Ja</option>
+                        <option [value]="false">Nej</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input class="form-control" type="text" placeholder="Nummerplade">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 col-form-label">Kursus/Seminar</div>
+                <div class="col">
+                    <select class="form-control">
+                        <option [value]="null"></option>
+                        <option [value]="true">Ja</option>
+                        <option [value]="false">Nej</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-2 col-form-label">Formål</div>
+                <div class="col"><input type="text" class="form-control" formControlName="purpose"></div>
+            </div>
+
+            <div class="row pt-3">
+                <div class="col text-right">
+                    <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
+                </div>
+            </div>
+
+            <pre>Form data:
+{{ travelExpenseFormGroup.getRawValue() | json }}</pre>
+        </form>
+    </div>
+</div>
+
 
 

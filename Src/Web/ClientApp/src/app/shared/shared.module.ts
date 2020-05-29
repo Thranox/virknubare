@@ -9,6 +9,7 @@ import {NgbDateAdapter, NgbDateParserFormatter, NgbTimeAdapter} from "@ng-bootst
 import {NgbDateDayjsAdapter} from "./others/datepicker-adapter";
 import {DanishDateParserFormatter} from "./others/datepicker-custom-formatter";
 import {NgbTimeStringAdapter} from "./others/timepicker-adapter";
+import {MockTravelExpenseService} from "./mocks/mock-travel-expense.service";
 
 
 
@@ -26,6 +27,7 @@ const PROVIDERS = [
     // Services
     // DemoService,
     TravelExpenseService,
+    MockTravelExpenseService,
     FlowStepService,
 
 
