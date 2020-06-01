@@ -30,4 +30,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SharedWouldBeNugets\SharedWouldBeNugets.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
+  </ItemGroup>
 </Project>
