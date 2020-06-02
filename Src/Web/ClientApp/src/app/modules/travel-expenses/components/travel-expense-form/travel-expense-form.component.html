@@ -1,106 +1,106 @@
 
 <div class="card">
     <div class="card-body">
-        <form [formGroup]="travelExpenseFormGroup">
+        <form [formGroup]="travelExpenseFormGroup" class="needs-validation" novalidate>
             <div class="row">
-                <div class="col-2 col-form-label">ID på afregning</div>
-                <div class="col col-form-label">{{ travelExpense.id }}</div>
-            </div>
-
-            <div class="row">
-                <div class="col-2 col-form-label">Udrejsetidspunkt</div>
-                <div class="col-2">
-                    <input class="form-control" formControlName="startDate" placement="bottom"
-                           ngbDatepicker [showWeekNumbers]="true" (click)="datepickerStart.toggle()"
-                           #datepickerStart="ngbDatepicker">
-                </div>
-                <div class="col-2">
-                    <ngb-timepicker [spinners]="false"  formControlName="startTime"></ngb-timepicker>
-                </div>
-                <div class="col-2 col-form-label">Hjemkomsttidspunkt</div>
-                <div class="col-2">
-                    <input class="form-control" formControlName="endDate" placement="bottom"
-                           ngbDatepicker [showWeekNumbers]="true" (click)="datepickerEnd.toggle()"
-                           #datepickerEnd="ngbDatepicker">
-                </div>
-                <div class="col-2">
-                    <ngb-timepicker [spinners]="false"  formControlName="endTime"></ngb-timepicker>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-2 col-form-label">Udrejsested</div>
                 <div class="col">
+                    <h5>Møde- og rejseoplysninger</h5>
+                </div>
+            </div>
+            <div class="form-row mb-2">
+                <div class="col-md-6">
+                    <label>Udrejsetidspunkt</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <input class="form-control" formControlName="startDate" placement="bottom"
+                                   ngbDatepicker [showWeekNumbers]="true" (click)="datepickerStart.toggle()"
+                                   #datepickerStart="ngbDatepicker">
+                        </div>
+                        <div class="col">
+                            <ngb-timepicker size="small" [spinners]="false" formControlName="startTime"></ngb-timepicker>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback">
+                        Vælg en dato
+                    </div>
+
+                    <label>Hjemkomsttidspunkt</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <input class="form-control" formControlName="endDate" placement="bottom"
+                                   ngbDatepicker [showWeekNumbers]="true" (click)="datepickerEnd.toggle()"
+                                   #datepickerEnd="ngbDatepicker">
+                        </div>
+                        <div class="col">
+                            <ngb-timepicker size="small" [spinners]="false"  formControlName="endTime"></ngb-timepicker>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback">
+                        Vælg en dato
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label>Udvalg</label>
+                    <input type="text" class="form-control">
+                    <label>Formål</label>
+                    <input type="text" class="form-control" formControlName="purpose">
+                    <label>Mødested</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-row mb-2">
+                <div class="col-md-6">
+                    <label>Udrejsested</label>
                     <select class="form-control">
                         <option [value]="1">Hjem</option>
                         <option [value]="2">Arbejde</option>
                         <option [value]="3">Andet</option>
                     </select>
-                </div>
-                <div class="col">
                     <input class="form-control" type="text" placeholder="Adresse">
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-2 col-form-label">Hjemkomststed</div>
-                <div class="col">
+                <div class="col-md-6">
+                    <label>Hjemkomststed</label>
                     <select class="form-control">
                         <option [value]="1">Hjem</option>
                         <option [value]="2">Arbejde</option>
                         <option [value]="3">Andet</option>
                     </select>
-                </div>
-                <div class="col">
                     <input class="form-control" type="text" placeholder="Adresse">
                 </div>
-        </div>
-
-            <div class="row">
-                <div class="col-2 col-form-label">Beskrivelse</div>
-                <div class="col"><input type="text" class="form-control" formControlName="description"></div>
             </div>
 
             <div class="row">
-                <div class="col-2 col-form-label">Udvalg</div>
                 <div class="col">
-                    <select class="form-control">
-                        <option disabled></option>
-                        <option [value]="1">Mulighed 1</option>
-                        <option [value]="2">Mulighed 2</option>
-                    </select>
+                    <h5>Afregningsoplysninger</h5>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-2 col-form-label">Kørsel i egen bil</div>
-                <div class="col">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <label>Kursus/Seminar</label>
                     <select class="form-control">
                         <option [value]="null"></option>
                         <option [value]="true">Ja</option>
                         <option [value]="false">Nej</option>
                     </select>
                 </div>
-                <div class="col">
+                <div class="col-md-6">
+                    <label>Kørsel i egen bil</label>
+                    <select class="form-control">
+                        <option [value]="null"></option>
+                        <option [value]="true">Ja</option>
+                        <option [value]="false">Nej</option>
+                    </select>
                     <input class="form-control" type="text" placeholder="Nummerplade">
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-2 col-form-label">Kursus/Seminar</div>
-                <div class="col">
-                    <select class="form-control">
-                        <option [value]="null"></option>
-                        <option [value]="true">Ja</option>
-                        <option [value]="false">Nej</option>
-                    </select>
+            <div class="form-row">
+                <div class="col-12">
+                    <label>Bemærkninger</label>
+                    <textarea type="text" class="form-control" formControlName="description" rows="3"></textarea>
                 </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-2 col-form-label">Formål</div>
-                <div class="col"><input type="text" class="form-control" formControlName="purpose"></div>
             </div>
 
             <div class="row pt-3">
