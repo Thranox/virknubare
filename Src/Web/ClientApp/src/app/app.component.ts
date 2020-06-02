@@ -11,7 +11,7 @@ export class AppComponent {
   private isLoggedIn: boolean;
 
   constructor(private authService: AuthService) {
-    this.authService.isLoggedIn().then(loggedIn => {
+    this.authService.isLoggedIn().subscribe(loggedIn => {
       this.isLoggedIn = loggedIn;
     });
   }

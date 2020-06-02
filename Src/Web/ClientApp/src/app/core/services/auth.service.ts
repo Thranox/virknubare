@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {UserManager, User, UserManagerSettings} from 'oidc-client';
-import {Subject, from} from 'rxjs';
+import {Subject, from, Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,6 @@ export class AuthService {
         const stsSettings = {
             authority: environment.stsAuthorityUrl,
             client_id: environment.stsClientId,
-
             redirect_uri: `${window.location.origin}/signin-redirect-callback`,
             scope: 'openid profile roles teapi',
             response_type: 'code',
@@ -30,15 +30,17 @@ export class AuthService {
         return this.userManager.signinRedirect();
     }
 
-    isLoggedIn(): Promise<boolean> {
-        return this.userManager.getUser().then(user => {
-            const userCurrent = !!user && !user.expired;
-            if (this.user !== user) {
-                this.loginChangedSubject.next(userCurrent);
-            }
-            this.user = user;
-            return userCurrent;
-        });
+    isLoggedIn(): Observable<boolean> {
+        return this.getUser().pipe(
+            map(user => {
+                const userCurrent = !!user && !user.expired;
+                if (this.user !== user) {
+                    this.loginChangedSubject.next(userCurrent);
+                }
+                this.user = user;
+                return userCurrent;
+            })
+        );
     }
 
     completeLogin() {
@@ -49,7 +51,7 @@ export class AuthService {
         }, (error) => {
             console.log('login error, session might have expired', error);
             this.user = null;
-            this.userManager.removeUser();
+            this.logout();
         });
     }
 
