@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../core/services/auth.service";
 import {environment} from "../../../environments/environment";
 import {Observable, of} from "rxjs";
+import {FlowStep} from "../model/flow-step.model";
 
 @Injectable()
 export class TravelExpenseResource {
@@ -50,5 +51,18 @@ export class TravelExpenseResource {
 
     updateTravelExpense(travelExpense: TravelExpense): Observable<void> {
         return this._httpClient.put<void>(this.baseUrl + 'travelexpenses/' + travelExpense.id, travelExpense);
+    }
+
+    processStep(travelExpense: TravelExpense, flowStep: FlowStep) {
+        const url = this.baseUrl + 'travelexpenses/' + travelExpense.id + '/ProcessStep/' + flowStep.key;
+        console.log('Sending to url:', url);
+        console.warn('Not yet implemented');
+        return of([]);
+        // return this._httpClient.post<TravelExpenseResponse>(url, {});
+
+    }
+
+    getFlowSteps() {
+        return this._httpClient.get<any>(this.baseUrl + 'flowsteps');
     }
 }
