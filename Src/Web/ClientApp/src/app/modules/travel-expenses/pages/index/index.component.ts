@@ -12,7 +12,7 @@ import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-exp
 export class IndexComponent implements OnInit {
     travelExpenses$: Observable<TravelExpense[]>;
 
-  constructor(private travelExpenseService: MockTravelExpenseService) {}
+  constructor(private travelExpenseService: TravelExpenseService) {}
 
   ngOnInit(): void {
       this.travelExpenses$ = this.travelExpenseService.getTravelExpenses();

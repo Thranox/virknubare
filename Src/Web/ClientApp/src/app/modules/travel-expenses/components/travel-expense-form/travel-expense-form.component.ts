@@ -17,7 +17,7 @@ export class TravelExpenseFormComponent implements OnInit {
     travelExpenseFormGroup: FormGroup;
 
     constructor(
-        private travelExpenseService: MockTravelExpenseService,
+        private travelExpenseService: TravelExpenseService,
         private fb: FormBuilder,
     ) {
     }

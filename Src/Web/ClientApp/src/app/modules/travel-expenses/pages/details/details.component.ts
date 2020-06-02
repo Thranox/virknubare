@@ -15,7 +15,7 @@ export class DetailsComponent implements OnInit {
     travelExpense$: Observable<TravelExpense> = from([]);
 
     constructor(
-        private travelExpenseService: MockTravelExpenseService,
+        private travelExpenseService: TravelExpenseService,
         private activatedRoute: ActivatedRoute,
     ) {
     }
