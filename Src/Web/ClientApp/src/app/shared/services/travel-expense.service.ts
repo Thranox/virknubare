@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {TravelExpense} from "../model/travel-expense.model";
 import {TravelExpenseResource} from "../resources/travel-expense.resource";
+import {FlowStep} from "../model/flow-step.model";
 
 
 @Injectable()
@@ -25,8 +26,15 @@ export class TravelExpenseService {
         return this._travelExpenseResource.getTravelExpenseById(id);
     }
 
+    getFlowsteps(): Observable<any> {
+        return this._travelExpenseResource.getFlowSteps();
+    }
+
     updateTravelExpense(travelExpense: TravelExpense): Observable<void> {
         return this._travelExpenseResource.updateTravelExpense(travelExpense);
     }
 
+    processStep(travelExpense: TravelExpense, flowStep: FlowStep) {
+        return this._travelExpenseResource.processStep(travelExpense, flowStep);
+    }
 }

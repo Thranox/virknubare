@@ -4,4 +4,5 @@ export class FlowStep {
   key: string | null;
   fromStageText: string | null;
   fromStageId: string;
+  flowStepId: string;
 }
