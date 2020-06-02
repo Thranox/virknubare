@@ -13,6 +13,7 @@ import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-exp
 })
 export class DetailsComponent implements OnInit {
     travelExpense$: Observable<TravelExpense> = from([]);
+    travelExpenseIsMoved = false;
 
     constructor(
         private travelExpenseService: TravelExpenseService,
@@ -25,6 +26,14 @@ export class DetailsComponent implements OnInit {
             map((param) => param.get('id')),
             switchMap((id: string) => this.travelExpenseService.getTravelExpenseById(id))
         );
+    }
+
+
+    moveToFlowStep(travelExpense, flowStep) {
+        this.travelExpenseService.processStep(travelExpense, flowStep).subscribe(response => {
+            console.log('Got response from processStep:', response);
+            this.travelExpenseIsMoved = true;
+        });
     }
 
 }

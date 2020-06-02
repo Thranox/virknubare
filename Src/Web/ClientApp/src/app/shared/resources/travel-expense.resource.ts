@@ -54,11 +54,8 @@ export class TravelExpenseResource {
     }
 
     processStep(travelExpense: TravelExpense, flowStep: FlowStep) {
-        const url = this.baseUrl + 'travelexpenses/' + travelExpense.id + '/ProcessStep/' + flowStep.key;
-        console.log('Sending to url:', url);
-        console.warn('Not yet implemented');
-        return of([]);
-        // return this._httpClient.post<TravelExpenseResponse>(url, {});
+        const url = this.baseUrl + 'travelexpenses/' + travelExpense.id + '/FlowStep/' + flowStep.flowStepId;
+        return this._httpClient.post<any>(url, {});
 
     }
 
