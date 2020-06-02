@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../core/services/auth.service';
 
 @Component({
@@ -6,14 +6,17 @@ import {AuthService} from '../../core/services/auth.service';
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.scss']
 })
-export class NavMenuComponent {
+export class NavMenuComponent implements OnInit {
   isLoggedIn = false;
   isExpanded = false;
 
   constructor(private authService: AuthService) {
-    this.authService.loginChanged.subscribe(loggedIn => {
-      this.isLoggedIn = loggedIn;
-    });
+  }
+
+  ngOnInit() {
+      this.authService.loginChanged.subscribe(loggedIn => {
+          this.isLoggedIn = loggedIn;
+      });
   }
 
   toggle() {

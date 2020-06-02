@@ -8,12 +8,12 @@ import {AuthService} from "../../core/services/auth.service";
 })
 
 export class SigninRedirectCallbackComponent implements OnInit {
-  constructor(private _authService: AuthService,
-              private _router: Router) { }
+  constructor(private authService: AuthService,
+              private router: Router) { }
 
   ngOnInit() {
-    this._authService.completeLogin().then(user => {
-      this._router.navigate(['/'], { replaceUrl: true });
-    })
+    this.authService.completeLogin().then(user => {
+      this.router.navigate(['/'], { replaceUrl: true });
+    });
   }
 }

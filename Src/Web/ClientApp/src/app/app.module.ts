@@ -15,6 +15,8 @@ import {SharedModule} from './shared/shared.module';
 import localeDa from '@angular/common/locales/da';
 import localeExtraDa from '@angular/common/locales/extra/da';
 import {registerLocaleData} from '@angular/common';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { SignInComponent } from './modules/authentication/sign-in/sign-in.component';
 registerLocaleData(localeDa, 'da', localeExtraDa);
 
 dayjs.locale('da');
@@ -25,6 +27,8 @@ dayjs.locale('da');
     NavMenuComponent,
     FooterComponent,
     FetchDataComponent,
+    PageNotFoundComponent,
+    SignInComponent,
   ],
   imports: [
     BrowserModule,

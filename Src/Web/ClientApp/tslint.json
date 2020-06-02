@@ -8,6 +8,7 @@
       ]
     },
     "array-type": false,
+    "no-trailing-whitespace": false,
     "arrow-return-shorthand": true,
     "curly": true,
     "deprecation": {
