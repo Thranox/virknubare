@@ -57,7 +57,7 @@ namespace Web
                 await dbSeeder.MigrateAsync();
                 await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
-            });
+            }).Wait();
 
             app.UseCors(options =>
             {

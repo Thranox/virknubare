@@ -49,7 +49,7 @@ namespace PolAPI
 
                 await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
-            });
+            }).Wait();
 
             app.UseCors(options =>
             {
