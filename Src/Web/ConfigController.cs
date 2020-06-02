@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using API;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Web
@@ -11,27 +8,34 @@ namespace Web
     [Route("Config")]
     public class ConfigController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
-        public ConfigController(Serilog.ILogger logger)
+        public ConfigController(Serilog.ILogger logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet]
         public AngularConfig Get()
         {
-            return new AngularConfig();
+            return new AngularConfig
+            {
+                stsAuthorityUrl=_configuration.GetValue<string>("IDP_URL"),
+                apiUrl= _configuration.GetValue<string>("API_URL"),
+                clientUrl= _configuration.GetValue<string>("CLIENT_URL"),
+                stsClientId = "polangularclient"
+
+            };
         }
     }
 
     public class AngularConfig
     {
-        public string Sts = "This is sts";
+        public string stsAuthorityUrl { get; set; }
+        public string stsClientId { get; set; }
+        public string apiUrl { get; set; }
+        public string clientUrl { get; set; }
     }
 }
