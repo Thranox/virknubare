@@ -1,12 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Mail;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using Application.Services;
-using System.Runtime.InteropServices;
 
 namespace Tests.Web
 {
