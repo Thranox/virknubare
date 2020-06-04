@@ -13,6 +13,7 @@ namespace Tests.Web
     public class MailSendingTests
     {
         [Test]
+        [Explicit]
         public async Task SendEmail()
         {
             var subject = "Test";
