@@ -1,13 +1,15 @@
 {
-  "name": "app",
+  "name": "web",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 44324 --ssl --ssl-key sslcerts/localhost.key  --ssl-cert sslcerts/localhost.crt",
+    "start": "ng serve --port 44324",
     "build": "ng build",
+      "build:ssr": "ng run Web:server:dev",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+      "prod-build": "ng build --prod --build-optimizer"
   },
   "private": true,
   "dependencies": {
