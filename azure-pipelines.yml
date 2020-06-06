@@ -15,12 +15,12 @@ steps:
 
 - task: Npm@1
   inputs:
-    workingDirectory: 'Src/polangular'
+    workingDir: 'Src/polangular'
     command: install
 
 - task: Npm@1
   inputs:
-    workingDirectory: 'Src/polangular'
+    workingDir: 'Src/polangular'
     command: custom
     customCommand: run build-prod
 
