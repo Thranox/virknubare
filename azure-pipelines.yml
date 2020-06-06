@@ -24,14 +24,9 @@ steps:
     command: custom
     customCommand: run build-prod
 
-- task: CopyFiles@2
-  inputs:
-    Contents: 'Src/polangular/dist/**' # Pull the build directory 
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
 - task: PublishBuildArtifacts@1
   inputs: 
-    pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
+    pathtoPublish: 'Src/polangular/dist' # dist or build files
     ArtifactName: 'www' # output artifact named www
 
 
