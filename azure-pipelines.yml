@@ -60,7 +60,7 @@ steps:
 - script: |
     npm install
     npm run build-prod
- workingDirectory: polangular
+ workingDirectory: 'src/polangular'
  displayName: 'npm install and build prod'
 
 
