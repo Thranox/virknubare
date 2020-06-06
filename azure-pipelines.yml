@@ -57,12 +57,12 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-  - task: Npm@1
+- task: Npm@1
   inputs:
     workingDirectory: 'src/polangular'
     command: install
 
-  - task: Npm@1
+- task: Npm@1
   inputs:
     workingDirectory: 'src/polangular'
     command: custom run build-prod
