@@ -58,9 +58,10 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install
-    npm run build-prod
-  displayName: 'npm install and build prod'
+ npm install
+ npm run build-prod
+ workingDirectory: polangular
+ displayName: 'npm install and build prod'
 
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
