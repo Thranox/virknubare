@@ -8,7 +8,7 @@ using IdentityServer4;
 using IdentityServer4.Models;
 using SharedWouldBeNugets;
 
-namespace IdentityServerAspNetIdentit
+namespace IDP
 {
     public static class Config
     {
@@ -62,7 +62,12 @@ namespace IdentityServerAspNetIdentit
                         "http://localhost:44324/signin-redirect-callback",
                         "http://localhost:4200/signin-redirect-callback",
                         "http://localhost:50627/signin-redirect-callback",
-                        
+
+                        "https://andersathome.dk/signin-redirect-callback",
+                        "https://dev.politikerafregning.dk/signin-redirect-callback",
+                        "https://politikerafregning.dk/signin-redirect-callback",
+
+
                         ImproventoGlobals.LocalKataRedirect
                     },
                     PostLogoutRedirectUris = new List<string>
@@ -71,6 +76,10 @@ namespace IdentityServerAspNetIdentit
                         "http://localhost:44324/signout-redirect-callback",
                         "http://localhost:4200/signout-redirect-callback",
                         "http://localhost:50627/signout-redirect-callback",
+
+                        "https://andersathome.dk/signout-redirect-callback",
+                        "https://dev.politikerafregning.dk/signout-redirect-callback",
+                        "https://politikerafregning.dk/signout-redirect-callback",
 
                         ImproventoGlobals.LocalKataRedirect
                     },
@@ -86,7 +95,11 @@ namespace IdentityServerAspNetIdentit
                         "https://localhost:44324",
                         "http://localhost:44324",
                         "http://localhost:4200",
-                        "http://localhost:50627"
+                        "http://localhost:50627",
+
+                        "https://andersathome.dk",
+                        "https://dev.politikerafregning.dk",
+                        "https://politikerafregning.dk"
                     },
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 15 * 60 * 60 // 15 hrs
