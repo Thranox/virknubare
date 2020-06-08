@@ -21,8 +21,7 @@ const routes: Routes = [
         loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule),
         canActivate: [UserSignedInGuard]
     },
-    {path: '404', component: PageNotFoundComponent},
-    {path: '**', redirectTo: '/404'}
+    {path: '404', component: PageNotFoundComponent}
 ];
 
 @NgModule({
