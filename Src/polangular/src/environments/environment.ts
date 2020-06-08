@@ -2,8 +2,19 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  production: false
+import {EnvironmentInterface} from './environment-interface';
+
+export const environment: EnvironmentInterface = {
+    production: false,
+
+    // stsAuthorityUrl: 'https://dev.politikerafregning.dk/IDP/',
+    // apiUrl: 'https://dev.politikerafregning.dk/PolAPI/',
+    // apiUrl: 'https://dev.politikerafregning.dk/APIOpen/',
+
+    stsAuthorityUrl: 'https://andersathome.dk/IDP/',
+    apiUrl: 'https://andersathome.dk/PolAPI/',
+    // apiUrl: 'https://cors-anywhere.herokuapp.com/https://andersathome.dk/PolAPI/',
+    stsClientId: 'polangularclient'
 };
 
 /*
@@ -13,4 +24,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+import 'zone.js/dist/zone-error';  // Included with Angular CLI.
