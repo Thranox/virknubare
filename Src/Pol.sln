@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{DA925968-1D01-413B-A418-FFF970A9ABD6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{839F45F2-9A8A-4B5E-A3F0-EB504695F542}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
@@ -32,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIOPEN", "APIOPEN\APIOPEN.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolAPI", "PolAPI\PolAPI.csproj", "{4BDB498D-9B60-4ED2-B74E-F1EFD28A8628}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Messaging", "Infrastructure.Messaging\Infrastructure.Messaging.csproj", "{B1580232-0C68-4512-9B32-EB22582C45DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Messaging", "Infrastructure.Messaging\Infrastructure.Messaging.csproj", "{B1580232-0C68-4512-9B32-EB22582C45DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata", "Kata\Kata.csproj", "{E4E22B9F-555A-491B-B70C-658D175DA4A1}"
 EndProject
@@ -42,10 +40,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DA925968-1D01-413B-A418-FFF970A9ABD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA925968-1D01-413B-A418-FFF970A9ABD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA925968-1D01-413B-A418-FFF970A9ABD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA925968-1D01-413B-A418-FFF970A9ABD6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{965175CF-1278-431A-8CED-B011DE7633FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{965175CF-1278-431A-8CED-B011DE7633FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{965175CF-1278-431A-8CED-B011DE7633FD}.Release|Any CPU.ActiveCfg = Release|Any CPU

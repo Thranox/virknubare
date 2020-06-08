@@ -1,18 +1,11 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "cli": {
-    "packageManager": "yarn"
-  },
   "newProjectRoot": "projects",
   "projects": {
-    "Web": {
+    "polangular": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -20,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist",
+            "outputPath": "dist/polangular",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -31,7 +24,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.css"
             ],
             "scripts": []
           },
@@ -69,18 +62,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "Web:build"
+            "browserTarget": "polangular:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "Web:build:production"
+              "browserTarget": "polangular:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Web:build"
+            "browserTarget": "polangular:build"
           }
         },
         "test": {
@@ -95,7 +88,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.css"
             ],
             "scripts": []
           }
@@ -117,42 +110,19 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "Web:serve"
+            "devServerTarget": "polangular:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "Web:serve:production"
+              "devServerTarget": "polangular:serve:production"
             }
           }
-        },
-      "server": {
-          "builder": "@angular-devkit/build-angular:server",
-          "options": {
-              "outputPath": "dist-server",
-              "main": "src/main.ts",
-              "tsConfig": "src/tsconfig.server.json"
-          },
-          "configurations": {
-              "dev": {
-                  "optimization": true,
-                  "outputHashing": "all",
-                  "sourceMap": false,
-                  "namedChunks": false,
-                  "extractLicenses": true,
-                  "vendorChunk": true
-              },
-              "production": {
-                  "optimization": true,
-                  "outputHashing": "all",
-                  "sourceMap": false,
-                  "namedChunks": false,
-                  "extractLicenses": true,
-                  "vendorChunk": false
-              }
-          }
+        }
       }
     }
-    }
   },
-  "defaultProject": "Web"
+  "defaultProject": "polangular",
+  "cli": {
+    "analytics": "d797d61f-2162-4084-ad06-489fe2b761ff"
+  }
 }
