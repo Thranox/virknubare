@@ -16,7 +16,7 @@ steps:
 - task: Npm@1
   inputs:
     workingDir: 'Src/polangular'
-    command: install
+    command: ci
 
 - task: Npm@1
   inputs:
