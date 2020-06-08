@@ -22,9 +22,7 @@ const routes: Routes = [
         canActivate: [UserSignedInGuard]
     },
     {path: '404', component: PageNotFoundComponent},
-    {path: '**', redirectTo: '/404'},
-
-    { matcher: PathExcluding  },
+    {path: '**', redirectTo: '/404'}
 ];
 
 @NgModule({
