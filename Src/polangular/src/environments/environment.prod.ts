@@ -4,8 +4,8 @@ export const environment = {
     // apiUrl: 'https://dev.politikerafregning.dk/PolAPI/',
     // apiUrl: 'https://dev.politikerafregning.dk/APIOpen/',
 
-    stsAuthorityUrl: 'https://andersathome.dk/IDP/',
-    apiUrl: 'https://andersathome.dk/PolAPI/',
+    stsAuthorityUrl: '/IDP/',
+    apiUrl: '/PolAPI/',
     // apiUrl: 'https://cors-anywhere.herokuapp.com/https://andersathome.dk/PolAPI/',
     stsClientId: 'polangularclient'
 };
