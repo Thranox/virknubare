@@ -8,9 +8,9 @@ namespace Application.Dtos
     {
         public override IEnumerable<object> GetEqualityComponents()
         {
-            yield return CustomerId;
+            yield return CustomerIds;
         }
 
-        public Guid CustomerId { get; set; }
+        public IEnumerable<Guid> CustomerIds { get; set; }
     }
 }

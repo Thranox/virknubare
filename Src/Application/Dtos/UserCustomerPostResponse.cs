@@ -6,7 +6,7 @@ namespace Application.Dtos
 {
     public class UserCustomerPostResponse : ValueObject
     {
-        public Guid Id { get; set; }
+        public IEnumerable<Guid> Ids { get; set; }
 
         public override IEnumerable<object> GetEqualityComponents()
         {

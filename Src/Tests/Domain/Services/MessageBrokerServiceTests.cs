@@ -25,7 +25,7 @@ namespace Tests.Domain.Services
             {
                 var userEntityAnders = new UserEntity("Anders", Guid.NewGuid().ToString());
                 var receivingUserEntities = new[] {userEntityAnders};
-                var customerEntity = testContext.GetDummyCustomer();
+                var customerEntity = testContext.GetDummyCustomer1();
                 var stageEntity = testContext.GetStages().Single(x=>x.Value==TravelExpenseStage.Initial);
                 var travelExpenseEntity = new TravelExpenseEntity("Description", userEntityAnders, customerEntity, stageEntity);
 

@@ -24,7 +24,7 @@ namespace Tests.Flows
             using (var testContext = new IntegrationTestContext())
             {
                 // Arrange
-                var customerId = testContext.GetDummyCustomerId();
+                var customerId = testContext.GetDummyCustomer1Id();
                 var travelExpenseController = testContext.ServiceProvider.GetRequiredService<TravelExpenseController>();
                 var flowStepController = testContext.ServiceProvider.GetRequiredService<FlowStepController>();
 

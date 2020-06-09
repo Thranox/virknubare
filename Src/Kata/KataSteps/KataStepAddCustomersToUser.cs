@@ -35,8 +35,7 @@ namespace Kata.KataSteps
                 )
                 .AddJsonBody(new UserCustomerPostDto
                 {
-                    CustomerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int) UserStatus.Initial).CustomerId
+                    CustomerIds = ClientContext.UserInfoGetResponse.UserCustomerInfo.Select(x=>x.CustomerId).ToArray()
                 });
             var userCustomerPostResponse = await restClient.PostAsync<UserCustomerPostResponse>(restRequest);
             ClientContext.UserCustomerPostResponse = userCustomerPostResponse;
