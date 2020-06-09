@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {Routes, RouterModule, UrlSegment} from '@angular/router';
 import {SigninRedirectCallbackComponent} from './modules/authentication/signin-redirect-callback.component';
 import {SignoutRedirectCallbackComponent} from './modules/authentication/signout-redirect-callback.component';
 import {UnauthorizedComponent} from './modules/authentication/unauthorized.component';
@@ -21,8 +21,7 @@ const routes: Routes = [
         loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule),
         canActivate: [UserSignedInGuard]
     },
-    {path: '404', component: PageNotFoundComponent},
-    {path: '**', redirectTo: '/404'}
+    {path: '404', component: PageNotFoundComponent}
 ];
 
 @NgModule({
@@ -30,4 +29,7 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 export class AppRoutingModule {
+}
+export function PathExcluding(url: UrlSegment[]): any {
+    return url.length === 1 && !(url[0].path.includes('url-Path-to-Exlude')) ? ({consumed: url}) : undefined;
 }

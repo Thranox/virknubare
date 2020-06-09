@@ -70,7 +70,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "polangular:build:production"
+              "browserTarget": "polangular:build:production",
+              "proxyConfig": "src/proxy.config.json"
             }
           }
         },
