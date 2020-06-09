@@ -1,3 +1,4 @@
+using System;
 using API.Shared;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -57,7 +58,7 @@ namespace Web
                 await dbSeeder.MigrateAsync();
                 await dbSeeder.SeedAsync();
                 logger.Information("Done Db Migration and Seeding...");
-            });
+            }).Wait();
 
             app.UseCors(options =>
             {
@@ -99,7 +100,7 @@ namespace Web
                 // see https://go.microsoft.com/fwlink/?linkid=864501
 
                 spa.Options.SourcePath = "ClientApp";
-
+                spa.Options.StartupTimeout = TimeSpan.FromSeconds(10);
                 if (env.IsDevelopment()) spa.UseAngularCliServer("start");
             });
 

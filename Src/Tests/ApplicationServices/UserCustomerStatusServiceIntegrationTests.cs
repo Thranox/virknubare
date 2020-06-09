@@ -27,12 +27,34 @@ namespace Tests.ApplicationServices
 
                 // Act
                 var actual = await sut.PutAsync(testContext.GetPolApiContext(TestData.DummyAdminSubDennis), userEntity
-                    .Id,testContext.GetDummyCustomerId(),(int)UserStatus.UserAdministrator);
+                    .Id, testContext.GetDummyCustomer1Id(), (int)UserStatus.UserAdministrator);
 
                 // Assert
                 var userAfterChange = testContext.GetUnitOfWork().Repository.List(new UserBySub(userEntity.Subject)).Single();
-                var customerUserPermissionEntityAfterChange = userAfterChange.CustomerUserPermissions.Single(x=>x.CustomerId==testContext.GetDummyCustomerId());
-                Assert.That(customerUserPermissionEntityAfterChange.UserStatus==UserStatus.UserAdministrator);
+                var customerUserPermissionEntityAfterChange = userAfterChange.CustomerUserPermissions.Single(x => x.CustomerId == testContext.GetDummyCustomer1Id());
+                Assert.That(customerUserPermissionEntityAfterChange.UserStatus == UserStatus.UserAdministrator);
+            }
+        }
+
+        [Test]
+        public async Task CreateCustomerStatusAsync_ValidInput_UpdatesUserRelation()
+        {
+            // Arrange
+            using (var testContext = new IntegrationTestContext())
+            {
+                var sut = testContext.ServiceProvider.GetService<IUserCustomerStatusService>();
+
+                var userEntity = testContext.GetUnitOfWork().Repository
+                    .List(new UserBySub(TestData.DummyPolSubAlice))
+                    .Single();
+
+                // Act
+                var actual = await sut.CreateCustomerStatusAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice),new []{ testContext.GetDummyCustomer2Id() } );
+
+                // Assert
+                var userAfterChange = testContext.GetUnitOfWork().Repository.List(new UserBySub(userEntity.Subject)).Single();
+                var customerUserPermissionEntityAfterChange = userAfterChange.CustomerUserPermissions.Single(x => x.CustomerId == testContext.GetDummyCustomer2Id());
+                Assert.That(customerUserPermissionEntityAfterChange.UserStatus == UserStatus.Initial);
             }
         }
     }

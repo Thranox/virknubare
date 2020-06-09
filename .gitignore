@@ -171,8 +171,8 @@ publish/
 *.pubxml
 *.publishproj
 
-# Microsoft Azure Web App publish settings. Comment the next line if you want to
-# checkin your Azure Web App publish settings, but sensitive information contained
+# Microsoft Azure Web ClientApp publish settings. Comment the next line if you want to
+# checkin your Azure Web ClientApp publish settings, but sensitive information contained
 # in these scripts will be unencrypted
 PublishScripts/
 
@@ -328,3 +328,4 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 Src/IDP/appsettings.Development.JUULSERVER2019A.json
+.DS_Store

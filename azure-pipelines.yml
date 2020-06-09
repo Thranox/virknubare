@@ -1,4 +1,4 @@
-# Run on master, develop and all feature-branches. More?
+# Run on master, develop and all feature-branches.
 
 trigger:
 - master
@@ -8,10 +8,29 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  inputs:
+    workingDir: 'Src/polangular'
+    command: install
+
+- task: Npm@1
+  inputs:
+    workingDir: 'Src/polangular'
+    command: custom
+    customCommand: run build-prod
+
+- task: PublishBuildArtifacts@1
+  inputs: 
+    pathtoPublish: 'Src/polangular/dist' # dist or build files
+    ArtifactName: 'www' # output artifact named www
+
+
+
 
 # Build the .Net Core projects
 - task: DotNetCoreCLI@2
@@ -27,14 +46,6 @@ steps:
     command: test
     projects: '**/Tests/*.csproj'
     publishTestResults: false
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: publish
-    publishWebProjects: false
-    projects: '**/Web.csproj'
-    arguments: '--output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: True
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -62,6 +73,8 @@ steps:
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
+
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'politikerafregning'
+

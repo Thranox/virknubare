@@ -39,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.Shared\API.Shared.csproj" />
-    <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
