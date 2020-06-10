@@ -55,13 +55,16 @@ namespace Domain.Entities
 
         public void SetUserStatus(UserEntity userEntity, UserStatus userStatus)
         {
-            var any = CustomerUserPermissions.SingleOrDefault(x => x.UserId == userEntity.Id);
+            var customerUserPermissionEntity = CustomerUserPermissions.SingleOrDefault(x => x.UserId == userEntity.Id);
 
-            if (any == null)
-                CustomerUserPermissions.Add(new CustomerUserPermissionEntity
-                    {User = userEntity, UserStatus = userStatus});
+            if (customerUserPermissionEntity == null)
+            {
+                customerUserPermissionEntity = new CustomerUserPermissionEntity
+                    {User = userEntity, UserStatus = userStatus};
+                CustomerUserPermissions.Add(customerUserPermissionEntity);
+            }
             else
-                any.UserStatus = userStatus;
+                customerUserPermissionEntity.UserStatus = userStatus;
         }
 
         public void AddInvitation(string email, IMessageValueEnricher[] messageValueEnrichers)

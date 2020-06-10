@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Shared.Services;
 using Application.Dtos;
@@ -30,6 +31,18 @@ namespace API.Shared.Controllers
             var flowStepGetResponse = await _userCustomerStatusService.PutAsync(polApiContext, userId, customerId, userStatus);
 
             return Ok(flowStepGetResponse);
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<ActionResult<UserCustomerPostResponse>> Post(UserCustomerPostDto userCustomerPostDto)
+        {
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
+
+            var ids = await _userCustomerStatusService
+                .CreateCustomerStatusAsync(polApiContext, userCustomerPostDto.CustomerIds.ToArray());
+
+            return Ok(ids);
         }
     }
 }

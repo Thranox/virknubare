@@ -20,7 +20,7 @@ namespace Tests.ApplicationServices
                 var sut = testContext.ServiceProvider.GetService<ICustomerUserService>();
 
                 // Act
-                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), testContext.GetDummyCustomerId());
+                var actual = await sut.GetAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), testContext.GetDummyCustomer1Id());
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);
@@ -40,7 +40,7 @@ namespace Tests.ApplicationServices
 
                 // Act
                 var actual = await sut.CreateInvitationsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice),
-                    testContext.GetDummyCustomerId(), customerInvitationsPostDto);
+                    testContext.GetDummyCustomer1Id(), customerInvitationsPostDto);
 
                 // Assert
                 Assert.That(actual, Is.Not.Null);

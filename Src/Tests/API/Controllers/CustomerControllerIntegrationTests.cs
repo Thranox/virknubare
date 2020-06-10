@@ -35,7 +35,7 @@ namespace Tests.API.Controllers
                 var sut = GetSut(testContext);
 
                 // Act
-                var actual = await sut.GetCustomerUsers(testContext.GetDummyCustomerId());
+                var actual = await sut.GetCustomerUsers(testContext.GetDummyCustomer1Id());
 
                 // Assert
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
@@ -58,7 +58,7 @@ namespace Tests.API.Controllers
                 var sut = GetSut(testContext);
 
                 // Act
-                var actual = await sut.PostInvitations(testContext.GetDummyCustomerId(), customerInvitationsPostDto);
+                var actual = await sut.PostInvitations(testContext.GetDummyCustomer1Id(), customerInvitationsPostDto);
 
                 // Assert
                 Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
