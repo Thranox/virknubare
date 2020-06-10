@@ -1,5 +1,7 @@
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Threading.Tasks;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using API.Shared.Services;
@@ -21,10 +23,12 @@ using Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -78,7 +82,8 @@ namespace API.Shared
                         var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
                             .RequireAuthenticatedUser()
                             .Build();
-                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
+                        //TODO reenable
+                        //options.Filters.Add(new WrapperFilter( new AuthorizeFilter(policyRequiringAuthenticatedUser),StartupHelper.CreateLogger(configuration,componentName)));
                     }
                 })
                 .AddApplicationPart(assembly);
@@ -155,5 +160,31 @@ namespace API.Shared
             services.AddScoped<IHandle<TravelExpenseChangedStateDomainEvent>, TravelExpenseChangedStateDomainEventHandler>();
             services.AddScoped<IHandle<InvitationAddedDomainEvent>, InvitationAddedDomainEventEventHandler>();
         }
+    }
+
+    public class WrapperFilter : IAsyncAuthorizationFilter, IFilterMetadata, IFilterFactory
+    {
+        private readonly AuthorizeFilter _authorizeFilter;
+        private readonly ILogger _logger;
+
+        public WrapperFilter(AuthorizeFilter authorizeFilter, ILogger logger)
+        {
+            _authorizeFilter = authorizeFilter;
+            _logger = logger;
+        }
+
+        public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+        {
+            _logger.Debug("Result: "+JsonConvert.SerializeObject( context.Result));
+            await _authorizeFilter.OnAuthorizationAsync(context);
+        }
+
+
+        public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
+        public bool IsReusable { get; }
     }
 }
