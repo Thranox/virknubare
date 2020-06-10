@@ -7,18 +7,28 @@ using Domain.Interfaces;
 using Domain.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Serilog;
 using SharedWouldBeNugets;
 
 namespace API.Shared.Services
 {
     public class SubManagementService : ISubManagementService
     {
-        private static PolSystem[] Systems = new[] { new PolSystem("https://localhost:44348/", "https://localhost:44324/"), };
-        private readonly IUnitOfWork _unitOfWork;
+        private static PolSystem[] Systems = new[]
+        {
+            new PolSystem("https://localhost:44348/", "https://localhost:44324/"), 
+            new PolSystem("https://api.andersathome.dk/polapi/", "https://andersathome.dk/"),
+            new PolSystem("https://apidev.politikerafregning.dk/polapi/", "https://dev.politikerafregning.dk/"),
+            new PolSystem("https://api.politikerafregning.dk/polapi/", "https://politikerafregning.dk/"),
+        };
 
-        public SubManagementService(IUnitOfWork unitOfWork)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
+
+        public SubManagementService(IUnitOfWork unitOfWork, ILogger logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<PolApiContext> GetPolApiContext(HttpContext httpContext)
@@ -29,7 +39,13 @@ namespace API.Shared.Services
 
             var userIdentity =httpContext.User.Identity;
             var claims = (userIdentity as ClaimsIdentity).Claims.ToArray();
-            var sub = claims.Single(x => x.Type == ImproventoGlobals.ImproventoSubClaimName).Value;
+            var improventoSubClaim = claims.SingleOrDefault(x => x.Type == ImproventoGlobals.ImproventoSubClaimName);
+            if (improventoSubClaim == null)
+            {
+                _logger.Error("User has no improvento sub claim");
+            }
+
+            var sub = improventoSubClaim.Value;
 
             var userEntity = _unitOfWork.Repository.List(new UserBySub(sub)).SingleOrDefault();
             if (userEntity == null)
