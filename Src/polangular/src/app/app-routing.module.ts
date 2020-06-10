@@ -21,7 +21,8 @@ const routes: Routes = [
         loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule),
         canActivate: [UserSignedInGuard]
     },
-    {path: '404', component: PageNotFoundComponent}
+    {path: '404', component: PageNotFoundComponent},
+    {path: '**', redirectTo: '/404'},
 ];
 
 @NgModule({
@@ -29,7 +30,4 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 export class AppRoutingModule {
-}
-export function PathExcluding(url: UrlSegment[]): any {
-    return url.length === 1 && !(url[0].path.includes('url-Path-to-Exlude')) ? ({consumed: url}) : undefined;
 }
