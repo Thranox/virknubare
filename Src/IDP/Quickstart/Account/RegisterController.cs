@@ -131,6 +131,10 @@ namespace IdentityServer4.Quickstart.UI
 
                     Log.Debug(model.UserName + " created");
 
+                    _emailFactory.CreateConfirmationEmail()
+
+                    Log.Debug("Email send to "+model.UserName );
+
                     return View("Success");
                 }
 
