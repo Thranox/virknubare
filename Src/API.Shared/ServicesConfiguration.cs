@@ -97,27 +97,26 @@ namespace API.Shared
             var assembly = typeof(TravelExpenseController).Assembly;
             //services.AddMvc(x =>
             //{
-                
+
             //})
             //    .AddApplicationPart(assembly);
-            //services.AddControllersWithViews(options =>
-            //    {
-            //        // Include handling of Domain Exceptions
-            //        options.Filters.Add<HttpResponseExceptionFilter>();
-            //        // Log all entries and exits of controller methods.
-            //        options.Filters.Add<MethodLoggingActionFilter>();
+            services.AddControllersWithViews(options =>
+                {
+                    // Include handling of Domain Exceptions
+                    options.Filters.Add<HttpResponseExceptionFilter>();
+                    // Log all entries and exits of controller methods.
+                    options.Filters.Add<MethodLoggingActionFilter>();
 
-            //        // If desired, be set up a global Authorize filter
-            //        if (enforceAuthenticated)
-            //        {
-            //            var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-            //                .RequireAuthenticatedUser()
-            //                .Build();
-            //            //TODO reenable
-            //            //options.Filters.Add(new WrapperFilter( new AuthorizeFilter(policyRequiringAuthenticatedUser),StartupHelper.CreateLogger(configuration,componentName)));
-            //        }
-            //    })
-            //    .AddApplicationPart(assembly);
+                    // If desired, be set up a global Authorize filter
+                    if (enforceAuthenticated)
+                    {
+                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
+                            .RequireAuthenticatedUser()
+                            .Build();
+                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
+                    }
+                })
+                .AddApplicationPart(assembly);
 
             services.AddSwaggerGen(x =>
             {
@@ -191,31 +190,5 @@ namespace API.Shared
             services.AddScoped<IHandle<TravelExpenseChangedStateDomainEvent>, TravelExpenseChangedStateDomainEventHandler>();
             services.AddScoped<IHandle<InvitationAddedDomainEvent>, InvitationAddedDomainEventEventHandler>();
         }
-    }
-
-    public class WrapperFilter : IAsyncAuthorizationFilter, IFilterMetadata, IFilterFactory
-    {
-        private readonly AuthorizeFilter _authorizeFilter;
-        private readonly ILogger _logger;
-
-        public WrapperFilter(AuthorizeFilter authorizeFilter, ILogger logger)
-        {
-            _authorizeFilter = authorizeFilter;
-            _logger = logger;
-        }
-
-        public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
-        {
-            _logger.Debug("Result: "+JsonConvert.SerializeObject( context.Result));
-            await _authorizeFilter.OnAuthorizationAsync(context);
-        }
-
-
-        public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
-
-        public bool IsReusable { get; }
     }
 }
