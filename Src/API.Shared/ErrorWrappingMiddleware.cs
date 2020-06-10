@@ -20,7 +20,12 @@ namespace API.Shared
         {
             try
             {
-                logger.Debug("About to execute: " + context.Request.Host.Value + context.Request.Path.Value);
+                var isNonProduction = context.Request.Host.Host.ToLower().Contains("localhost") ||
+                                      context.Request.Host.Host.ToLower().Contains("andersathome.dk")||
+                                      context.Request.Host.Host.ToLower().Contains("dev.politikerafregning.dk");
+
+                logger.Debug("About to execute: " + context.Request.Host.Value + context.Request.Path.Value+
+                              (isNonProduction? "\n"+context.Request.Headers["Authorization"]:""));
                 await _next.Invoke(context);
             }
             catch (Exception ex)
