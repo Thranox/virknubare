@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -119,7 +120,8 @@ namespace IdentityServer4.Quickstart.UI
 
                     var enumerable = new List<Claim>()
                     {
-                        { new Claim(ClaimTypes.Email, model.Email)}
+                        new Claim(JwtClaimTypes.Email, model.Email),
+                        new Claim(JwtClaimTypes.EmailVerified, "false", ClaimValueTypes.Boolean),
                     };
                     result = _userManager
                         .AddClaimsAsync(user, enumerable)
@@ -128,11 +130,12 @@ namespace IdentityServer4.Quickstart.UI
                     if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
                     Log.Debug(model.UserName + " created");
+
+                    return View("Success");
                 }
-                else
-                {
-                    Log.Debug(model.UserName + " already exists");
-                }
+
+                Log.Debug(model.UserName + " already exists");
+                return View("UserAlreadyExisted");
             }
 
             // something went wrong, show form with error
