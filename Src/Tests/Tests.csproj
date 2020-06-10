@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.Shared\API.Shared.csproj" />
+    <ProjectReference Include="..\PolAPI\PolAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
