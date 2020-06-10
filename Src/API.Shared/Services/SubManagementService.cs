@@ -7,6 +7,7 @@ using Domain.Interfaces;
 using Domain.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Newtonsoft.Json;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -36,9 +37,13 @@ namespace API.Shared.Services
             var fullUrl = UriHelper.GetDisplayUrl(httpContext.Request);
 
             var system = Systems.FirstOrDefault(x => fullUrl.Contains(x.ApiUrl));
-
+            _logger.Debug("System: {@system}" , system);
+            _logger.Debug("HttpContextUser: {httpContextUser}", JsonConvert.SerializeObject( httpContext.User?.Identity?.Name) );
+            
             var userIdentity =httpContext.User.Identity;
             var claims = (userIdentity as ClaimsIdentity).Claims.ToArray();
+            _logger.Debug("Claims count: {ClaimsCount}", claims.Length);
+
             var improventoSubClaim = claims.SingleOrDefault(x => x.Type == ImproventoGlobals.ImproventoSubClaimName);
             if (improventoSubClaim == null)
             {
