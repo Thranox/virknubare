@@ -71,11 +71,11 @@ namespace API.Shared
             {
                 jwtOptions.Authority = configuration.GetValue<string>("IDP_URL");
                 jwtOptions.Events = new JwtBearerEvents();
-                jwtOptions.TokenValidationParameters.ValidateTokenReplay = true;
-                jwtOptions.TokenValidationParameters.ValidateIssuer = true;
-                jwtOptions.TokenValidationParameters.ValidateAudience = true;
-                jwtOptions.TokenValidationParameters.ValidateLifetime = true;
-                jwtOptions.TokenValidationParameters.ValidateIssuerSigningKey = true;
+                jwtOptions.TokenValidationParameters.ValidateTokenReplay = false;
+                jwtOptions.TokenValidationParameters.ValidateIssuer = false;
+                jwtOptions.TokenValidationParameters.ValidateAudience = false;
+                jwtOptions.TokenValidationParameters.ValidateLifetime = false;
+                jwtOptions.TokenValidationParameters.ValidateIssuerSigningKey = false;
                 jwtOptions.TokenValidationParameters.ValidAudiences = new []{"teapi"};
                 // if you want to debug, or just understand the JwtBearer events, // uncomment the following line of code.
                 // jwtOptions.Events = JwtBearerMiddlewareDiagnostics.Subscribe(jwtOptions.Events);
