@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using API.Shared.Services;
 using Application.Dtos;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Shared.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("travelexpenses")]
     public class TravelExpenseController : ControllerBase

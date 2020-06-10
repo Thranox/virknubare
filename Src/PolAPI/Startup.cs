@@ -1,3 +1,4 @@
+using System.Linq;
 using API.Shared;
 using Domain.Interfaces;
 using Infrastructure.Data;
@@ -77,7 +78,7 @@ namespace PolAPI
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version"));
+            logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version")+"\n"+string.Join("\n", _configuration.AsEnumerable(true).Select(x=>x.Key +"="+x.Value)));
         }
     }
 }
