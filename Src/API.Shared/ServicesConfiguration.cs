@@ -15,6 +15,7 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
+using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
@@ -57,31 +58,43 @@ namespace API.Shared
             services.AddScoped<MethodLoggingActionFilter>();
             services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
 
-            //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-            //    .AddIdentityServerAuthentication(options =>
-            //    {
-            //        options.Authority = configuration.GetValue<string>("IDP_URL");
-            //        options.ApiName = "teapi";
-            //        options.RequireHttpsMetadata = false;
-            //        options.ApiSecret = "secret";
-                   
-            //        Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
-            //    });
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtOptions =>
-            {
-                jwtOptions.Authority = configuration.GetValue<string>("IDP_URL");
-                jwtOptions.Events = new JwtBearerEvents();
-                jwtOptions.TokenValidationParameters.ValidateTokenReplay = false;
-                jwtOptions.TokenValidationParameters.ValidateIssuer = false;
-                jwtOptions.TokenValidationParameters.ValidateAudience = false;
-                jwtOptions.TokenValidationParameters.ValidateLifetime = false;
-                jwtOptions.TokenValidationParameters.ValidateIssuerSigningKey = false;
-                jwtOptions.TokenValidationParameters.ValidAudiences = new []{"teapi"};
-                // if you want to debug, or just understand the JwtBearer events, // uncomment the following line of code.
-                // jwtOptions.Events = JwtBearerMiddlewareDiagnostics.Subscribe(jwtOptions.Events);
-            });
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                //.AddJwtBearer(con=>
+                //{
+                //    con.TokenValidationParameters.RequireAudience = false;
+                //    con.TokenValidationParameters.RequireSignedTokens= false;
+                //    con.TokenValidationParameters.RequireExpirationTime = false;
+                //    con.TokenValidationParameters.ValidateActor = false;
+                //    con.TokenValidationParameters.ValidateAudience = false;
+                //    con.TokenValidationParameters.ValidateIssuer = false;
+                //    con.TokenValidationParameters.ValidateIssuerSigningKey = false;
+                //    con.TokenValidationParameters.ValidateLifetime = false;
+                //    con.TokenValidationParameters.ValidateTokenReplay = false;
+                //})
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = configuration.GetValue<string>("IDP_URL");
+                    options.ApiName = "teapi";
+                    options.RequireHttpsMetadata = false;
+                    options.SupportedTokens = SupportedTokens.Jwt;
+                    Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+                });
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtOptions =>
+            //{
+            //    jwtOptions.Authority = configuration.GetValue<string>("IDP_URL");
+            //    jwtOptions.Events = new JwtBearerEvents();
+            //    jwtOptions.TokenValidationParameters.ValidateTokenReplay = false;
+            //    jwtOptions.TokenValidationParameters.ValidateIssuer = false;
+            //    jwtOptions.TokenValidationParameters.ValidateAudience = false;
+            //    jwtOptions.TokenValidationParameters.ValidateLifetime = false;
+            //    jwtOptions.TokenValidationParameters.ValidateIssuerSigningKey = false;
+            //    jwtOptions.TokenValidationParameters.ValidAudiences = new []{"teapi"};
+            //    // if you want to debug, or just understand the JwtBearer events,
+            //    // uncomment the following line of code.
+            //    // jwtOptions.Events = JwtBearerMiddlewareDiagnostics.Subscribe(jwtOptions.Events);
+            //});
 
-                var assembly = typeof(TravelExpenseController).Assembly;
+            var assembly = typeof(TravelExpenseController).Assembly;
             //services.AddMvc(x =>
             //{
                 
