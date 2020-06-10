@@ -69,24 +69,29 @@ namespace API.Shared
                 });
 
             var assembly = typeof(TravelExpenseController).Assembly;
-            services.AddControllersWithViews(options =>
-                {
-                    // Include handling of Domain Exceptions
-                    options.Filters.Add<HttpResponseExceptionFilter>();
-                    // Log all entries and exits of controller methods.
-                    options.Filters.Add<MethodLoggingActionFilter>();
+            //services.AddMvc(x =>
+            //{
+                
+            //})
+            //    .AddApplicationPart(assembly);
+            //services.AddControllersWithViews(options =>
+            //    {
+            //        // Include handling of Domain Exceptions
+            //        options.Filters.Add<HttpResponseExceptionFilter>();
+            //        // Log all entries and exits of controller methods.
+            //        options.Filters.Add<MethodLoggingActionFilter>();
 
-                    // If desired, be set up a global Authorize filter
-                    if (enforceAuthenticated)
-                    {
-                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        //TODO reenable
-                        //options.Filters.Add(new WrapperFilter( new AuthorizeFilter(policyRequiringAuthenticatedUser),StartupHelper.CreateLogger(configuration,componentName)));
-                    }
-                })
-                .AddApplicationPart(assembly);
+            //        // If desired, be set up a global Authorize filter
+            //        if (enforceAuthenticated)
+            //        {
+            //            var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
+            //                .RequireAuthenticatedUser()
+            //                .Build();
+            //            //TODO reenable
+            //            //options.Filters.Add(new WrapperFilter( new AuthorizeFilter(policyRequiringAuthenticatedUser),StartupHelper.CreateLogger(configuration,componentName)));
+            //        }
+            //    })
+            //    .AddApplicationPart(assembly);
 
             services.AddSwaggerGen(x =>
             {
