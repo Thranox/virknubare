@@ -94,29 +94,6 @@ namespace API.Shared
             //    // jwtOptions.Events = JwtBearerMiddlewareDiagnostics.Subscribe(jwtOptions.Events);
             //});
 
-            var assembly = typeof(TravelExpenseController).Assembly;
-            //services.AddMvc(x =>
-            //{
-
-            //})
-            //    .AddApplicationPart(assembly);
-            services.AddControllersWithViews(options =>
-                {
-                    // Include handling of Domain Exceptions
-                    options.Filters.Add<HttpResponseExceptionFilter>();
-                    // Log all entries and exits of controller methods.
-                    options.Filters.Add<MethodLoggingActionFilter>();
-
-                    // If desired, be set up a global Authorize filter
-                    if (enforceAuthenticated)
-                    {
-                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
-                    }
-                })
-                .AddApplicationPart(assembly);
 
             services.AddSwaggerGen(x =>
             {
