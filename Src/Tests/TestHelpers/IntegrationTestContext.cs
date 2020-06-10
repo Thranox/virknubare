@@ -15,6 +15,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PolAPI.Controllers;
 using Serilog;
 using SharedWouldBeNugets;
 
