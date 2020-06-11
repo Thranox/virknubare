@@ -5,7 +5,7 @@ using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Shared.Controllers
+namespace PolAPI.Controllers
 {
     [ApiController]
     [Route("travelexpenses")]

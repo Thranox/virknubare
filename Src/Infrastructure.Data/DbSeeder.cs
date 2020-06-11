@@ -50,7 +50,8 @@ namespace Infrastructure.Data
             // -----------------------------------
             // Dummy customer
             var customer1 = GetOrCreateTestCustomer(TestData.DummyCustomerName1);
-            
+            var customer2 = GetOrCreateTestCustomer(TestData.DummyCustomerName2);
+
             // -----------------------------------
             // Dummy Users
             var userEntityPol = GetOrCreateTestUser(customer1, TestData.DummyPolSubAlice, "alice", UserStatus.Registered);

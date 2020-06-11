@@ -24,7 +24,7 @@ namespace Tests.ApplicationServices
                     .Repository
                     .List(
                         new FlowStepByCustomerAndStage(
-                            testContext.GetDummyCustomerId(),testContext.TravelExpenseEntity1.Stage.Value
+                            testContext.GetDummyCustomer1Id(),testContext.TravelExpenseEntity1.Stage.Value
                             )
                         )
                     .Single()

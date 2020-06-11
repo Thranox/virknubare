@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using API.Shared.ActionFilters;
-using API.Shared.Controllers;
 using API.Shared.Services;
 using Application;
 using Application.Interfaces;
@@ -18,9 +17,8 @@ using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
 using Infrastructure.Messaging;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,41 +45,22 @@ namespace API.Shared
         }
         public static void AddPolApi(this IServiceCollection services, IConfiguration configuration, bool enforceAuthenticated, string apiTitle, string componentName)
         {
-            services.AddControllers().AddNewtonsoftJson();
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
-            services.AddScoped<ILogger>(s=> StartupHelper.CreateLogger(configuration, componentName));
+            services.AddScoped<ILogger>(s => StartupHelper.CreateLogger(configuration, componentName));
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+            services.AddControllers().AddNewtonsoftJson();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
+                    // base-address of your identityserver
                     options.Authority = configuration.GetValue<string>("IDP_URL");
-                    options.ApiName = "teapi";
+
+                    // name of the API resource
+                    options.Audience = "teapi";
                     options.RequireHttpsMetadata = false;
-                    options.ApiSecret = "secret";
-
-
                     Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
                 });
-
-            var assembly = typeof(TravelExpenseController).Assembly;
-            services.AddControllersWithViews(options =>
-                {
-                    // Include handling of Domain Exceptions
-                    options.Filters.Add<HttpResponseExceptionFilter>();
-                    // Log all entries and exits of controller methods.
-                    options.Filters.Add<MethodLoggingActionFilter>();
-
-                    // If desired, be set up a global Authorize filter
-                    if (enforceAuthenticated)
-                    {
-                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
-                    }
-                })
-                .AddApplicationPart(assembly);
 
             services.AddSwaggerGen(x =>
             {

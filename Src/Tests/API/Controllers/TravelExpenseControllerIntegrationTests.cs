@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using PolAPI.Controllers;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
 
@@ -419,7 +420,7 @@ namespace Tests.API.Controllers
                 // Act
                 var actual = await sut.Process(testContext.TravelExpenseEntity1.Id,
                     testContext.GetUnitOfWork().Repository
-                        .List(new FlowStepByCustomerAndStage(testContext.GetDummyCustomerId(),
+                        .List(new FlowStepByCustomerAndStage(testContext.GetDummyCustomer1Id(),
                             testContext.TravelExpenseEntity1.Stage.Value)).Single().Id); // Globals.InitialReporteddone);
 
                 // Assert

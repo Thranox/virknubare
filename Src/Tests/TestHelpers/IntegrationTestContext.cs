@@ -15,6 +15,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PolAPI.Controllers;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -90,15 +91,26 @@ namespace Tests.TestHelpers
             return new UnitOfWork(new EfRepository(context));
         }
 
-        public Guid GetDummyCustomerId()
+        public Guid GetDummyCustomer1Id()
         {
-            return GetDummyCustomer().Id;
+            return GetDummyCustomer1().Id;
         }
 
-        public CustomerEntity GetDummyCustomer()
+        public CustomerEntity GetDummyCustomer1()
         {
             return GetUnitOfWork()
                 .Repository.List(new CustomerByName(TestData.DummyCustomerName1))
+                .Single();
+        }
+        public Guid GetDummyCustomer2Id()
+        {
+            return GetDummyCustomer2().Id;
+        }
+
+        public CustomerEntity GetDummyCustomer2()
+        {
+            return GetUnitOfWork()
+                .Repository.List(new CustomerByName(TestData.DummyCustomerName2))
                 .Single();
         }
 

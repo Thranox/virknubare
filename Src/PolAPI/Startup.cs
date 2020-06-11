@@ -1,12 +1,19 @@
+using System.Linq;
+using System.Reflection;
 using API.Shared;
+using API.Shared.ActionFilters;
+using API.Shared.Controllers;
 using Domain.Interfaces;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PolAPI.Controllers;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -29,6 +36,26 @@ namespace PolAPI
         {
             services.AddPolApi(_configuration, true, Title, "PolAPI");
             services.AddPolDatabase(_configuration, _environment.EnvironmentName);
+
+            services.AddControllersWithViews(options =>
+                {
+                    // Include handling of Domain Exceptions
+                    options.Filters.Add<HttpResponseExceptionFilter>();
+                    // Log all entries and exits of controller methods.
+                    options.Filters.Add<MethodLoggingActionFilter>();
+
+                    // If desired, be set up a global Authorize filter
+                    if (true)
+                    {
+                        var policyRequiringAuthenticatedUser = new AuthorizationPolicyBuilder()
+                            .RequireAuthenticatedUser()
+                            .Build();
+                        options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
+                    }
+                })
+                .AddApplicationPart(typeof(TravelExpenseController).Assembly)
+                .AddApplicationPart(typeof(AdminController).Assembly);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +104,7 @@ namespace PolAPI
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version"));
+            logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version")+"\n"+string.Join("\n", _configuration.AsEnumerable(true).Select(x=>x.Key +"="+x.Value)));
         }
     }
 }
