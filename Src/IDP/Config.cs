@@ -69,6 +69,10 @@ namespace IDP
                         "https://dev.politikerafregning.dk/signin-redirect-callback",
                         "https://politikerafregning.dk/signin-redirect-callback",
 
+                        "https://andersathome.dk/#/signin-redirect-callback",
+                        "https://dev.politikerafregning.dk/#/signin-redirect-callback",
+                        "https://politikerafregning.dk/#/signin-redirect-callback",
+
 
                         ImproventoGlobals.LocalKataRedirect
                     },
@@ -84,6 +88,10 @@ namespace IDP
                         "https://andersathome.dk/signout-redirect-callback",
                         "https://dev.politikerafregning.dk/signout-redirect-callback",
                         "https://politikerafregning.dk/signout-redirect-callback",
+
+                        "https://andersathome.dk/#/signout-redirect-callback",
+                        "https://dev.politikerafregning.dk/#/signout-redirect-callback",
+                        "https://politikerafregning.dk/#/signout-redirect-callback",
 
                         ImproventoGlobals.LocalKataRedirect
                     },
