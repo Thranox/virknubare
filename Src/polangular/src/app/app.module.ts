@@ -14,7 +14,7 @@ import {FormsModule} from '@angular/forms';
 import {SharedModule} from './shared/shared.module';
 import localeDa from '@angular/common/locales/da';
 import localeExtraDa from '@angular/common/locales/extra/da';
-import {registerLocaleData} from '@angular/common';
+import {HashLocationStrategy, LocationStrategy, registerLocaleData} from '@angular/common';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { SignInComponent } from './modules/authentication/sign-in/sign-in.component';
 registerLocaleData(localeDa, 'da', localeExtraDa);
@@ -40,7 +40,8 @@ dayjs.locale('da');
     SharedModule.forRoot(),
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'da-DK' } // For angular date-pipe
+    { provide: LOCALE_ID, useValue: 'da-DK' }, // For angular date-pipe
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
   ],
   bootstrap: [AppComponent]
 })

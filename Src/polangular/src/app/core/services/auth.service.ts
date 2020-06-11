@@ -16,10 +16,10 @@ export class AuthService {
         const stsSettings = {
             authority: environment.stsAuthorityUrl,
             client_id: environment.stsClientId,
-            redirect_uri: `${window.location.origin}/signin-redirect-callback`,
+            redirect_uri: `${window.location.origin}/#/signin-redirect-callback`,
             scope: 'openid profile roles teapi',
             response_type: 'code',
-            post_logout_redirect_uri: `${window.location.origin}/signout-redirect-callback`,
+            post_logout_redirect_uri: `${window.location.origin}/#/signout-redirect-callback`,
             automaticSilentRenew: true,
             loadUserInfo: true
         } as UserManagerSettings;
