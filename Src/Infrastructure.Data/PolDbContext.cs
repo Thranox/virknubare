@@ -25,6 +25,7 @@ namespace Infrastructure.Data
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<StageEntity> Stages { get; set; }
         public DbSet<SubmissionEntity> Submissions { get; set; }
+        public DbSet<EmailEntity> Emails { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -71,6 +72,12 @@ namespace Infrastructure.Data
                 .WithMany(b => b.FlowStepUserPermissions)
                 .HasForeignKey(bc => bc.UserId);
 
+            modelBuilder.Entity<EmailEntity>()
+                .Property(e => e.Recievers)
+                .HasConversion(
+                v => string.Join(';', v),
+                v => v.Split(';', StringSplitOptions.RemoveEmptyEntries));
+
             modelBuilder.Entity<CustomerEntity>().ToTable("Customers");
             modelBuilder.Entity<UserEntity>().ToTable("Users");
             modelBuilder.Entity<FlowStepEntity>().ToTable("FlowSteps");
@@ -79,6 +86,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<CustomerUserPermissionEntity>().ToTable("CustomerUserPermissions");
             modelBuilder.Entity<InvitationEntity>().ToTable("Invitations");
             modelBuilder.Entity<SubmissionEntity>().ToTable("Submissions");
+            modelBuilder.Entity<EmailEntity>().ToTable("Emails");
         }
     }
 }

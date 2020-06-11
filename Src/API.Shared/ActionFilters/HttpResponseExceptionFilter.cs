@@ -26,6 +26,7 @@ namespace API.Shared.ActionFilters
 
             if (context.Exception is ItemNotFoundException travelExpenseNotFoundByIdException)
             {
+                _logger.Debug("Exception => 404");
                 context.Result = new ObjectResult(new
                 {
                     travelExpenseNotFoundByIdException.Id,
@@ -40,6 +41,7 @@ namespace API.Shared.ActionFilters
 
             if (context.Exception is BusinessRuleViolationException businessRuleViolationException)
             {
+                _logger.Debug("Exception => 422");
                 context.Result = new ObjectResult(new
                 {
                     Id = businessRuleViolationException.EntityId,
@@ -54,6 +56,7 @@ namespace API.Shared.ActionFilters
 
             if (context.Exception is ItemNotAllowedException itemNotAllowedException)
             {
+                _logger.Debug("Exception => 401");
                 context.Result = new ObjectResult(new
                 {
                     itemNotAllowedException.Id,
@@ -68,6 +71,7 @@ namespace API.Shared.ActionFilters
 
             if (context.Exception != null && !context.ExceptionHandled)
             {
+                _logger.Debug("Exception => 500");
                 context.Result = new ObjectResult(new
                 {
                     Message = "Internal server error -- please see log and look for errorId=" + errorId,

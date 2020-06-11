@@ -38,7 +38,6 @@ namespace SharedWouldBeNugets
                 .ReadFrom.Configuration(config)
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate);
             var logger = loggerConfiguration.CreateLogger();
-            logger.Information("Application started");
             return logger;
         }
 
