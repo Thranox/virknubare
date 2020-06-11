@@ -18,9 +18,9 @@ namespace API.Shared.Services
         private static PolSystem[] Systems = new[]
         {
             new PolSystem("https://localhost:44348/", "https://localhost:44324/"), 
-            new PolSystem("https://api.andersathome.dk/polapi/", "https://andersathome.dk/"),
-            new PolSystem("https://apidev.politikerafregning.dk/polapi/", "https://dev.politikerafregning.dk/"),
-            new PolSystem("https://api.politikerafregning.dk/polapi/", "https://politikerafregning.dk/"),
+            new PolSystem("https://andersathome.dk/polapi/", "https://andersathome.dk/"),
+            new PolSystem("https://dev.politikerafregning.dk/polapi/", "https://dev.politikerafregning.dk/"),
+            new PolSystem("https://politikerafregning.dk/polapi/", "https://politikerafregning.dk/"),
         };
 
         private readonly IUnitOfWork _unitOfWork;
