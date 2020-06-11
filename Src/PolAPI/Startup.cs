@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Reflection;
 using API.Shared;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
@@ -9,11 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PolAPI.Controllers;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -53,9 +50,7 @@ namespace PolAPI
                         options.Filters.Add(new AuthorizeFilter(policyRequiringAuthenticatedUser));
                     }
                 })
-                .AddApplicationPart(typeof(TravelExpenseController).Assembly)
-                .AddApplicationPart(typeof(AdminController).Assembly);
-
+                .AddApplicationPart(typeof(TravelExpenseController).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
