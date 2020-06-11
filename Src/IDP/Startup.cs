@@ -64,11 +64,9 @@ namespace IDP
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            var builder = services.AddIdentityServer(options =>
+            services.AddIdentityServer(options =>
                 {
                     options.IssuerUri = ImproventoGlobals.IssUri;
-                    //options.AccessTokenJwtType = "JWT";
-                    //options.EmitLegacyResourceAudienceClaim = true;
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
