@@ -62,6 +62,8 @@ namespace IDP
                         "http://localhost:44324/signin-redirect-callback",
                         "http://localhost:4200/signin-redirect-callback",
                         "http://localhost:50627/signin-redirect-callback",
+                        "https://localhost:44324/#/signin-redirect-callback",
+                        "https://andersathome.dk/#/signin-redirect-callback",
 
                         "https://andersathome.dk/signin-redirect-callback",
                         "https://dev.politikerafregning.dk/signin-redirect-callback",
@@ -76,6 +78,8 @@ namespace IDP
                         "http://localhost:44324/signout-redirect-callback",
                         "http://localhost:4200/signout-redirect-callback",
                         "http://localhost:50627/signout-redirect-callback",
+                        "https://localhost:44324/#/signout-redirect-callback",
+                        "https://andersathome.dk/#/signout-redirect-callback",
 
                         "https://andersathome.dk/signout-redirect-callback",
                         "https://dev.politikerafregning.dk/signout-redirect-callback",
