@@ -1,0 +1,12 @@
+{
+    "/api": {
+        "target": "https://andersathome.dk",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/idp": {
+        "target": "https://andersathome.dk",
+        "secure": false,
+        "changeOrigin": true
+    }    
+}

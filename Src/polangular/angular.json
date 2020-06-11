@@ -5,7 +5,11 @@
   "projects": {
     "polangular": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -24,7 +28,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -66,7 +70,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "polangular:build:production"
+              "browserTarget": "polangular:build:production",
+              "proxyConfig": "src/proxy.config.json"
             }
           }
         },

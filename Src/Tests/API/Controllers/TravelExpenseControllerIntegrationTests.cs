@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using PolAPI.Controllers;
 using SharedWouldBeNugets;
 using Tests.TestHelpers;
 

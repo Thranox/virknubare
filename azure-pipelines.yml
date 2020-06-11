@@ -16,7 +16,7 @@ steps:
 - task: Npm@1
   inputs:
     workingDir: 'Src/polangular'
-    command: install
+    command: ci
 
 - task: Npm@1
   inputs:
@@ -36,7 +36,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    arguments: '--configuration Release'
+    arguments: '--configuration Debug'
     projects: '**/*.csproj'
     
     

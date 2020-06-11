@@ -8,6 +8,7 @@
       ]
     },
     "array-type": false,
+    "no-trailing-whitespace": false,
     "arrow-return-shorthand": true,
     "curly": true,
     "deprecation": {
@@ -45,7 +46,7 @@
       140
     ],
     "member-ordering": [
-      true,
+      false,
       {
         "order": [
           "static-field",
@@ -55,8 +56,9 @@
         ]
       }
     ],
+    "no-consecutive-blank-lines": false,
     "no-console": [
-      true,
+      false,
       "debug",
       "info",
       "time",

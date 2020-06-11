@@ -3,7 +3,7 @@
     public static class ImproventoGlobals
     {
         public static int LocalKataPort = 45656;
-        public static string LocalKataRedirect = "https://127.0.0.1:"+LocalKataPort;
+        public static string LocalKataRedirect = "https://127.0.0.1:" + LocalKataPort;
 
         public static string IssUri = "https://improvento.dk/";
 
@@ -15,4 +15,3 @@
         public static string AngularClientId = "polangularclient";
     }
 }
-
