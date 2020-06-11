@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
-using Application.Services;
+using Serilog;
+using SharedWouldBeNugets;
 
-namespace Tests.Web
+namespace Tests.SharedWouldBeNugets
 {
     public class MailSendingTests
     {
@@ -15,7 +16,7 @@ namespace Tests.Web
             var fromAddress = "tobias.jensen@improvento.com";
             var toAddress = "tobias.jensen@improvento.com";
 
-            var mailService = new MailService();
+            var mailService = new MailService(Log.Logger);
             await mailService.SendAsync(fromAddress, toAddress, subject, body);
         }
     }

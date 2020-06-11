@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using SharedWouldBeNugets;
+using TestHelpers;
 
 namespace Tests.TestHelpers
 {

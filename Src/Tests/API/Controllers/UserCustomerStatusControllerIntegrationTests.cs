@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Shared.Controllers;
@@ -12,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
-using SharedWouldBeNugets;
+using TestHelpers;
 using Tests.TestHelpers;
 
 namespace Tests.API.Controllers

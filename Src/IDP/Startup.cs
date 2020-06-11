@@ -1,5 +1,4 @@
 ﻿using IdentityServer4.Services;
-using IdentityServerAspNetIdentit;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
 using Microsoft.AspNetCore.Builder;
@@ -12,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using SharedWouldBeNugets;
-using ILogger = Serilog.ILogger;
+using TestHelpers;
 
 namespace IDP
 {
@@ -29,6 +28,16 @@ namespace IDP
 
         public void ConfigureServices(IServiceCollection services)
         {
+            if (Configuration.GetValue<bool>("UseReadEmailSender"))
+            {
+                services.AddScoped<IMailService, MailService>();
+            }
+            else
+            {
+                services.AddScoped<IMailService, FakeMailService>();
+            }
+
+            services.AddScoped<IEmailFactory, EmailFactory>();
             services.AddScoped<ILogger>(s=>Log.Logger);
             services.Configure<CookiePolicyOptions>(options =>
             {

@@ -12,19 +12,18 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
-using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
 using Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
+using TestHelpers;
 
 namespace API.Shared
 {
@@ -74,6 +73,14 @@ namespace API.Shared
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
+            if (configuration.GetValue<bool>("UseReadEmailSender"))
+            {
+                services.AddScoped<IMailService, MailService>();
+            }
+            else
+            {
+                services.AddScoped<IMailService, FakeMailService>();
+            }
             services.AddAutoMapper(typeof(EntityDtoProfile));
 
             // Infrastructure

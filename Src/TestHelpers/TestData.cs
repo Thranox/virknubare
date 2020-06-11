@@ -4,8 +4,9 @@ using System.Security.Claims;
 using Domain.ValueObjects;
 using IdentityModel;
 using IdentityServer4;
+using SharedWouldBeNugets;
 
-namespace SharedWouldBeNugets
+namespace TestHelpers
 {
     public static class TestData
     {

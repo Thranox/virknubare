@@ -1,47 +1,44 @@
-﻿using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using IdentityServerAspNetIdentit.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
+using IdentityServer4.Models;
+using IdentityServer4.Quickstart.UI;
+using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using IdentityServerAspNetIdentit.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using SharedWouldBeNugets;
 
-namespace IdentityServer4.Quickstart.UI
+namespace IDP.Quickstart.Account
 {
     [SecurityHeaders]
     [AllowAnonymous]
     public class RegisterController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
-        private readonly IAuthenticationSchemeProvider _schemeProvider;
-        private readonly IEventService _events;
+        private readonly IEmailFactory _emailFactory;
+        private readonly IMailService _mailService;
 
         public RegisterController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
             IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IClientStore clientStore, 
+            IEmailFactory emailFactory, 
+            IMailService mailService)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _interaction = interaction;
             _clientStore = clientStore;
-            _schemeProvider = schemeProvider;
-            _events = events;
+            _emailFactory = emailFactory;
+            _mailService = mailService;
         }
 
         /// <summary>
@@ -62,7 +59,7 @@ namespace IdentityServer4.Quickstart.UI
 
             return new RegisterInputModel
             {
-                ReturnUrl=returnUrl
+                ReturnUrl = returnUrl
             };
         }
 
@@ -116,22 +113,28 @@ namespace IdentityServer4.Quickstart.UI
                         .CreateAsync(user, model.Password)
                         .Result;
 
-                    if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError("errorCreatingUser",result.Errors.First().Description);
+                        return View(model);
+                    }
 
-                    var enumerable = new List<Claim>()
+                    var claims = new List<Claim>()
                     {
                         new Claim(JwtClaimTypes.Email, model.Email),
                         new Claim(JwtClaimTypes.EmailVerified, "false", ClaimValueTypes.Boolean),
                     };
                     result = _userManager
-                        .AddClaimsAsync(user, enumerable)
+                        .AddClaimsAsync(user, claims)
                         .Result;
 
                     if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
                     Log.Debug(model.UserName + " created");
 
-                    _emailFactory.CreateConfirmationEmail()
+                    var confirmationEmail = _emailFactory.CreateConfirmationEmail(user, claims);
+                    await _mailService
+                        .SendAsync("info@improvento.com", model.Email, confirmationEmail.Subject,confirmationEmail.Body);
 
                     Log.Debug("Email send to "+model.UserName );
 
@@ -143,8 +146,7 @@ namespace IdentityServer4.Quickstart.UI
             }
 
             // something went wrong, show form with error
-            var vm = await BuildRegisterViewModelAsync(model.ReturnUrl);
-            return View(vm);
+            return View(model);
         }
     }
 

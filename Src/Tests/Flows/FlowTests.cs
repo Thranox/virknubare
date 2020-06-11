@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SharedWouldBeNugets;
+using TestHelpers;
 using Tests.TestHelpers;
 
 namespace Tests.Flows

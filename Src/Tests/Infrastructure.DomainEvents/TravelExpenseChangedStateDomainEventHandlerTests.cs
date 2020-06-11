@@ -6,7 +6,7 @@ using Domain.Interfaces;
 using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using SharedWouldBeNugets;
+using TestHelpers;
 using Tests.TestHelpers;
 
 namespace Tests.Infrastructure.DomainEvents
