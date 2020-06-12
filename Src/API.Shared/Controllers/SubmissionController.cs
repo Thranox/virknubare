@@ -4,6 +4,7 @@ using Application;
 using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace API.Shared.Controllers
 {
@@ -38,9 +39,9 @@ namespace API.Shared.Controllers
         {
             var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
 
-            var travelExpenseDtos = await _submitSubmissionService.SubmitAsync(polApiContext);
+            await _submitSubmissionService.SubmitAsync(polApiContext);
 
-            return Ok(travelExpenseDtos);
+            return Ok();
         }
     }
 
