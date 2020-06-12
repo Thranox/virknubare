@@ -21,8 +21,8 @@ namespace Tests.ApplicationServices
             {
                 var path = Path.GetTempFileName();
                 File.WriteAllText(path, "Gibberish!");
-                SubmissionEntity entity = new SubmissionEntity() { PathToFile = path };
-                testContext.GetUnitOfWork().Repository.Add(entity);
+                SubmissionEntity entity = new SubmissionEntity() { PathToFile = path, Customer = testContext.GetDummyCustomer1() };
+                testContext.GetUnitOfWork().Repository.Attach(entity);
                 await testContext.GetUnitOfWork().CommitAsync();
                 
                 var sut = testContext.ServiceProvider.GetRequiredService<ISubmitSubmissionService>();

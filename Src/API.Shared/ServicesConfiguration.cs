@@ -105,7 +105,12 @@ namespace API.Shared
             services.AddScoped<ICustomerUserService, CustomerUserService>();
             services.AddScoped<IInvitationService, InvitationService>();
             services.AddScoped<ISubmitSubmissionService, SubmitSubmissionService>();
-            
+            services.AddScoped<IFtpClientFactory>(s => new FtpClientFactory(
+                        configuration.GetValue<string>("ftpHost"),
+                        configuration.GetValue<string>("ftpUser"),
+                        configuration.GetValue<string>("ftpPass")
+                        ));
+
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
@@ -115,7 +120,7 @@ namespace API.Shared
                 services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
                     new PolApiContext(
                         new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),
-                        "http://nowhere.com",new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
+                        "http://nowhere.com", new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
                         )));
             }
 

@@ -117,6 +117,21 @@ namespace Infrastructure.Data
                 return includableQueryable.ToList() as List<T>;
             }
 
+            if (typeof(T) == typeof(SubmissionEntity))
+            {
+                IQueryable<SubmissionEntity> includableQueryable = _dbContext
+                    .Set<SubmissionEntity>()
+                    .Include(g => g.Customer);
+
+                if (spec != null)
+                {
+                    var castedSpec = spec as ISpecification<SubmissionEntity>;
+                    includableQueryable = includableQueryable.Where(castedSpec.Criteria);
+                }
+
+                return includableQueryable.ToList() as List<T>;
+            }
+
             var query = _dbContext.Set<T>().AsQueryable();
             if (spec != null) query = query.Where(spec.Criteria);
             return query.ToList();

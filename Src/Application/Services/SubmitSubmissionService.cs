@@ -15,14 +15,14 @@ namespace Application.Services
     public class SubmitSubmissionService : ISubmitSubmissionService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IFtpClient _ftpClient;
         private readonly ILogger _logger;
+        private readonly IFtpClientFactory _ftpClientFactory;
 
-        public SubmitSubmissionService(IUnitOfWork unitOfWork, IFtpClient ftpClient, ILogger logger)
+        public SubmitSubmissionService(IUnitOfWork unitOfWork, ILogger logger, IFtpClientFactory ftpClientFactory)
         {
             _unitOfWork = unitOfWork;
-            _ftpClient = ftpClient;
             _logger = logger;
+            _ftpClientFactory = ftpClientFactory;
         }
         public async Task SubmitAsync(PolApiContext polApiContext)
         {
@@ -43,16 +43,18 @@ namespace Application.Services
             // Submit all or just the first?!
             // Move ftp information into method parameters?
             //using (var ftp = new FtpClient("ftp01.improvento.com", "alj", "ALJ040620"))
-            await _ftpClient.ConnectAsync(token);
 
             foreach (var submissionEntity in submissions)
             {
+                var ftpClient = _ftpClientFactory.Create(submissionEntity.Customer);
+                await ftpClient.ConnectAsync(token);
                 // Ftp upload file.
                 // Will overwrite file if file with the same name exists, will not create remote directory if it does not exist, 
                 // does not require checksum verification to assume a successful upload
                 fileName = Path.GetFileName(submissionEntity.PathToFile);
-                //var directory = submissionEntity.
-                var status = await _ftpClient.UploadFileAsync(submissionEntity.PathToFile, $"/homes/ALJ/Politikerafregning/{fileName}", FtpRemoteExists.Overwrite, createRemoteDir: false);
+                // TODO
+                var directory = submissionEntity.Customer.Id.ToString();
+                var status = await ftpClient.UploadFileAsync(submissionEntity.PathToFile, $"/homes/ALJ/Politikerafregning/{directory}/{fileName}", FtpRemoteExists.Overwrite, createRemoteDir: true);
 
                 // UploadFileAsync returns an enum FtpStatus, where 0 = Failed, 1 = Success and 2 = Skipped
                 // We only record the SubmissionTime if the submission went well
@@ -65,11 +67,13 @@ namespace Application.Services
                     case FtpStatus.Success:
                         submissionEntity.SubmissionTime = DateTime.Now;
                         break;
+                    default:
+                        throw new System.NotImplementedException();
                 }
+                await ftpClient.DisconnectAsync();
             }
 
             await _unitOfWork.CommitAsync();
-            //throw new System.NotImplementedException();
         }
     }
 }
