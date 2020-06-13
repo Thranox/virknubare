@@ -36,7 +36,7 @@ namespace Tests.TestHelpers
 
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appsettings.json", false, true);
+            configurationBuilder.AddJsonFile("appsettings.IntegrationTest.json", false, true);
 
             ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
 

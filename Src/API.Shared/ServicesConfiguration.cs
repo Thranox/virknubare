@@ -112,18 +112,22 @@ namespace API.Shared
             services.AddScoped<ICustomerUserService, CustomerUserService>();
             services.AddScoped<IInvitationService, InvitationService>();
             services.AddScoped<ISubmitSubmissionService, SubmitSubmissionService>();
-            
+
+            var subUsedWhenAuthenticationDisabled = configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled");
+
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
             }
             else
             {
-                services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
-                    new PolApiContext(
-                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),
-                        "http://nowhere.com",new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
-                        )));
+                services.AddScoped<ISubManagementService>(x =>
+                {
+                    var callingUser = new UserEntity("Temp", subUsedWhenAuthenticationDisabled);
+                    var polSystem = new PolSystem("http://nowhere.com/api", "http://nowhere.com/web");
+                    var polApiContext = new PolApiContext(callingUser,"http://nowhere.com", polSystem);
+                    return new FakeSubManagementService(polApiContext);
+                });
             }
 
             Assembly
