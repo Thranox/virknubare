@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using SharedWouldBeNugets;
 
-namespace SharedWouldBeNugets
+namespace TestHelpers
 {
     public class PolTestUser
     {

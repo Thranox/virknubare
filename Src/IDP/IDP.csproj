@@ -27,5 +27,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharedWouldBeNugets\SharedWouldBeNugets.csproj" />
+    <ProjectReference Include="..\TestHelpers\TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
 </Project>

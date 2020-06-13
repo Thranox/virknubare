@@ -12,19 +12,18 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Domain.Services;
-using IdentityServer4.AccessTokenValidation;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
 using Infrastructure.DomainEvents.Handlers;
 using Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SharedWouldBeNugets;
+using TestHelpers;
 
 namespace API.Shared
 {
@@ -74,6 +73,14 @@ namespace API.Shared
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
+            if (configuration.GetValue<bool>("UseRealEmailSender"))
+            {
+                services.AddScoped<IMailService, MailService>();
+            }
+            else
+            {
+                services.AddScoped<IMailService, FakeMailService>();
+            }
             services.AddAutoMapper(typeof(EntityDtoProfile));
 
             // Infrastructure
@@ -105,18 +112,22 @@ namespace API.Shared
             services.AddScoped<ICustomerUserService, CustomerUserService>();
             services.AddScoped<IInvitationService, InvitationService>();
             services.AddScoped<ISubmitSubmissionService, SubmitSubmissionService>();
-            
+
+            var subUsedWhenAuthenticationDisabled = configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled");
+
             if (enforceAuthenticated)
             {
                 services.AddScoped<ISubManagementService, SubManagementService>();
             }
             else
             {
-                services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
-                    new PolApiContext(
-                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),
-                        "http://nowhere.com",new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
-                        )));
+                services.AddScoped<ISubManagementService>(x =>
+                {
+                    var callingUser = new UserEntity("Temp", subUsedWhenAuthenticationDisabled);
+                    var polSystem = new PolSystem("http://nowhere.com/api", "http://nowhere.com/web");
+                    var polApiContext = new PolApiContext(callingUser,"http://nowhere.com", polSystem);
+                    return new FakeSubManagementService(polApiContext);
+                });
             }
 
             Assembly

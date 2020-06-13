@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Application.Interfaces
+namespace SharedWouldBeNugets
 {
-    interface IMailService
+    public interface IMailService
     {
         Task SendAsync(string fromAddress, string toAddress, string subject, string body);
     }

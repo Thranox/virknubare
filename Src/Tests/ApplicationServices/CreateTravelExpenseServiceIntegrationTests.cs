@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using AutoFixture;
-using Domain;
 using Domain.Specifications;
 using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using SharedWouldBeNugets;
+using TestHelpers;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices

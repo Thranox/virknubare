@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using SharedWouldBeNugets;
+using TestHelpers;
 
 namespace Tests.TestHelpers
 {
@@ -36,7 +36,7 @@ namespace Tests.TestHelpers
 
             var serviceCollection = new ServiceCollection();
             var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appsettings.json", false, true);
+            configurationBuilder.AddJsonFile("appsettings.IntegrationTest.json", false, true);
 
             ServicesConfiguration.MapServices(serviceCollection, false, configurationBuilder.Build());
 

@@ -25,7 +25,7 @@ namespace API.Shared.Controllers
         [HttpPost("databasereset")]
         public async Task<ActionResult<DatabaseResetResponse>> DatabaseReset()
         {
-            var sub = await _subManagementService.GetPolApiContext(HttpContext);
+            var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
 
             _logger.Information("Reseeding database");
             await _adminService.ResetSeedningAsync();

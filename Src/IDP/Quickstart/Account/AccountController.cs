@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServerAspNetIdentit.Data;
 
 namespace IdentityServer4.Quickstart.UI
 {
@@ -30,6 +31,7 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -37,7 +39,7 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IEventService events, ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,6 +47,7 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _applicationDbContext = applicationDbContext;
         }
 
         /// <summary>
@@ -108,6 +111,26 @@ namespace IdentityServer4.Quickstart.UI
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.Username);
+
+                    if (user == null)
+                    {
+                        // something went wrong, show form with error
+                        ModelState.AddModelError(string.Empty,"User not found.");
+                        var vm1 = await BuildLoginViewModelAsync(model);
+                        return View(vm1);
+                    }
+
+                    // Almost there! Check to see whether email has been confirmed; we do not allow logon from users who has not confirmed email.
+                    var userClaims = _applicationDbContext.UserClaims.Where(x => x.UserId == user.Id).ToArray();
+                    var emailVerifiedClaim = userClaims.SingleOrDefault(x=>x.ClaimType==JwtClaimTypes.EmailVerified);
+                    if (emailVerifiedClaim == null || string.Equals(emailVerifiedClaim.ClaimValue, "false",
+                            StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        ModelState.AddModelError(string.Empty, "User has not verified email.");
+                        var vm1 = await BuildLoginViewModelAsync(model);
+                        return View(vm1);
+                    }
+
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.ClientId));
 
                     if (context != null)

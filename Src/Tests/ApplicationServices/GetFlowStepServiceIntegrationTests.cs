@@ -2,14 +2,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
-using Application.Services;
 using Domain;
-using Domain.Exceptions;
 using Domain.Specifications;
 using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using SharedWouldBeNugets;
+using TestHelpers;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices

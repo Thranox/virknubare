@@ -1,4 +1,4 @@
-namespace SharedWouldBeNugets
+namespace TestHelpers
 {
     public class PolUserCapabilities
     {
