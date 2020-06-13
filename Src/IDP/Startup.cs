@@ -28,7 +28,7 @@ namespace IDP
 
         public void ConfigureServices(IServiceCollection services)
         {
-            if (Configuration.GetValue<bool>("UseReadEmailSender"))
+            if (Configuration.GetValue<bool>("UseRealEmailSender"))
             {
                 services.AddScoped<IMailService, MailService>();
             }

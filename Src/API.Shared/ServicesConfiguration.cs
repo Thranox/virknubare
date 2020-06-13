@@ -73,7 +73,7 @@ namespace API.Shared
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
-            if (configuration.GetValue<bool>("UseReadEmailSender"))
+            if (configuration.GetValue<bool>("UseRealEmailSender"))
             {
                 services.AddScoped<IMailService, MailService>();
             }
