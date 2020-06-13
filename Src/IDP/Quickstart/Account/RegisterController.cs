@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using IdentityServerAspNetIdentit.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -107,7 +109,9 @@ namespace IDP.Quickstart.Account
                 {
                     user = new ApplicationUser
                     {
-                        UserName = model.UserName
+                        UserName = model.UserName,
+                        // Set verification code to a random number
+                        SecurityStamp = new Random().Next(1000000).ToString()
                     };
                     var result = _userManager
                         .CreateAsync(user, model.Password)
@@ -123,6 +127,13 @@ namespace IDP.Quickstart.Account
                     {
                         new Claim(JwtClaimTypes.Email, model.Email),
                         new Claim(JwtClaimTypes.EmailVerified, "false", ClaimValueTypes.Boolean),
+                        new Claim(ImproventoGlobals.ImproventoSubClaimName, Guid.NewGuid().ToString()),
+                        //new Claim(JwtClaimTypes.Name, "Alice Smith"),
+                        new Claim(JwtClaimTypes.GivenName, model.FirstName),
+                        new Claim(JwtClaimTypes.FamilyName, model.LastName),
+                        //new Claim(JwtClaimTypes.Address,
+                        //    @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
+                        //    IdentityServerConstants.ClaimValueTypes.Json)
                     };
                     result = _userManager
                         .AddClaimsAsync(user, claims)
@@ -132,7 +143,21 @@ namespace IDP.Quickstart.Account
 
                     Log.Debug(model.UserName + " created");
 
-                    var confirmationEmail = _emailFactory.CreateConfirmationEmail(user, claims);
+                    var path = GetConfirmPath(Request.Path);
+
+                    var uriBuilder = new UriBuilder
+                    {
+                        Scheme = Request.Scheme,
+                        Host = Request.Host.Host,
+                        Path = path,
+                        Query = $"email={model.Email}&securityStamp={user.SecurityStamp}"
+                    };
+                    if (Request.Host.Port.HasValue)
+                    {
+                        uriBuilder.Port = Request.Host.Port.Value;
+                    }
+
+                    var confirmationEmail = _emailFactory.CreateConfirmationEmail(user, claims, uriBuilder.Uri);
                     await _mailService
                         .SendAsync("info@improvento.com", model.Email, confirmationEmail.Subject,confirmationEmail.Body);
 
@@ -148,13 +173,26 @@ namespace IDP.Quickstart.Account
             // something went wrong, show form with error
             return View(model);
         }
+
+        private string GetConfirmPath(in PathString requestPath)
+        {
+            var indexOfRegister = requestPath.Value.ToLower().IndexOf("/register/");
+            return requestPath.Value.Substring(0, indexOfRegister) + "/Register/ConfirmEmail";
+        }
     }
 
     public class RegisterInputModel
     {
+        [Required]
         public string UserName { get; set; }
         public string ReturnUrl { get; set; }
+        [Required]
         public string Password { get; set; }
+        [Required][EmailAddress]
         public string Email { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
     }
 }
