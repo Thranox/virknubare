@@ -18,16 +18,6 @@ namespace SharedWouldBeNugets
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-                .WriteTo.HumioSink(new HumioSinkConfiguration
-                {
-                    BatchSizeLimit = 50,
-                    Period = TimeSpan.FromSeconds(5),
-                    Tags = new KeyValuePair<string, string>[]{
-                        new KeyValuePair<string, string>("source", "Politikerafregning"),
-                        new KeyValuePair<string, string>("environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
-                    },
-                    IngestToken = Environment.GetEnvironmentVariable("HUMIO_KEY") 
-                })
                 .Enrich.WithMachineName()
                 //.Enrich.WithProperty("ReleaseNumber", settings.ReleaseNumber)
                 .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
@@ -36,7 +26,19 @@ namespace SharedWouldBeNugets
                 .Enrich.WithProperty("TransactionId", Guid.NewGuid())
                 .Enrich.FromLogContext()
                 .ReadFrom.Configuration(config)
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate);
+                .WriteTo.Console(outputTemplate:"[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",theme: AnsiConsoleTheme.Literate)
+                .WriteTo.HumioSink(new HumioSinkConfiguration
+                {
+                    BatchSizeLimit = 50,
+                    Period = TimeSpan.FromSeconds(5),
+                    Tags = new KeyValuePair<string, string>[]
+                    {
+                        new KeyValuePair<string, string>("source", "Politikerafregning"),
+                        new KeyValuePair<string, string>("environment",
+                            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
+                    },
+                    IngestToken = Environment.GetEnvironmentVariable("HUMIO_KEY")
+                });
             var logger = loggerConfiguration.CreateLogger();
             return logger;
         }

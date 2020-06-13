@@ -38,7 +38,7 @@ namespace IDP
             }
 
             services.AddScoped<IEmailFactory, EmailFactory>();
-            services.AddScoped<ILogger>(s=>Log.Logger);
+            services.AddScoped<ILogger>(s=>StartupHelper.CreateLogger(Configuration, "IDP"));
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
