@@ -65,6 +65,29 @@ namespace IDP.Quickstart.Account
             };
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string email, string securityStamp)
+        {
+            var user = _userManager.Users.SingleOrDefault(x => x.Email == email && x.SecurityStamp == securityStamp);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("NotConfirmed","User email could not be confirmed. Please contact administrator.");
+                return View("Error");
+            }
+
+            user.EmailConfirmed = true;
+            var claims = await _userManager.GetClaimsAsync(user);
+            var emailConfirmedClaim = claims.Single(x => x.Type == JwtClaimTypes.EmailVerified);
+
+            var emailConfirmedClaimNewValue = new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean);
+            await _userManager
+                .ReplaceClaimAsync(user, emailConfirmedClaim,emailConfirmedClaimNewValue);
+            await _userManager.UpdateAsync(user);
+
+            return View("EmailConfirmed");
+        }
+
         /// <summary>
         /// Handle postback from register
         /// </summary>
@@ -111,7 +134,9 @@ namespace IDP.Quickstart.Account
                     {
                         UserName = model.UserName,
                         // Set verification code to a random number
-                        SecurityStamp = new Random().Next(1000000).ToString()
+                        SecurityStamp = new Random().Next(1000000).ToString(),
+                        Email = model.Email,
+                        EmailConfirmed = false
                     };
                     var result = _userManager
                         .CreateAsync(user, model.Password)
@@ -131,6 +156,7 @@ namespace IDP.Quickstart.Account
                         //new Claim(JwtClaimTypes.Name, "Alice Smith"),
                         new Claim(JwtClaimTypes.GivenName, model.FirstName),
                         new Claim(JwtClaimTypes.FamilyName, model.LastName),
+                        
                         //new Claim(JwtClaimTypes.Address,
                         //    @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
                         //    IdentityServerConstants.ClaimValueTypes.Json)
