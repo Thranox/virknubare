@@ -21,141 +21,139 @@ namespace Tests.Flows
         [Test]
         public async Task EndToEndUsingControllers()
         {
-            using (var testContext = new IntegrationTestContext())
-            {
-                // Arrange
-                var customerId = testContext.GetDummyCustomer1Id();
-                var travelExpenseController = testContext.ServiceProvider.GetRequiredService<TravelExpenseController>();
-                var flowStepController = testContext.ServiceProvider.GetRequiredService<FlowStepController>();
+            using var testContext = new IntegrationTestContext();
 
-                // Set the calling user to be Alice
-                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
+            // Arrange
+            var customerId = testContext.GetDummyCustomer1Id();
+            var travelExpenseController = testContext.ServiceProvider.GetRequiredService<TravelExpenseController>();
+            var flowStepController = testContext.ServiceProvider.GetRequiredService<FlowStepController>();
 
-                // ** Create TravelExpense
-                var actionResultTePost = await travelExpenseController.Post(
-                    new TravelExpenseCreateDto
-                        {Description = testContext.Fixture.Create<string>(), CustomerId = customerId});
+            // Set the calling user to be Alice
+            testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
 
-                var travelExpenseId =
-                    ((actionResultTePost.Result as CreatedResult).Value as TravelExpenseCreateResponse).Id;
+            // ** Create TravelExpense
+            var actionResultTePost = await travelExpenseController.Post(
+                new TravelExpenseCreateDto
+                    {Description = testContext.Fixture.Create<string>(), CustomerId = customerId});
 
-                Console.WriteLine("-----");
+            var travelExpenseId =
+                ((actionResultTePost.Result as CreatedResult).Value as TravelExpenseCreateResponse).Id;
 
-                Console.WriteLine("After posting:");
-                Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
-                    TravelExpenseGetByIdResponse, Formatting.Indented));
+            Console.WriteLine("-----");
 
-                // ** Report TravelExpense Done
-                var actionResulltFsGet = await flowStepController.Get();
-                var okObjectResult = actionResulltFsGet.Result as OkObjectResult;
-                var flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
+            Console.WriteLine("After posting:");
+            Console.WriteLine(JsonConvert.SerializeObject(
+                ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                TravelExpenseGetByIdResponse, Formatting.Indented));
 
-                Assert.That(flowStepGetResponse.Result.Any());
-                var firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
+            // ** Report TravelExpense Done
+            var actionResulltFsGet = await flowStepController.Get();
+            var okObjectResult = actionResulltFsGet.Result as OkObjectResult;
+            var flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
 
-                Console.WriteLine("After Reporting done:");
-                Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
-                    TravelExpenseGetByIdResponse, Formatting.Indented));
+            Assert.That(flowStepGetResponse.Result.Any());
+            var firstFlowStep = flowStepGetResponse.Result.First();
+            await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
 
-
-                // ** Certify TravelExpense
+            Console.WriteLine("After Reporting done:");
+            Console.WriteLine(JsonConvert.SerializeObject(
+                ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                TravelExpenseGetByIdResponse, Formatting.Indented));
 
 
-                // Set the calling user to be Bob
-                testContext.SetCallingUserBySub(TestData.DummySekSubBob);
-
-                actionResulltFsGet = await flowStepController.Get();
-                okObjectResult = actionResulltFsGet.Result as OkObjectResult;
-                flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
-
-                Assert.That(flowStepGetResponse.Result.Any());
-
-                firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
-
-                Console.WriteLine("After certifying");
-
-                // Set the calling user to be Alice
-                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
-
-                Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
-                    TravelExpenseGetByIdResponse, Formatting.Indented));
+            // ** Certify TravelExpense
 
 
-                // ** Assign TravelExpense for payment
+            // Set the calling user to be Bob
+            testContext.SetCallingUserBySub(TestData.DummySekSubBob);
+
+            actionResulltFsGet = await flowStepController.Get();
+            okObjectResult = actionResulltFsGet.Result as OkObjectResult;
+            flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
+
+            Assert.That(flowStepGetResponse.Result.Any());
+
+            firstFlowStep = flowStepGetResponse.Result.First();
+            await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
+
+            Console.WriteLine("After certifying");
+
+            // Set the calling user to be Alice
+            testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
+
+            Console.WriteLine(JsonConvert.SerializeObject(
+                ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                TravelExpenseGetByIdResponse, Formatting.Indented));
 
 
-                // Set the calling user to be Charlie
-                testContext.SetCallingUserBySub(TestData.DummyLedSubCharlie);
+            // ** Assign TravelExpense for payment
 
-                actionResulltFsGet = await flowStepController.Get();
-                okObjectResult = actionResulltFsGet.Result as OkObjectResult;
-                flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
 
-                Assert.That(flowStepGetResponse.Result.Any());
+            // Set the calling user to be Charlie
+            testContext.SetCallingUserBySub(TestData.DummyLedSubCharlie);
 
-                firstFlowStep = flowStepGetResponse.Result.First();
-                await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
+            actionResulltFsGet = await flowStepController.Get();
+            okObjectResult = actionResulltFsGet.Result as OkObjectResult;
+            flowStepGetResponse = okObjectResult.Value as FlowStepGetResponse;
 
-                Console.WriteLine("After Assigning Payment");
+            Assert.That(flowStepGetResponse.Result.Any());
 
-                // Set the calling user to be Alice
-                testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
-                Console.WriteLine(JsonConvert.SerializeObject(
-                    ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
-                    TravelExpenseGetByIdResponse, Formatting.Indented));
-            }
+            firstFlowStep = flowStepGetResponse.Result.First();
+            await travelExpenseController.Process(travelExpenseId, firstFlowStep.FlowStepId);
+
+            Console.WriteLine("After Assigning Payment");
+
+            // Set the calling user to be Alice
+            testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
+            Console.WriteLine(JsonConvert.SerializeObject(
+                ((await travelExpenseController.GetById(travelExpenseId)).Result as OkObjectResult).Value as
+                TravelExpenseGetByIdResponse, Formatting.Indented));
         }
 
         [Test]
         public void TestInitialToFinal()
         {
             // Arrange
-            using (var testContext = new IntegrationTestContext())
-            {
-                var processFlowSteps = testContext
-                    .ServiceProvider
-                    .GetServices<IProcessFlowStep>()
-                    .ToArray();
+            using var testContext = new IntegrationTestContext();
 
-                var customer = testContext
+            var processFlowSteps = testContext
+                .ServiceProvider
+                .GetServices<IProcessFlowStep>()
+                .ToArray();
+
+            var customer = testContext
+                .GetUnitOfWork()
+                .Repository
+                .List(new CustomerByName(TestData.DummyCustomerName1))
+                .Single();
+
+            var newTe = customer.TravelExpenses.First();
+
+            var iterations = 0;
+
+            // Act & Assert
+            do
+            {
+                iterations++;
+                Console.WriteLine("Stage: " + newTe.Stage);
+
+                var nextFlowSteps = testContext
                     .GetUnitOfWork()
                     .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName1))
-                    .Single();
+                    .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
+                    .First();
 
-                var newTe = customer.TravelExpenses.First();
+                var processFlowStep = processFlowSteps
+                    .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
 
-                var iterations = 0;
+                Assert.That(processFlowStep, Is.Not.Null);
 
-                // Act & Assert
-                do
-                {
-                    iterations++;
-                    Console.WriteLine("Stage: " + newTe.Stage);
+                newTe.ApplyProcessStep(processFlowStep);
 
-                    var nextFlowSteps = testContext
-                        .GetUnitOfWork()
-                        .Repository
-                        .List(new FlowStepByCustomer(newTe.Stage.Value, customer.Id))
-                        .First();
-
-                    var processFlowStep = processFlowSteps
-                        .SingleOrDefault(x => x.CanHandle(nextFlowSteps.Key));
-
-                    Assert.That(processFlowStep, Is.Not.Null);
-
-                    newTe.ApplyProcessStep(processFlowStep);
-
-                    // Guard -- should this test not come to a natural ending, it should fail, not continue forever.
-                    if (iterations > 10)
-                        throw new InvalidOperationException();
-                } while (newTe.Stage.Value != TravelExpenseStage.Final);
-            }
+                // Guard -- should this test not come to a natural ending, it should fail, not continue forever.
+                if (iterations > 10)
+                    throw new InvalidOperationException();
+            } while (newTe.Stage.Value != TravelExpenseStage.Final);
         }
     }
 }

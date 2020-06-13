@@ -25,28 +25,25 @@ namespace IDP
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            using (var serviceProvider = services.BuildServiceProvider()) 
-            {
-                using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-                    var pendingMigrations = context.Database.GetPendingMigrations();
-                    foreach (var pendingMigration in pendingMigrations)
-                        context
-                            .Database.GetInfrastructure()
-                            .GetService<IMigrator>()
-                            .MigrateAsync(pendingMigration)
-                            .Wait();
+            using var serviceProvider = services.BuildServiceProvider();
+            using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-                    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    GetOrCreateUser(userMgr, "alice");
-                    GetOrCreateUser(userMgr, "bob");
-                    GetOrCreateUser(userMgr, "charlie");
-                    GetOrCreateUser(userMgr, "dennis");
-                    GetOrCreateUser(userMgr, "edward");
-                    GetOrCreateUser(userMgr, "freddie");
-                }
-            }
+            var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+            var pendingMigrations = context.Database.GetPendingMigrations();
+            foreach (var pendingMigration in pendingMigrations)
+                context
+                    .Database.GetInfrastructure()
+                    .GetService<IMigrator>()
+                    .MigrateAsync(pendingMigration)
+                    .Wait();
+
+            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            GetOrCreateUser(userMgr, "alice");
+            GetOrCreateUser(userMgr, "bob");
+            GetOrCreateUser(userMgr, "charlie");
+            GetOrCreateUser(userMgr, "dennis");
+            GetOrCreateUser(userMgr, "edward");
+            GetOrCreateUser(userMgr, "freddie");
         }
 
         private static void GetOrCreateUser(UserManager<ApplicationUser> userMgr, string userName)

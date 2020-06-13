@@ -28,19 +28,22 @@ namespace IDP.Quickstart.Account
         private readonly IClientStore _clientStore;
         private readonly IEmailFactory _emailFactory;
         private readonly IMailService _mailService;
+        private readonly ILogger _logger;
 
         public RegisterController(
             UserManager<ApplicationUser> userManager,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore, 
             IEmailFactory emailFactory, 
-            IMailService mailService)
+            IMailService mailService,
+            ILogger logger)
         {
             _userManager = userManager;
             _interaction = interaction;
             _clientStore = clientStore;
             _emailFactory = emailFactory;
             _mailService = mailService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -49,6 +52,7 @@ namespace IDP.Quickstart.Account
         [HttpGet]
         public async Task<IActionResult> NewUser(string returnUrl)
         {
+            _logger.Debug("New user requested");
             // build a model so we know what to show on the login page
             var vm = await BuildRegisterViewModelAsync(returnUrl);
 
@@ -101,6 +105,8 @@ namespace IDP.Quickstart.Account
             // the user clicked the "cancel" button
             if (button != "register")
             {
+                _logger.Debug("User cancelled creation of new user.");
+
                 if (context != null)
                 {
                     // if the user cancels, send a result back into IdentityServer as if they 
@@ -127,6 +133,8 @@ namespace IDP.Quickstart.Account
 
             if (ModelState.IsValid)
             {
+                _logger.Debug("New user posted for creation -- model state valid.");
+
                 var user = _userManager.FindByNameAsync(model.UserName).Result;
                 if (user == null)
                 {
@@ -144,6 +152,7 @@ namespace IDP.Quickstart.Account
 
                     if (!result.Succeeded)
                     {
+                        _logger.Error("Problem creating user in db: "+ result.Errors.First().Description);
                         ModelState.AddModelError("errorCreatingUser",result.Errors.First().Description);
                         return View(model);
                     }
@@ -165,7 +174,12 @@ namespace IDP.Quickstart.Account
                         .AddClaimsAsync(user, claims)
                         .Result;
 
-                    if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
+                    if (!result.Succeeded)
+                    {
+                        _logger.Error("Problem creating claims in db: " + result.Errors.First().Description);
+                        ModelState.AddModelError("errorCreatingClaims", result.Errors.First().Description);
+                        return View(model);
+                    }
 
                     Log.Debug(model.UserName + " created");
 
@@ -183,9 +197,20 @@ namespace IDP.Quickstart.Account
                         uriBuilder.Port = Request.Host.Port.Value;
                     }
 
+                    _logger.Debug("Sending confirmation mail to new user: " +user.Email);
                     var confirmationEmail = _emailFactory.CreateConfirmationEmail(user, claims, uriBuilder.Uri);
-                    await _mailService
-                        .SendAsync("info@improvento.com", model.Email, confirmationEmail.Subject,confirmationEmail.Body);
+
+                    try
+                    {
+                        await _mailService
+                            .SendAsync("info@improvento.com", model.Email, confirmationEmail.Subject, confirmationEmail.Body);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e,"Problem sending email: \n" + e.Message+"\n"+e.StackTrace);
+                        ModelState.AddModelError("errorCreatingClaims", "Could not create user.");
+                        return View(model);
+                    }
 
                     Log.Debug("Email send to "+model.UserName );
 
@@ -197,6 +222,7 @@ namespace IDP.Quickstart.Account
             }
 
             // something went wrong, show form with error
+            _logger.Debug("New user posted for creation -- model state invalid.");
             return View(model);
         }
 

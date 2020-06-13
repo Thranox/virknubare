@@ -38,7 +38,7 @@ namespace IDP
             }
 
             services.AddScoped<IEmailFactory, EmailFactory>();
-            services.AddScoped<ILogger>(s=>Log.Logger);
+            services.AddScoped<ILogger>(s=>StartupHelper.CreateLogger(Configuration, "IDP"));
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
@@ -118,11 +118,11 @@ namespace IDP
                 defaultCorsPolicyService.AllowAll = true;
             }
 
-            Log.Information("Ensuring database is migrated and seeded...");
+            logger.Information("Ensuring database is migrated and seeded...");
             var connectionStringService = new ConnectionStringService(Configuration, Environment.EnvironmentName);
             var connectionString = connectionStringService.GetConnectionString("DefaultConnection");
             SeedData.EnsureSeedData(connectionString);
-            Log.Information("Done ensuring database is migrated and seeded.");
+            logger.Information("Done ensuring database is migrated and seeded.");
 
             if (Environment.IsDevelopment())
             {

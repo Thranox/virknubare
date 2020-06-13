@@ -22,8 +22,8 @@ namespace IDP
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
+                    webBuilder.UseStartup<Startup>();
                 });
         }
     }

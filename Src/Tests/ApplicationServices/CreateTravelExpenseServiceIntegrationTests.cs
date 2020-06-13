@@ -19,30 +19,29 @@ namespace Tests.ApplicationServices
         public async Task CreateAsync_ValidInput_CreatesTravelExpense()
         {
             // Arrange
-            using (var testContext = new IntegrationTestContext())
-            {
-                var newDescription = testContext.Fixture.Create<string>();
-                var customerId = testContext.GetDummyCustomer1Id();
-                var travelExpenseCreateDto = new TravelExpenseCreateDto { Description = newDescription, CustomerId = customerId};
-                var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
+            using var testContext = new IntegrationTestContext();
+            
+            var newDescription = testContext.Fixture.Create<string>();
+            var customerId = testContext.GetDummyCustomer1Id();
+            var travelExpenseCreateDto = new TravelExpenseCreateDto
+                {Description = newDescription, CustomerId = customerId};
+            var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
-                // Act
-                var actual = await sut.CreateAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice), travelExpenseCreateDto);
+            // Act
+            var actual = await sut.CreateAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice),
+                travelExpenseCreateDto);
 
-                // Assert
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual.Id, Is.Not.EqualTo(Guid.Empty));
+            // Assert
+            Assert.That(actual, Is.Not.Null);
+            Assert.That(actual.Id, Is.Not.EqualTo(Guid.Empty));
 
-                using (var unitOfWork = testContext.GetUnitOfWork())
-                {
-                    var travelExpenseEntity = unitOfWork
-                        .Repository.List(new TravelExpenseById(actual.Id))
-                        .SingleOrDefault();
-                    Assert.That(travelExpenseEntity, Is.Not.Null);
-                    Assert.That(travelExpenseEntity.Stage.Value, Is.EqualTo(TravelExpenseStage.Initial));
-                }
+            using var unitOfWork = testContext.GetUnitOfWork();
 
-            }
+            var travelExpenseEntity = unitOfWork
+                .Repository.List(new TravelExpenseById(actual.Id))
+                .SingleOrDefault();
+            Assert.That(travelExpenseEntity, Is.Not.Null);
+            Assert.That(travelExpenseEntity.Stage.Value, Is.EqualTo(TravelExpenseStage.Initial));
         }
     }
 }

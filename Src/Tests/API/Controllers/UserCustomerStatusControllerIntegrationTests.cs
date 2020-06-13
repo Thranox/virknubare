@@ -30,59 +30,56 @@ namespace Tests.API.Controllers
         public async Task Put_ExistingUser_IsSuccess()
         {
             // Arrange
+            using var testContext = new IntegrationTestContext();
 
-            using (var testContext = new IntegrationTestContext())
-            {
-                // Set executing user to be Dennis -- he is admin
-                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
-                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyAdminSubDennis));
+            // Set executing user to be Dennis -- he is admin
+            _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyAdminSubDennis));
 
-                var userEntityEdward = testContext
-                    .GetUnitOfWork()
-                    .Repository
-                    .List(new UserBySub(TestData.DummyInitialSubEdward))
-                    .SingleOrDefault();
+            var userEntityEdward = testContext
+                .GetUnitOfWork()
+                .Repository
+                .List(new UserBySub(TestData.DummyInitialSubEdward))
+                .SingleOrDefault();
 
-                var sut = GetSut(testContext);
+            var sut = GetSut(testContext);
 
-                // Act
-                var actual = await sut.Put(userEntityEdward.Id, testContext.GetDummyCustomer1Id(), (int)UserStatus.Registered);
+            // Act
+            var actual = await sut.Put(userEntityEdward.Id, testContext.GetDummyCustomer1Id(),
+                (int) UserStatus.Registered);
 
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
-                var okObjectResult = actual.Result as OkObjectResult;
-                Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as UserCustomerStatusPutResponse;
-                Assert.That(value, Is.Not.Null);
-            }
+            // Assert
+            Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+            var okObjectResult = actual.Result as OkObjectResult;
+            Assert.That(okObjectResult, Is.Not.Null);
+            var value = okObjectResult.Value as UserCustomerStatusPutResponse;
+            Assert.That(value, Is.Not.Null);
         }
 
         [Test]
         public async Task Post_ExistingCustomer_IsSuccess()
         {
             // Arrange
+            using var testContext = new IntegrationTestContext();
+            
+            // Set executing user to be alice -- she has only association with dummy customer
+            var subOfUser = TestData.DummyPolSubAlice;
+            _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                .ReturnsAsync(testContext.GetPolApiContext(subOfUser));
 
-            using (var testContext = new IntegrationTestContext())
-            {
-                // Set executing user to be alice -- she has only association with dummy customer
-                var subOfUser = TestData.DummyPolSubAlice;
-                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
-                    .ReturnsAsync(testContext.GetPolApiContext(subOfUser));
+            var sut = GetSut(testContext);
 
-                var sut = GetSut(testContext);
+            // Act
+            var userCustomerPostDto = new UserCustomerPostDto {CustomerIds = new[] {testContext.GetDummyCustomer2Id()}};
+            var actual = await sut.Post(userCustomerPostDto);
 
-                // Act
-                var userCustomerPostDto = new UserCustomerPostDto{CustomerIds = new[] {testContext.GetDummyCustomer2Id()} };
-                var actual = await sut.Post(userCustomerPostDto);
-
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
-                var okObjectResult = actual.Result as OkObjectResult;
-                Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as UserCustomerPostResponse;
-                Assert.That(value, Is.Not.Null);
-                Assert.That(value.Ids.Count, Is.EqualTo(userCustomerPostDto.CustomerIds.Count()+1));
-            }
+            // Assert
+            Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+            var okObjectResult = actual.Result as OkObjectResult;
+            Assert.That(okObjectResult, Is.Not.Null);
+            var value = okObjectResult.Value as UserCustomerPostResponse;
+            Assert.That(value, Is.Not.Null);
+            Assert.That(value.Ids.Count, Is.EqualTo(userCustomerPostDto.CustomerIds.Count() + 1));
         }
 
         private static UserCustomerStatusController GetSut(IntegrationTestContext testContext)
