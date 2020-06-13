@@ -46,7 +46,7 @@ namespace Application.Services
 
             travelExpenseEntity.ApplyProcessStep(processFlowStep);
 
-            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, polApiContext.CallingUser, polApiContext.RequestedUrl));
+            travelExpenseEntity.Events.Add(new TravelExpenseChangedStateDomainEvent(stageBefore, travelExpenseEntity, polApiContext.CallingUser, polApiContext.System.AppUrl));
 
             _unitOfWork
                 .Repository
