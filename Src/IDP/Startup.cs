@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Services;
+﻿using System;
+using IdentityServer4.Services;
 using IdentityServerAspNetIdentit.Data;
 using IdentityServerAspNetIdentit.Models;
 using Microsoft.AspNetCore.Builder;
@@ -147,6 +148,21 @@ namespace IDP
             {
                 endpoints.MapDefaultControllerRoute();
             });
+
+            try
+            {
+                var mailService = app
+                    .ApplicationServices
+                    .CreateScope()
+                    .ServiceProvider
+                    .GetRequiredService<IMailService>();
+                mailService.SendAsync("andersjuulsfirma@gmail.com", "andersjuulsfirma@gmail.com", "IDP is up",
+                    "Empty body!").Wait(TimeSpan.FromSeconds(3));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
