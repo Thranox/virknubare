@@ -20,7 +20,7 @@ namespace SharedWouldBeNugets
             {
                 var smtp = new SmtpClient();
                 {
-                    smtp.Host = "172.20.157.15";
+                    smtp.Host = "188.244.78.162";
                     smtp.Port = 25;
                     smtp.EnableSsl = false;
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
