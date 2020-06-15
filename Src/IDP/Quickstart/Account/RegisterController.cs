@@ -233,7 +233,7 @@ namespace IDP.Quickstart.Account
         private string GetConfirmPath(in PathString requestPath)
         {
             var indexOfRegister = requestPath.Value.ToLower().IndexOf("/register/");
-            return requestPath.Value.Substring(0, indexOfRegister) + "/Register/ConfirmEmail";
+            return requestPath.Value.Substring(0, indexOfRegister) + "/IDP/Register/ConfirmEmail";
         }
     }
 

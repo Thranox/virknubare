@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace PolAPI
 {
-    public interface ITimedHostedService: IHostedService, IDisposable
+    public interface IMailSenderHostedService: IHostedService, IDisposable
     {
     }
 }

@@ -1,3 +1,4 @@
+using API.Shared;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,17 +28,19 @@ namespace PolAPI
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
                 })
-                .ConfigureServices((hosted ,services )=>
+                .ConfigureServices((hosted, services) =>
                 {
-                    var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-                    services.AddSingleton<ITimedHostedService>(s =>
-                        new TimedHostedService(
-                            s.GetRequiredService<ILogger>(),
-                            s,
-                            s.GetRequiredService<IMailService>(),
-                            configuration.GetValue<string>("MailFromAddress"))
-                    );
-                    services.AddHostedService<ITimedHostedService>((a) => a.GetRequiredService<ITimedHostedService>());
+                    services.AddHostedService<IMailSenderHostedService>(serviceProvider =>
+                    {
+                        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                        return new MailSenderHostedService(
+                            serviceProvider.GetRequiredService<ILogger>(),
+                            serviceProvider,
+                            serviceProvider.GetRequiredService<IMailService>(),
+                            configuration.GetValue<string>("MailFromAddress"),
+                            configuration.GetValue<int>("MailSendingIntervalInSeconds")
+                        );
+                    });
                 });
         }
     }

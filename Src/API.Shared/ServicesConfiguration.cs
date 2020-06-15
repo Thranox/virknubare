@@ -21,7 +21,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using PolAPI;
 using Serilog;
 using SharedWouldBeNugets;
 using TestHelpers;
@@ -74,7 +73,6 @@ namespace API.Shared
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
-
             if (configuration.GetValue<bool>("UseRealEmailSender"))
             {
                 services.AddSingleton<IMailService>(s =>
