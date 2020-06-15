@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using PolAPI;
 using Serilog;
 using SharedWouldBeNugets;
 using TestHelpers;
@@ -46,7 +47,7 @@ namespace API.Shared
         {
             services.AddScoped<HttpResponseExceptionFilter>();
             services.AddScoped<MethodLoggingActionFilter>();
-            services.AddScoped<ILogger>(s => StartupHelper.CreateLogger(configuration, componentName));
+            services.AddSingleton<ILogger>(s => StartupHelper.CreateLogger(configuration, componentName));
 
             services.AddControllers().AddNewtonsoftJson();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -73,13 +74,19 @@ namespace API.Shared
 
         public static void MapServices(IServiceCollection services, bool enforceAuthenticated, IConfiguration configuration)
         {
+
             if (configuration.GetValue<bool>("UseRealEmailSender"))
             {
-                services.AddScoped<IMailService, MailService>();
+                services.AddSingleton<IMailService>(s =>
+                    new MailService(
+                        s.GetRequiredService<ILogger>(),
+                        configuration.GetValue<string>("SmtpIp"),
+                        configuration.GetValue<int>("SmtpTimeoutMs"))
+                );
             }
             else
             {
-                services.AddScoped<IMailService, FakeMailService>();
+                services.AddSingleton<IMailService, FakeMailService>();
             }
             services.AddAutoMapper(typeof(EntityDtoProfile));
 

@@ -4,6 +4,6 @@ namespace SharedWouldBeNugets
 {
     public interface IMailService
     {
-        Task SendAsync(string fromAddress, string toAddress, string subject, string body);
+        Task SendAsync(string fromAddress, string[] toAddress, string subject, string body);
     }
 }

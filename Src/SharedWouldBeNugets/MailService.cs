@@ -19,7 +19,7 @@ namespace SharedWouldBeNugets
             _smtpTimeoutMs = smtpTimeoutMs;
         }
 
-        public async Task SendAsync(string fromAddress, string toAddress, string subject, string body)
+        public async Task SendAsync(string fromAddress, string[] toAddress, string subject, string body)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace SharedWouldBeNugets
                     smtp.Credentials = new NetworkCredential("", "");
                     smtp.Timeout = _smtpTimeoutMs;
                 }
-                await smtp.SendMailAsync(fromAddress, toAddress, subject, body);
+                await smtp.SendMailAsync(fromAddress,string.Join(";", toAddress), subject, body);
             }
             catch (Exception e)
             {

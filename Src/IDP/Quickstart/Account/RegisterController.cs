@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -29,6 +30,7 @@ namespace IDP.Quickstart.Account
         private readonly IEmailFactory _emailFactory;
         private readonly IMailService _mailService;
         private readonly ILogger _logger;
+        private readonly string _mailFromAddress;
 
         public RegisterController(
             UserManager<ApplicationUser> userManager,
@@ -36,7 +38,8 @@ namespace IDP.Quickstart.Account
             IClientStore clientStore, 
             IEmailFactory emailFactory, 
             IMailService mailService,
-            ILogger logger)
+            ILogger logger,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _interaction = interaction;
@@ -44,6 +47,7 @@ namespace IDP.Quickstart.Account
             _emailFactory = emailFactory;
             _mailService = mailService;
             _logger = logger;
+            _mailFromAddress = configuration.GetValue<string>("MailFromAddress");
         }
 
         /// <summary>
@@ -203,7 +207,7 @@ namespace IDP.Quickstart.Account
                     try
                     {
                         await _mailService
-                            .SendAsync("info@improvento.com", model.Email, confirmationEmail.Subject, confirmationEmail.Body);
+                            .SendAsync(_mailFromAddress,new []{ model.Email}, confirmationEmail.Subject, confirmationEmail.Body);
                     }
                     catch (Exception e)
                     {
