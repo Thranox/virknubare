@@ -30,7 +30,7 @@ namespace IDP
         {
             if (Configuration.GetValue<bool>("UseRealEmailSender"))
             {
-                services.AddScoped<IMailService, MailService>();
+                services.AddScoped<IMailService>(s=>new MailService(s.GetRequiredService<ILogger>(), Configuration.GetValue<string>("SmtpIp"), Configuration.GetValue<int>("SmtpTimeoutMs")));
             }
             else
             {

@@ -16,7 +16,7 @@ namespace Tests.SharedWouldBeNugets
             var fromAddress = "tobias.jensen@improvento.com";
             var toAddress = "tobias.jensen@improvento.com";
 
-            var mailService = new MailService(Log.Logger);
+            var mailService = new MailService(Log.Logger, "188.244.78.162",3000);
             await mailService.SendAsync(fromAddress, toAddress, subject, body);
         }
     }
