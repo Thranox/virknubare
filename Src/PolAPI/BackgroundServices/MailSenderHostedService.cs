@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using SharedWouldBeNugets;
 
-namespace PolAPI
+namespace PolAPI.BackgroundServices
 {
     public class MailSenderHostedService : BackgroundService, IMailSenderHostedService
     {

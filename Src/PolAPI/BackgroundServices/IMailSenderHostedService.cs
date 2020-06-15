@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Hosting;
 
-namespace PolAPI
+namespace PolAPI.BackgroundServices
 {
     public interface IMailSenderHostedService: IHostedService, IDisposable
     {
