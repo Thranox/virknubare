@@ -31,7 +31,12 @@ namespace IDP
         {
             if (Configuration.GetValue<bool>("UseRealEmailSender"))
             {
-                services.AddScoped<IMailService>(s=>new MailService(s.GetRequiredService<ILogger>(), Configuration.GetValue<string>("SmtpIp"), Configuration.GetValue<int>("SmtpTimeoutMs")));
+                services.AddScoped<IMailService>(s=>
+                    new MailService(
+                        s.GetRequiredService<ILogger>(), 
+                        Configuration.GetValue<string>("SmtpIp"), 
+                        Configuration.GetValue<int>("SmtpTimeoutMs"))
+                );
             }
             else
             {
@@ -148,21 +153,6 @@ namespace IDP
             {
                 endpoints.MapDefaultControllerRoute();
             });
-
-            try
-            {
-                var mailService = app
-                    .ApplicationServices
-                    .CreateScope()
-                    .ServiceProvider
-                    .GetRequiredService<IMailService>();
-                mailService.SendAsync("andersjuulsfirma@gmail.com", "andersjuulsfirma@gmail.com", "IDP is up",
-                    "Empty body!").Wait(TimeSpan.FromSeconds(3));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
         }
     }
 }

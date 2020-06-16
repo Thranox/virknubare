@@ -6,10 +6,10 @@ namespace TestHelpers
 {
     public class FakeMailService : IMailService
     {
-        public Task SendAsync(string fromAddress, string toAddress, string subject, string body)
+        public Task SendAsync(string fromAddress, string[] toAddress, string subject, string body)
         {
             var tempFileName = Path.GetTempFileName()+".txt";
-            File.WriteAllLines(tempFileName, new[]{fromAddress,toAddress,subject,body});
+            File.WriteAllLines(tempFileName, new[]{fromAddress,string.Join(";", toAddress),subject,body});
 
             return Task.CompletedTask;
         }
