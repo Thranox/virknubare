@@ -30,6 +30,7 @@ namespace Domain.Entities
         public string Name { get; set; }
 
         public ICollection<InvitationEntity> Invitations { get; }
+        public string FtpIdentifier { get; set; } = "SL";
 
         public void AddUser(UserEntity userEntity, UserStatus userStatus)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Application.Interfaces;
@@ -11,25 +12,27 @@ namespace Tests.ApplicationServices
 {
     public class SubmitSubmissionServiceIntegrationTests
     {
-        [Test]
-        [Explicit("Awaits 2020-27")]
+        [Test]       
         public async Task SubmitAsync_NoParameters_SubmitsAll()
         {
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
                 var path = Path.GetTempFileName();
-                File.WriteAllText(path,"Gibberish!");
-                testContext.GetUnitOfWork().Repository.Add(new SubmissionEntity() {PathToFile = path});
+                File.WriteAllText(path, "Gibberish!");
+                SubmissionEntity entity = new SubmissionEntity() { PathToFile = path, Customer = testContext.GetDummyCustomer1() };
+                testContext.GetUnitOfWork().Repository.Attach(entity);
                 await testContext.GetUnitOfWork().CommitAsync();
                 
                 var sut = testContext.ServiceProvider.GetRequiredService<ISubmitSubmissionService>();
 
                 // Act
-                var actual = await sut.SubmitAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+                await sut.SubmitAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
 
                 // Assert
-                Assert.That(actual, Is.Not.Null);
+                var submissionEntity = testContext.GetUnitOfWork().Repository.GetById<SubmissionEntity>(entity.Id);
+                Assert.That(submissionEntity.SubmissionTime, Is.Not.Null);
+                Assert.That(DateTime.Now - submissionEntity.SubmissionTime, Is.LessThan(TimeSpan.FromSeconds(10)));
             }
         }
     }
