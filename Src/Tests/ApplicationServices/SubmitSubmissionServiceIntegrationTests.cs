@@ -12,8 +12,7 @@ namespace Tests.ApplicationServices
 {
     public class SubmitSubmissionServiceIntegrationTests
     {
-        [Test]
-        //[Explicit("Awaits 2020-27")]
+        [Test]       
         public async Task SubmitAsync_NoParameters_SubmitsAll()
         {
             // Arrange

@@ -38,7 +38,7 @@ namespace Tests.API.Controllers
         }
 
         [Test]
-        //[Explicit("Awaits 2020-27")]
+        [Explicit("Awaits 2020-27")]
         public async Task PostTbd_NoParameters_SendsSubmissions()
         {
             // Arrange
