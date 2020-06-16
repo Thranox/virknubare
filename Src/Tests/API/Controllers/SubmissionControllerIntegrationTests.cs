@@ -38,7 +38,7 @@ namespace Tests.API.Controllers
         }
 
         [Test]
-        [Explicit("Awaits 2020-27")]
+        //[Explicit("Awaits 2020-27")]
         public async Task PostTbd_NoParameters_SendsSubmissions()
         {
             // Arrange
@@ -48,7 +48,8 @@ namespace Tests.API.Controllers
 
                 var path = Path.GetTempFileName();
                 File.WriteAllText(path, "Gibberish!");
-                testContext.GetUnitOfWork().Repository.Add(new SubmissionEntity {PathToFile = path});
+                SubmissionEntity entity = new SubmissionEntity { PathToFile = path };
+                testContext.GetUnitOfWork().Repository.Add(entity);
                 await testContext.GetUnitOfWork().CommitAsync();
 
                 var sut = GetSut(testContext);
