@@ -2,7 +2,7 @@
     <div class="col-12" *ngIf="travelExpense$ | async as travelExpense; else loading">
 
 
-        <h2>Vis afregning: {{travelExpense.id | slice:0:8}}..</h2>
+        <h2>Vis afregning <small>({{travelExpense?.id | slice:0:8}}..)</small></h2>
 
 
         <app-travel-expense-form [travelExpense]="travelExpense"></app-travel-expense-form>

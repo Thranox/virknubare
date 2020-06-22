@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {TravelExpense} from '../../../../shared/model/travel-expense.model';
-import {from, Observable} from 'rxjs';
+import {from, Observable, of} from 'rxjs';
 import {TravelExpenseService} from '../../../../shared/services/travel-expense.service';
-import {ActivatedRoute} from '@angular/router';
-import {map, switchMap} from "rxjs/operators";
+import {ActivatedRoute, Router} from '@angular/router';
+import {catchError, map, switchMap} from "rxjs/operators";
 import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
 
 @Component({
@@ -18,13 +18,21 @@ export class DetailsComponent implements OnInit {
     constructor(
         private travelExpenseService: TravelExpenseService,
         private activatedRoute: ActivatedRoute,
+        private router: Router,
     ) {
     }
 
     ngOnInit(): void {
         this.travelExpense$ = this.activatedRoute.paramMap.pipe(
             map((param) => param.get('id')),
-            switchMap((id: string) => this.travelExpenseService.getTravelExpenseById(id))
+            switchMap((id: string) => this.travelExpenseService.getTravelExpenseById(id)),
+            catchError((error, caught) => {
+                if (error.status === 404 || error.status === 400) {
+                    return this.router.navigate(['404']);
+                }
+                console.dir(error);
+                console.dir(caught);
+            }),
         );
     }
 

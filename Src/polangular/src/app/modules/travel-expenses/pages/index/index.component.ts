@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {TravelExpense} from '../../../../shared/model/travel-expense.model';
 import {from, Observable} from 'rxjs';
-import {TravelExpenseService} from '../../../../shared/services/travel-expense.service';
-import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
+import {MockTravelExpenseService} from '../../../../shared/mocks/mock-travel-expense.service';
+import {TravelExpenseService} from "../../../../shared/services/travel-expense.service";
 
 @Component({
   selector: 'app-index',

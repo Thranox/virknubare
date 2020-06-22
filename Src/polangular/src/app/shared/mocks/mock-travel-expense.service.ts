@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of, throwError} from 'rxjs';
 import {TravelExpense} from '../model/travel-expense.model';
+import {FlowStep} from "../model/flow-step.model";
 
 
 @Injectable()
@@ -52,6 +53,10 @@ export class MockTravelExpenseService {
             return entry;
         });
         return of(travelExpense);
+    }
+
+    processStep(travelExpense: TravelExpense, flowStep: FlowStep) {
+        return of({});
     }
 
 }
