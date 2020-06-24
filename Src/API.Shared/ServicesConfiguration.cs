@@ -133,16 +133,12 @@ namespace API.Shared
             {
                 services.AddScoped<ISubManagementService>(x =>
                 {
-                    var callingUser = new UserEntity("Temp", subUsedWhenAuthenticationDisabled);
+                    var subject = configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled");
+                    var callingUser = new UserEntity("Temp", subject){Email = "dummy@email.com"};
                     var polSystem = new PolSystem("http://nowhere.com/api", "http://nowhere.com/web");
                     var polApiContext = new PolApiContext(callingUser,"http://nowhere.com", polSystem);
                     return new FakeSubManagementService(polApiContext);
                 });
-                services.AddScoped<ISubManagementService>(x => new FakeSubManagementService(
-                    new PolApiContext(
-                        new UserEntity("Temp", configuration.GetValue<string>("SubUsedWhenAuthenticationDisabled")),
-                        "http://nowhere.com", new PolSystem("http://nowhere.com/api", "http://nowhere.com/web")
-                        )));
             }
 
             Assembly

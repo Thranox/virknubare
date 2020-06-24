@@ -2,7 +2,7 @@
   "profiles": {
     "Kata": {
       "commandName": "Project",
-      "commandLineArgs": "--jwtdir c:\\poljwt --sutname andersathome --prompt true "
+      "commandLineArgs": "--jwtdir c:\\poljwt --sutname localhost --prompt true "
     }
   }
 }
