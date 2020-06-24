@@ -7,10 +7,16 @@ import {DetailsComponent} from './pages/details/details.component';
 import { TravelExpenseFormComponent } from './components/travel-expense-form/travel-expense-form.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {CreateComponent} from "./pages/create/create.component";
 
 
 @NgModule({
-  declarations: [IndexComponent, DetailsComponent, TravelExpenseFormComponent],
+  declarations: [
+      IndexComponent,
+      DetailsComponent,
+      TravelExpenseFormComponent,
+      CreateComponent,
+  ],
     imports: [
         CommonModule,
         ReactiveFormsModule,
