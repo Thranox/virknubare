@@ -1,8 +1,13 @@
 <footer class="container">
-    <p class="float-right"><a href="#">Tilbage til toppen</a></p>
-    <p>&copy; 2020 Improvento. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-    <p><img src="assets/logo.png" alt="Images path test"></p>
-    <button class="btn btn-sm btn-outline-primary" (click)="showUserInfo = !showUserInfo">Show user info</button>
-    <small [hidden]="!showUserInfo">
-        <pre>{{ user | async | json }}</pre></small>
+    <!-- <p class="float-right"><a href="#">Tilbage til toppen</a></p> -->
+    <p>
+        &copy; 2020 Improvento.
+        &middot; <a href="#">Privatlivspolitik</a>
+        &middot; <a href="#">Betingelser</a>
+        &middot; <a href="#" (click)="showUserInfo = !showUserInfo">Vis brugerinfo</a>
+    </p>
+
+    <p><img src="assets/logo.png" class="my-3" alt=""></p>
+
+    <pre [hidden]="!showUserInfo" style="font-size: 70%;">{{ user | async | json }}</pre>
 </footer>
