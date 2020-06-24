@@ -4,9 +4,9 @@
 
         <h2>Vis afregning <small>({{travelExpense?.id | slice:0:8}}..)</small></h2>
 
-
-        <app-travel-expense-form [travelExpense]="travelExpense"></app-travel-expense-form>
-
+        <form [formGroup]="travelExpenseForm">
+            <app-travel-expense-form #travelExpenseFormComponent formControlName="travelExpense"></app-travel-expense-form>
+        </form>
 
 
         <div class="card my-2">
@@ -23,10 +23,20 @@
             </div>
         </div>
 
+        <div class="row pt-3">
+            <div class="col text-right">
+                <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
+            </div>
+        </div>
+
         <small>
             <div>
                 Info til fejlfinding:
-                <pre>{{ travelExpense | json}}</pre>
+<pre>
+Valid: {{ travelExpenseForm.valid}}
+{{ travelExpenseForm.getRawValue() | json}}
+
+</pre>
             </div>
         </small>
 
