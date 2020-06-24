@@ -8,6 +8,7 @@ import {TravelExpenseFormComponent} from './components/travel-expense-form/trave
 import {ReactiveFormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CreateComponent} from "./pages/create/create.component";
+import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {CreateComponent} from "./pages/create/create.component";
         CommonModule,
         ReactiveFormsModule,
         TravelExpensesRoutingModule,
+        NgxDatatableModule,
         NgbModule
     ]
 })

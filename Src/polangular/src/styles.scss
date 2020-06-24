@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
+
+$blue: #055fce;
+$navbar-dark-color: rgba(255, 255, 255, 0.9);
+$headings-font-weight: 300;
+
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
 
@@ -37,4 +42,26 @@ ngb-timepicker {
 .form-control.disabled {
     background-color: $input-disabled-bg;
     opacity: 1;
+}
+
+nav {
+    background: linear-gradient(346deg, rgba(18,7,205,1) 0%, rgba(7,31,196,1) 38%, rgba(1,183,219,1) 100%);
+}
+
+li.nav-item {
+    border-right: 1px solid #8aaee3;
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.navbar-expand-md .navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.navbar-dark .navbar-nav .link-active .nav-link {
+    color: white;
+    text-decoration: underline;
 }
