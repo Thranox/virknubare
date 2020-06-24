@@ -13,14 +13,13 @@ export class TravelExpenseResource {
 
     private baseUrl: string;
 
-    constructor(private _httpClient: HttpClient,
-                private _authService: AuthService) {
+    constructor(private httpClient: HttpClient) {
 
         this.baseUrl = environment.apiUrl;
     }
 
     getTravelExpenses(): Observable<TravelExpense[]> {
-        return this._httpClient.get<PolAPIResponse<TravelExpense[]>>(this.baseUrl + 'travelexpenses').pipe(
+        return this.httpClient.get<PolAPIResponse<TravelExpense[]>>(this.baseUrl + 'travelexpenses').pipe(
             map(response => {
                 return response.result;
             })
@@ -29,20 +28,14 @@ export class TravelExpenseResource {
 
     createTravelExpense(newTravelExpense: TravelExpense) {
         const baseUrl = environment.apiUrl;
-        const postBody = {
-            description: newTravelExpense.description,
-            customerId: "00000000-0000-0000-0000-000000000000",
-        };
+        const postBody = newTravelExpense as any;
+        postBody.customerId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 
-        console.warn('Not yet implemented');
-        return of([]);
-
-        // return this._httpClient.post<void>(baseUrl + 'travelexpenses', postBody);
-
+        return this.httpClient.post<void>(baseUrl + 'travelexpenses', postBody);
     }
 
     getTravelExpenseById(id: string): Observable<TravelExpense> {
-        return this._httpClient.get<PolAPIResponse<TravelExpense>>(this.baseUrl + 'travelexpenses/' + id).pipe(
+        return this.httpClient.get<PolAPIResponse<TravelExpense>>(this.baseUrl + 'travelexpenses/' + id).pipe(
             map(response => {
                 return response.result;
             })
@@ -50,16 +43,16 @@ export class TravelExpenseResource {
     }
 
     updateTravelExpense(travelExpense: TravelExpense): Observable<void> {
-        return this._httpClient.put<void>(this.baseUrl + 'travelexpenses/' + travelExpense.id, travelExpense);
+        return this.httpClient.put<void>(this.baseUrl + 'travelexpenses/' + travelExpense.id, travelExpense);
     }
 
     processStep(travelExpense: TravelExpense, flowStep: FlowStep) {
         const url = this.baseUrl + 'travelexpenses/' + travelExpense.id + '/FlowStep/' + flowStep.flowStepId;
-        return this._httpClient.post<any>(url, {});
+        return this.httpClient.post<any>(url, {});
 
     }
 
     getFlowSteps() {
-        return this._httpClient.get<any>(this.baseUrl + 'flowsteps');
+        return this.httpClient.get<any>(this.baseUrl + 'flowsteps');
     }
 }

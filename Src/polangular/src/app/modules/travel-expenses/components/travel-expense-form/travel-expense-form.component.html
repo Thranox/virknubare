@@ -79,10 +79,10 @@
             <div class="form-row">
                 <div class="col-md-6">
                     <label>Kursus/Seminar</label>
-                    <select class="form-control">
-                        <option [value]="null"></option>
-                        <option [value]="true">Ja</option>
-                        <option [value]="false">Nej</option>
+                    <select class="form-control" formControlName="isEducational">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="true">Ja</option>
+                        <option [ngValue]="false">Nej</option>
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -103,11 +103,14 @@
                 </div>
             </div>
 
-            <div class="row pt-3">
+            Gyldig: {{ travelExpenseFormGroup.valid
+            }}
+
+            <!--<div class="row pt-3">
                 <div class="col text-right">
                     <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
                 </div>
-            </div>
+            </div>-->
 
             <!--<pre>Form data:
 {{ travelExpenseFormGroup.getRawValue() | json }}</pre>-->
