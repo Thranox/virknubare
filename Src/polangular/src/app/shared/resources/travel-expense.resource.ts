@@ -28,16 +28,10 @@ export class TravelExpenseResource {
 
     createTravelExpense(newTravelExpense: TravelExpense) {
         const baseUrl = environment.apiUrl;
-        const postBody = {
-            description: newTravelExpense.description,
-            customerId: "00000000-0000-0000-0000-000000000000",
-        };
+        const postBody = newTravelExpense as any;
+        postBody.customerId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 
-        console.warn('Not yet implemented');
-        return of([]);
-
-        // return this.httpClient.post<void>(baseUrl + 'travelexpenses', postBody);
-
+        return this.httpClient.post<void>(baseUrl + 'travelexpenses', postBody);
     }
 
     getTravelExpenseById(id: string): Observable<TravelExpense> {

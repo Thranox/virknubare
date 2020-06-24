@@ -67,10 +67,10 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
     private initReactiveForm() {
         this.travelExpenseFormGroup = this.fb.group({
             description: [null, Validators.required],
-            startDate: [dayjs(), Validators.required],
-            startTime: ['08:00', Validators.required],
-            endDate: [dayjs(), Validators.required],
-            endTime: ['16:00', Validators.required],
+            startDate: [dayjs()],
+            startTime: ['08:00'],
+            endDate: [dayjs()],
+            endTime: ['16:00'],
             purpose: [null, Validators.required],
             isEducational: [false, Validators.required],
         });
