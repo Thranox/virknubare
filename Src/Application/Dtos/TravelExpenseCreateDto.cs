@@ -8,7 +8,7 @@ namespace Application.Dtos
     {
         public string Description { get; set; }
         public Guid CustomerId { get; set; }
-
+        
         public override IEnumerable<object> GetEqualityComponents()
         {
             yield return Description;

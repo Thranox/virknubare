@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.SharedKernel;
+using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Data
 {
@@ -83,6 +85,27 @@ namespace Infrastructure.Data
             modelBuilder.Entity<FlowStepEntity>().ToTable("FlowSteps");
             modelBuilder.Entity<FlowStepUserPermissionEntity>().ToTable("FlowStepUserPermissions");
             modelBuilder.Entity<TravelExpenseEntity>().ToTable("TravelExpenses");
+            modelBuilder.Entity<TravelExpenseEntity>()
+                .Property(x => x.DailyAllowanceAmount)
+                .HasConversion(
+                    xx => JsonConvert.SerializeObject(xx),
+                    xxx => JsonConvert.DeserializeObject<DailyAllowanceAmount>(xxx));
+            modelBuilder.Entity<TravelExpenseEntity>()
+                .Property(x => x.FoodAllowances)
+                .HasConversion(
+                    xx => JsonConvert.SerializeObject(xx),
+                    xxx => JsonConvert.DeserializeObject<FoodAllowances>(xxx));
+            modelBuilder.Entity<TravelExpenseEntity>()
+                .Property(x => x.DestinationPlace)
+                .HasConversion(
+                    xx => JsonConvert.SerializeObject(xx),
+                    xxx => JsonConvert.DeserializeObject<Place>(xxx));
+            modelBuilder.Entity<TravelExpenseEntity>()
+                .Property(x => x.TransportSpecification)
+                .HasConversion(
+                    xx => JsonConvert.SerializeObject(xx),
+                    xxx => JsonConvert.DeserializeObject<TransportSpecification>(xxx));
+
             modelBuilder.Entity<CustomerUserPermissionEntity>().ToTable("CustomerUserPermissions");
             modelBuilder.Entity<InvitationEntity>().ToTable("Invitations");
             modelBuilder.Entity<SubmissionEntity>().ToTable("Submissions");

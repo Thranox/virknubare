@@ -26,11 +26,20 @@ namespace Domain.Entities
         }
 
         public StageEntity Stage { get; private set; }
-
         public UserEntity OwnedByUser { get; private set; }
         public CustomerEntity Customer { get; private set; }
-
         public string Description { get; private set; }
+        public DateTime DepartureDateTime { get; set; }
+        public DateTime ArrivalDateTime { get; set; }
+        public int CommitteeId { get; set; }
+        public string Purpose { get; set; }
+        public Place DestinationPlace { get; set; }
+        public bool IsEducationalPurpose { get; set; }
+        public TransportSpecification TransportSpecification { get; set; }
+        public double Expenses { get; set; }
+        public bool IsAbsenceAllowance { get; set; }
+        public DailyAllowanceAmount DailyAllowanceAmount { get; set; }
+        public FoodAllowances FoodAllowances { get; set; }
 
         public void Update(string description)
         {

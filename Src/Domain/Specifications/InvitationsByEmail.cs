@@ -10,7 +10,6 @@ namespace Domain.Specifications
     {
         public InvitationsByEmail(string email)
         {
-            //if(email==)
             var lowerCaseEmail = email.ToLower();
             Criteria = e => e.InvitationState == InvitationState.Invited && e.Email == lowerCaseEmail;
         }
