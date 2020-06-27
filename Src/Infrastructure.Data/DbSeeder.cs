@@ -94,7 +94,7 @@ namespace Infrastructure.Data
             {
                 var travelExpenseDescriptions=Enumerable.Range(1, TestData.GetNumberOfTestDataTravelExpenses()).Select(x=> "Description"+x);
                 var newTravelExpenses= travelExpenseDescriptions
-                    .Select(x=>_travelExpenseFactory.Create(x, userEntityPol, customer1))
+                    .Select(x=>_travelExpenseFactory.Create(x, userEntityPol, customer1, arrivalDateTime:DateTime.Now))
                     .ToArray();
                 foreach (var travelExpenseEntity in newTravelExpenses)
                 {

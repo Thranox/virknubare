@@ -22,7 +22,7 @@ namespace Application.Services
         {
             var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
             var travelExpenseEntity = _travelExpenseFactory.Create(travelExpenseCreateDto.Description,
-                polApiContext.CallingUser, owningCustomer);
+                polApiContext.CallingUser, owningCustomer, travelExpenseCreateDto.ArrivalDateTime);
 
             _unitOfWork
                 .Repository
