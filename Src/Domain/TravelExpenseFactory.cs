@@ -18,15 +18,17 @@ namespace Domain
         }
 
         public TravelExpenseEntity Create(string description, UserEntity userEntityPol, CustomerEntity customer,
-            DateTime arrivalDateTime)
+            DateTime arrivalDateTime, DateTime departureDateTime, int committeeId, string purpose,
+            bool isEducationalPurpose, double expenses, bool isAbsenceAllowance, Place destinationPlace,
+            TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount,
+            FoodAllowances foodAllowances)
         {
             if (_stages == null) _stages = _unitOfWork.Repository.List<StageEntity>();
 
             var stageEntity = _stages.Single(x => x.Value == TravelExpenseStage.Initial);
-            return new TravelExpenseEntity(description, userEntityPol, customer,stageEntity)
-            {
-                ArrivalDateTime = arrivalDateTime
-            };
+            return new TravelExpenseEntity(description, userEntityPol, customer, stageEntity, arrivalDateTime,
+                departureDateTime, committeeId, purpose, isEducationalPurpose, expenses, isAbsenceAllowance,
+                destinationPlace, transportSpecification, dailyAllowanceAmount,foodAllowances);
         }
     }
 }

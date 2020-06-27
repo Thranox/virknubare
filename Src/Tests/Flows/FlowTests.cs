@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using TestHelpers;
+using Tests.Domain.Services;
 using Tests.TestHelpers;
 
 namespace Tests.Flows
@@ -32,9 +33,10 @@ namespace Tests.Flows
             testContext.SetCallingUserBySub(TestData.DummyPolSubAlice);
 
             // ** Create TravelExpense
-            var actionResultTePost = await travelExpenseController.Post(
-                new TravelExpenseCreateDto
-                    {Description = testContext.Fixture.Create<string>(), CustomerId = customerId});
+            var actionResultTePost = await travelExpenseController
+                .Post(
+                    TestDataHelper.GetValidTravelExpenseCreateDto(testContext.Fixture.Create<string>(),customerId)
+                    );
 
             var travelExpenseId =
                 ((actionResultTePost.Result as CreatedResult).Value as TravelExpenseCreateResponse).Id;

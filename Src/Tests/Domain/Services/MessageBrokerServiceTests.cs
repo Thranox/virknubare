@@ -27,7 +27,7 @@ namespace Tests.Domain.Services
                 var receivingUserEntities = new[] {userEntityAnders};
                 var customerEntity = testContext.GetDummyCustomer1();
                 var stageEntity = testContext.GetStages().Single(x=>x.Value==TravelExpenseStage.Initial);
-                var travelExpenseEntity = new TravelExpenseEntity("Description", userEntityAnders, customerEntity, stageEntity);
+                var travelExpenseEntity = TestDataHelper.GetValidTravelExpense(stageEntity,userEntityAnders, customerEntity);// new TravelExpenseEntity("Description", userEntityAnders, customerEntity, stageEntity, DateTime.Now);
 
                 var sut = testContext.ServiceProvider.GetRequiredService<IMessageBrokerService>();
 
