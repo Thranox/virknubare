@@ -15,5 +15,6 @@ namespace Kata
         public DatabaseResetResponse DatabaseResetResponse { get; set; }
         public CustomerInvitationsPostResponse CustomerInvitationsPostResponse { get; set; }
         public UserCustomerPostResponse UserCustomerPostResponse { get; set; }
+        public TravelExpenseUpdateResponse TravelExpenseUpdateResponse { get; set; }
     }
 }

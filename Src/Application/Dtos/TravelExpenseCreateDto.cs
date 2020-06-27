@@ -24,18 +24,17 @@ namespace Application.Dtos
         {
             yield return Description;
             yield return CustomerId;
+            yield return ArrivalDateTime;
+            yield return DepartureDateTime;
+            yield return CommitteeId;
+            yield return Purpose;
+            yield return IsEducationalPurpose;
+            yield return Expenses;
+            yield return IsAbsenceAllowance;
+            yield return DestinationPlace;
+            yield return TransportSpecification;
+            yield return DailyAllowanceAmount;
+            yield return FoodAllowances;
         }
-    }
-
-    public class FoodAllowancesDto:ValueObject
-    {
-        public override IEnumerable<object> GetEqualityComponents()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Morning { get; set; }
-        public int Lunch { get; set; }
-        public int Dinner { get; set; }
-    }
+}
 }

@@ -10,6 +10,7 @@ using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TestHelpers;
+using Tests.Domain.Services;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices
@@ -28,8 +29,7 @@ namespace Tests.ApplicationServices
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
-                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Description = newDescription};
+                    var travelExpenseUpdateDto = TestDataHelper.GetValidTravelExpenseUpdateDto(existing,newDescription);
                     var sut = testContext.ServiceProvider.GetService<IUpdateTravelExpenseService>();
 
                     // Act

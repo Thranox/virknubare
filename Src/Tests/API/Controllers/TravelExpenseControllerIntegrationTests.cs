@@ -102,8 +102,7 @@ namespace Tests.API.Controllers
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existingId = existing.Id;
-                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Description = newDescription};
+                    var travelExpenseUpdateDto =TestDataHelper.GetValidTravelExpenseUpdateDto(existing, newDescription);
                     var sut = GetSut(testContext);
 
                     // Act
@@ -135,7 +134,7 @@ namespace Tests.API.Controllers
             {
                 var newDescription = testContext.Fixture.Create<string>();
                 var existingId = Guid.NewGuid();
-                var travelExpenseUpdateDto = new TravelExpenseUpdateDto {Description = newDescription};
+                var travelExpenseUpdateDto = new TravelExpenseUpdateDto {Description = newDescription, DailyAllowanceAmount = new DailyAllowanceAmountDto(), DestinationPlace = new PlaceDto(), FoodAllowances = new FoodAllowancesDto(),TransportSpecification = new TransportSpecificationDto()};
 
                 var sut = GetSut(testContext);
 
@@ -155,13 +154,11 @@ namespace Tests.API.Controllers
             // Arrange
             using (var testContext = new IntegrationTestContext())
             {
-                var newDescription = string.Empty;
                 using (var unitOfWork = testContext.ServiceProvider.GetService<IUnitOfWork>())
                 {
                     var existing = unitOfWork.Repository.List<TravelExpenseEntity>().First();
                     existing.ApplyProcessStep(testContext.ServiceProvider.GetServices<IProcessFlowStep>().Single(x=>x.CanHandle(Globals.InitialReporteddone)));
-                    var travelExpenseUpdateDto = new TravelExpenseUpdateDto
-                        {Description = newDescription };
+                    var travelExpenseUpdateDto =TestDataHelper.GetValidTravelExpenseUpdateDto(existing);
                     var sut = GetSut(testContext);
 
                     // Act

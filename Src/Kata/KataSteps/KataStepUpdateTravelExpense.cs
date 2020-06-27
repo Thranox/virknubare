@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Application.Dtos;
-using Domain.ValueObjects;
 using Newtonsoft.Json;
 using RestSharp;
 using Serilog;
 
 namespace Kata.KataSteps
 {
-    public class KataStepCreateNewTravelExpense : KataStepBase, IKataStep
+    public class KataStepUpdateTravelExpense : KataStepBase, IKataStep
     {
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
 
-        public KataStepCreateNewTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
+        public KataStepUpdateTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
             IClientContext clientContext) : base(clientContext)
         {
             _logger = logger;
@@ -23,22 +21,20 @@ namespace Kata.KataSteps
 
         public bool CanHandle(string kataStepIdentifier)
         {
-            return kataStepIdentifier == "CreateNewTravelExpense";
+            return kataStepIdentifier == "UpdateTravelExpense";
         }
 
         protected override async Task Execute(string nameOfLoggedInUser)
         {
-            // Still alice, create new Travel Expense
-            _logger.Debug("Creating TravelExpense...");
+            // Still alice, update Travel Expense
+            _logger.Debug("Updating TravelExpense...");
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var restRequest = new RestRequest(
-                    new Uri("/travelexpenses", UriKind.Relative)
+                    new Uri("/travelexpenses/"+ClientContext.TravelExpenseCreateResponse.Id, UriKind.Relative)
                 )
-                .AddJsonBody(new TravelExpenseCreateDto
+                .AddJsonBody(new TravelExpenseUpdateDto()
                 {
                     Description = "From kata",
-                    CustomerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId,
                     DailyAllowanceAmount = new DailyAllowanceAmountDto
                     {
                         DaysLessThan4hours = 2,
@@ -67,10 +63,10 @@ namespace Kata.KataSteps
                     },
                     Purpose = "Purpose"
                 });
-            var travelExpenseCreateResponse = await restClient.PostAsync<TravelExpenseCreateResponse>(restRequest);
-            ClientContext.TravelExpenseCreateResponse = travelExpenseCreateResponse;
-            _logger.Debug("Created TravelExpense {travelExpenseCreateResponse}",
-                JsonConvert.SerializeObject(travelExpenseCreateResponse));
+            var travelExpenseUpdateResponse = await restClient.PutAsync<TravelExpenseUpdateResponse>(restRequest);
+            ClientContext.TravelExpenseUpdateResponse = travelExpenseUpdateResponse;
+            _logger.Debug("Updated TravelExpense {travelExpenseUpdateResponse}",
+                JsonConvert.SerializeObject(travelExpenseUpdateResponse));
         }
     }
 }
