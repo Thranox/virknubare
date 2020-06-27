@@ -9,6 +9,7 @@ using Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TestHelpers;
+using Tests.Domain.Services;
 using Tests.TestHelpers;
 
 namespace Tests.ApplicationServices
@@ -23,8 +24,7 @@ namespace Tests.ApplicationServices
             
             var newDescription = testContext.Fixture.Create<string>();
             var customerId = testContext.GetDummyCustomer1Id();
-            var travelExpenseCreateDto = new TravelExpenseCreateDto
-                {Description = newDescription, CustomerId = customerId};
+            var travelExpenseCreateDto = TestDataHelper.GetValidTravelExpenseCreateDto(newDescription, customerId);
             var sut = testContext.ServiceProvider.GetService<ICreateTravelExpenseService>();
 
             // Act

@@ -2,9 +2,9 @@
 {
     public class FoodAllowances
     {
-        public int morning { get; set; }
-        public int lunch { get; set; }
-        public int dinner { get; set; }
+        public int Morning { get; set; }
+        public int Lunch { get; set; }
+        public int Dinner { get; set; }
 
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
@@ -41,7 +42,7 @@ namespace Tests.Domain.Services
         {
             // Arrange
             var stageEntity = new StageEntity(travelExpenseStage);
-            var travelExpenseEntity = new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntity);
+            var travelExpenseEntity = TestDataHelper.GetValidTravelExpense(stageEntity);//new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntity, DateTime.Now);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity)).Returns(stageEntity);
             travelExpenseEntity.ApplyProcessStep(processStepStub.Object);
@@ -56,7 +57,7 @@ namespace Tests.Domain.Services
         {
             // Arrange
             var stageEntityAssignedForPayment = new StageEntity(TravelExpenseStage.AssignedForPayment);
-            var travelExpenseEntity = new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntityAssignedForPayment);
+            var travelExpenseEntity = TestDataHelper.GetValidTravelExpense(stageEntityAssignedForPayment);//new TravelExpenseEntity("a", new UserEntity("", ""), new CustomerEntity(""),stageEntityAssignedForPayment, DateTime.Now);
             var processStepStub = new Mock<IProcessFlowStep>();
             processStepStub.Setup(x => x.GetResultingStage(travelExpenseEntity))
                 .Returns(stageEntityAssignedForPayment);

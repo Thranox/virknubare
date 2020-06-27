@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 
 namespace Application.Services
 {
@@ -20,9 +22,46 @@ namespace Application.Services
         public async Task<TravelExpenseCreateResponse> CreateAsync(PolApiContext polApiContext,
             TravelExpenseCreateDto travelExpenseCreateDto)
         {
+            if (travelExpenseCreateDto.DailyAllowanceAmount == null)
+                throw new ArgumentNullException(nameof(travelExpenseCreateDto.DailyAllowanceAmount));
+            if (travelExpenseCreateDto.DestinationPlace == null)
+                throw new ArgumentNullException(nameof(travelExpenseCreateDto.DestinationPlace));
+            if (travelExpenseCreateDto.FoodAllowances == null)
+                throw new ArgumentNullException(nameof(travelExpenseCreateDto.FoodAllowances));
+            if (travelExpenseCreateDto.TransportSpecification == null)
+                throw new ArgumentNullException(nameof(travelExpenseCreateDto.TransportSpecification));
+
             var owningCustomer = _unitOfWork.Repository.GetById<CustomerEntity>(travelExpenseCreateDto.CustomerId);
             var travelExpenseEntity = _travelExpenseFactory.Create(travelExpenseCreateDto.Description,
-                polApiContext.CallingUser, owningCustomer);
+                polApiContext.CallingUser, owningCustomer, travelExpenseCreateDto.ArrivalDateTime,
+                travelExpenseCreateDto.DepartureDateTime, travelExpenseCreateDto.CommitteeId,
+                travelExpenseCreateDto.Purpose, travelExpenseCreateDto.IsEducationalPurpose, travelExpenseCreateDto.Expenses, 
+                travelExpenseCreateDto.IsAbsenceAllowance,
+                new Place
+                {
+                    Street = travelExpenseCreateDto.DestinationPlace.Street,
+                    StreetNumber = travelExpenseCreateDto.DestinationPlace.StreetNumber,
+                   ZipCode = travelExpenseCreateDto.DestinationPlace.ZipCode
+                }, new TransportSpecification
+                {
+                    KilometersCalculated = travelExpenseCreateDto.TransportSpecification.KilometersCalculated,
+                    KilometersCustom = travelExpenseCreateDto.TransportSpecification.KilometersCustom,
+                    KilometersOverTaxLimit = travelExpenseCreateDto.TransportSpecification.KilometersOverTaxLimit,
+                    KilometersTax = travelExpenseCreateDto.TransportSpecification.KilometersTax,
+                    Method = travelExpenseCreateDto.TransportSpecification.Method,
+                    NumberPlate = travelExpenseCreateDto.TransportSpecification.NumberPlate
+                }, 
+                new DailyAllowanceAmount
+                {
+                    DaysLessThan4hours = travelExpenseCreateDto.DailyAllowanceAmount.DaysLessThan4hours,
+                    DaysMoreThan4hours = travelExpenseCreateDto.DailyAllowanceAmount.DaysMoreThan4hours,
+                }, 
+                new FoodAllowances
+                {
+                    Morning = travelExpenseCreateDto.FoodAllowances.Morning,
+                    Lunch= travelExpenseCreateDto.FoodAllowances.Lunch,
+                    Dinner= travelExpenseCreateDto.FoodAllowances.Dinner
+                });
 
             _unitOfWork
                 .Repository

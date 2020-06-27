@@ -9,13 +9,13 @@ using Serilog;
 
 namespace Kata.KataSteps
 {
-    public class KataStepCreateNewTravelExpense :KataStepBase, IKataStep
+    public class KataStepCreateNewTravelExpense : KataStepBase, IKataStep
     {
         private readonly ILogger _logger;
         private readonly IRestClientProvider _restClientProvider;
 
         public KataStepCreateNewTravelExpense(ILogger logger, IRestClientProvider restClientProvider,
-            IClientContext clientContext) :base(clientContext)
+            IClientContext clientContext) : base(clientContext)
         {
             _logger = logger;
             _restClientProvider = restClientProvider;
@@ -38,11 +38,39 @@ namespace Kata.KataSteps
                 {
                     Description = "From kata",
                     CustomerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId
+                        .First(x => x.UserCustomerStatus != (int) UserStatus.Initial).CustomerId,
+                    DailyAllowanceAmount = new DailyAllowanceAmountDto
+                    {
+                        DaysLessThan4hours = 2,
+                        DaysMoreThan4hours = 3
+                    },
+                    DestinationPlace = new PlaceDto
+                    {
+                        Street = "Jegstrupvænget",
+                        StreetNumber = "269",
+                        ZipCode = "8310"
+                    },
+                    FoodAllowances = new FoodAllowancesDto
+                    {
+                        Morning = 1,
+                        Lunch = 1,
+                        Dinner = 1
+                    },
+                    TransportSpecification = new TransportSpecificationDto
+                    {
+                        KilometersCustom = 42,
+                        KilometersCalculated = 43,
+                        KilometersOverTaxLimit = 5,
+                        KilometersTax = 7,
+                        Method = "Method",
+                        NumberPlate = "AX68276"
+                    },
+                    Purpose = "Purpose"
                 });
             var travelExpenseCreateResponse = await restClient.PostAsync<TravelExpenseCreateResponse>(restRequest);
             ClientContext.TravelExpenseCreateResponse = travelExpenseCreateResponse;
-            _logger.Debug("Created TravelExpense {travelExpenseCreateResponse}", JsonConvert.SerializeObject(travelExpenseCreateResponse));
+            _logger.Debug("Created TravelExpense {travelExpenseCreateResponse}",
+                JsonConvert.SerializeObject(travelExpenseCreateResponse));
         }
     }
 }

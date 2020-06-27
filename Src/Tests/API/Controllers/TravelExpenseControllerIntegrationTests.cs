@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using TestHelpers;
+using Tests.Domain.Services;
 using Tests.TestHelpers;
 
 namespace Tests.API.Controllers
@@ -376,11 +377,7 @@ namespace Tests.API.Controllers
                     .List(new CustomerByName(TestData.DummyCustomerName1))
                     .Single()
                     .Id;
-                var travelExpenseCreateDto = new TravelExpenseCreateDto
-                {
-                    Description = newDescription,
-                    CustomerId = customerId
-                };
+                var travelExpenseCreateDto = TestDataHelper.GetValidTravelExpenseCreateDto(newDescription, customerId);
                 var sut = GetSut(testContext);
 
                 // Act
