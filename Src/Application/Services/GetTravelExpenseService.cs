@@ -51,7 +51,7 @@ namespace Application.Services
             var travelExpenseDtos = all
                 .Select(x =>
                 {
-                    var travelExpenseDto = _mapper.Map<TravelExpenseDto>(x);
+                    var travelExpenseDto = _mapper.Map<TravelExpenseInListDto>(x);
                     travelExpenseDto.AllowedFlows = GetAllowedFlows(x, polApiContext.CallingUser).ToArray();
                     return travelExpenseDto;
                 })

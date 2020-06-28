@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Application.Dtos
 {
-    public class TravelExpenseSingleDto : ValueObject
+    public class TravelExpenseInListDto : ValueObject
     {
         public string Description { get; set; }
         public Guid Id { get; set; }
@@ -27,9 +27,6 @@ namespace Application.Dtos
         public TransportSpecificationDto TransportSpecification { get; set; }
         public DailyAllowanceAmountDto DailyAllowanceAmount { get; set; }
         public FoodAllowancesDto FoodAllowances { get; set; }
-
-        public LossOfEarningsTableDto LossOfEarningsTable { get; set; }
-        public PayoutTableDto PayoutTable { get; set; }
 
         public override string ToString()
         {

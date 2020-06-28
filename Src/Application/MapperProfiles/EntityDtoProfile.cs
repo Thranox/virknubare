@@ -10,7 +10,7 @@ namespace Application.MapperProfiles
     {
         public EntityDtoProfile()
         {
-            CreateMap<TravelExpenseEntity, TravelExpenseDto>()
+            CreateMap<TravelExpenseEntity, TravelExpenseInListDto>()
                 .ForMember(x => x.StageId, xx => xx.MapFrom(xxx => xxx.Stage.Id))
                 .ForMember(x => x.StageText, xx => xx.MapFrom(xxx => Globals.StageNamesDanish[xxx.Stage.Value]))
                 .ForMember(x => x.AllowedFlows, xx => xx.Ignore())

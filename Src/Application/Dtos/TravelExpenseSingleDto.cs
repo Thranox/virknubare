@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Application.Dtos
 {
-    public class TravelExpenseDto : ValueObject
+    public class TravelExpenseSingleDto : ValueObject
     {
         public string Description { get; set; }
         public Guid Id { get; set; }
@@ -28,6 +28,9 @@ namespace Application.Dtos
         public DailyAllowanceAmountDto DailyAllowanceAmount { get; set; }
         public FoodAllowancesDto FoodAllowances { get; set; }
 
+        public LossOfEarningsTableDto LossOfEarningsTable { get; set; }
+        public PayoutTableDto PayoutTable { get; set; }
+
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
@@ -43,14 +46,14 @@ namespace Application.Dtos
             yield return StageId;
             yield return StageText;
 
-            if (AllowedFlows==null)
-                yield break;
-
-            foreach (var allowedFlowDto in AllowedFlows)
+            if (AllowedFlows != null)
             {
-                foreach (var equalityComponent in allowedFlowDto.GetEqualityComponents())
+                foreach (var allowedFlowDto in AllowedFlows)
                 {
-                    yield return equalityComponent;
+                    foreach (var equalityComponent in allowedFlowDto.GetEqualityComponents())
+                    {
+                        yield return equalityComponent;
+                    }
                 }
             }
         }

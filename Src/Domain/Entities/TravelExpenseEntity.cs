@@ -91,7 +91,14 @@ namespace Domain.Entities
 
         public PayoutTable CalculatePayoutTable()
         {
-            var payoutTable= new PayoutTable();
+            var payoutTable= new PayoutTable(new []{ "Art","Enheder","Sats","Beløb","Lønart"});
+            payoutTable.AddRow(PayoutTableRow.Create( new [] {"Fraværsgodtgørelse","","","0,00 kr.","959" }));
+            payoutTable.AddRow(PayoutTableRow.Create(new[] { "Fradrag i fraværsopgørelse", "", "", "0,00 kr.", "" }));
+            payoutTable.AddRow(PayoutTableRow.Create(new[] { "Fradragsgodtgørelse til udbetaling", "", "", "260,50 kr.", "" }));
+            payoutTable.AddRow(PayoutTableRow.Create(new[] { "Diæter over 4 timer", "1", "860,00 kr.", "860,00 kr.", "893" }));
+            payoutTable.AddRow(PayoutTableRow.Create(new[] { "KM-godtgørelse", "155", "3,52 kr.", "545,60 kr.", "915" }));
+            payoutTable.AddRow(PayoutTableRow.Create(new[] { new[] { "Tabt arbejdsfortjeneste"}, new[] {"0","0","0"}, new[] { "300,00 kr.", "400,00 kr.", "500,00 kr." }, new [] { "0,00 kr.", "0,00 kr.", "0,00 kr." }, new [] { "894", "894", "894" }} ));
+
             return payoutTable;
         }
     }

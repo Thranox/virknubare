@@ -4,6 +4,6 @@ namespace Application.Dtos
 {
     public class TravelExpenseGetResponse
     {
-        public IEnumerable<TravelExpenseDto> Result { get; set; }
+        public IEnumerable<TravelExpenseInListDto> Result { get; set; }
     }
 }
