@@ -88,5 +88,11 @@ namespace Domain.Entities
 
             Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
+
+        public PayoutTable CalculatePayoutTable()
+        {
+            var payoutTable= new PayoutTable();
+            return payoutTable;
+        }
     }
 }

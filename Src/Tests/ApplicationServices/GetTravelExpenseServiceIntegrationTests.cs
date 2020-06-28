@@ -83,7 +83,7 @@ namespace Tests.ApplicationServices
             var flowSteps = testContext.GetUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
             var flowStepId = flowSteps.Single(x => x.From.Value == TravelExpenseStage.Initial).Id;
 
-            Assert.That(actual.Result, Is.EqualTo(new TravelExpenseDto
+            Assert.That(actual.Result, Is.EqualTo(new TravelExpenseSingleDto
             {
                 Description = testContext.TravelExpenseEntity1.Description,
                 Id = testContext.TravelExpenseEntity1.Id,
