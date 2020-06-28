@@ -50,5 +50,39 @@ namespace Tests.Domain.Services
                 Purpose = "Purpose"
             };
         }
+
+        public static TravelExpenseUpdateDto GetValidTravelExpenseUpdateDto(TravelExpenseEntity existing, string description=null)
+        {
+            return new TravelExpenseUpdateDto
+            {
+                Description = description?? existing.Description + "_" + DateTime.Now.TimeOfDay,
+                DailyAllowanceAmount = new DailyAllowanceAmountDto
+                {
+                    DaysLessThan4hours = existing.DailyAllowanceAmount.DaysLessThan4hours + 1,
+                    DaysMoreThan4hours = existing.DailyAllowanceAmount.DaysMoreThan4hours + 1
+                },
+                DestinationPlace = new PlaceDto
+                {
+                    Street = existing.DestinationPlace.Street + "_A",
+                    StreetNumber = existing.DestinationPlace.StreetNumber + "0",
+                    ZipCode = existing.DestinationPlace.ZipCode + "0"
+                },
+                FoodAllowances = new FoodAllowancesDto
+                {
+                    Morning = existing.FoodAllowances.Morning + 1,
+                    Lunch = existing.FoodAllowances.Lunch + 1,
+                    Dinner = existing.FoodAllowances.Dinner + 1
+                },
+                TransportSpecification = new TransportSpecificationDto
+                {
+                    KilometersCustom = existing.TransportSpecification.KilometersCustom + 1,
+                    KilometersCalculated = existing.TransportSpecification.KilometersCalculated + 1,
+                    KilometersOverTaxLimit = existing.TransportSpecification.KilometersOverTaxLimit + 1,
+                    KilometersTax = existing.TransportSpecification.KilometersTax + 1,
+                    NumberPlate = existing.TransportSpecification.NumberPlate + "X",
+                    Method = existing.TransportSpecification.Method + "Y"
+                }
+            };
+        }
     }
 }

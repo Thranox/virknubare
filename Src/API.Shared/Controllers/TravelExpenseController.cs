@@ -12,8 +12,8 @@ namespace API.Shared.Controllers
     public class TravelExpenseController : ControllerBase
     {
         private readonly ICreateTravelExpenseService _createTravelExpenseService;
-        private readonly IGetTravelExpenseService _getTravelExpenseService;
         private readonly IFlowStepTravelExpenseService _flowStepTravelExpenseService;
+        private readonly IGetTravelExpenseService _getTravelExpenseService;
         private readonly ISubManagementService _subManagementService;
         private readonly IUpdateTravelExpenseService _updateTravelExpenseService;
 
@@ -70,17 +70,18 @@ namespace API.Shared.Controllers
             [FromBody] TravelExpenseUpdateDto travelExpenseUpdateDto)
         {
             var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
-            var travelExpenseDtos =
-                await _updateTravelExpenseService.UpdateAsync(polApiContext, id, travelExpenseUpdateDto);
+            var travelExpenseUpdateResponse = await _updateTravelExpenseService
+                .UpdateAsync(polApiContext, id, travelExpenseUpdateDto);
 
-            return Ok(travelExpenseDtos);
+            return Ok(travelExpenseUpdateResponse);
         }
 
         [HttpPost]
         public async Task<ActionResult<TravelExpenseCreateResponse>> Post(TravelExpenseCreateDto travelExpenseCreateDto)
         {
             var polApiContext = await _subManagementService.GetPolApiContext(HttpContext);
-            var travelExpenseCreateResponse = await _createTravelExpenseService.CreateAsync(polApiContext, travelExpenseCreateDto);
+            var travelExpenseCreateResponse = await _createTravelExpenseService
+                .CreateAsync(polApiContext, travelExpenseCreateDto);
 
             return Created(nameof(GetById), travelExpenseCreateResponse);
         }

@@ -21,22 +21,20 @@ namespace Tests.Domain.Services
         public async Task SendMessageAsync_KeyForAssignedForPayment_ReturnsTrue()
         {
             // Arrange
-            using (var testContext = new IntegrationTestContext())
-            {
-                var userEntityAnders = new UserEntity("Anders", Guid.NewGuid().ToString());
-                var receivingUserEntities = new[] {userEntityAnders};
-                var customerEntity = testContext.GetDummyCustomer1();
-                var stageEntity = testContext.GetStages().Single(x=>x.Value==TravelExpenseStage.Initial);
-                var travelExpenseEntity = TestDataHelper.GetValidTravelExpense(stageEntity,userEntityAnders, customerEntity);// new TravelExpenseEntity("Description", userEntityAnders, customerEntity, stageEntity, DateTime.Now);
+            using var testContext = new IntegrationTestContext();
+            var userEntityAnders = new UserEntity("Anders", Guid.NewGuid().ToString());
+            var receivingUserEntities = new[] {userEntityAnders};
+            var customerEntity = testContext.GetDummyCustomer1();
+            var stageEntity = testContext.GetStages().Single(x=>x.Value==TravelExpenseStage.Initial);
+            var travelExpenseEntity = TestDataHelper.GetValidTravelExpense(stageEntity,userEntityAnders, customerEntity);// new TravelExpenseEntity("Description", userEntityAnders, customerEntity, stageEntity, DateTime.Now);
 
-                var sut = testContext.ServiceProvider.GetRequiredService<IMessageBrokerService>();
+            var sut = testContext.ServiceProvider.GetRequiredService<IMessageBrokerService>();
 
-                // Act
-                var actual = await sut.SendMessageAsync(receivingUserEntities, MessageKind.YourTravelExpenseHasChangedState, new IMessageValueEnricher[] { travelExpenseEntity, customerEntity });
+            // Act
+            var actual = await sut.SendMessageAsync(receivingUserEntities, MessageKind.YourTravelExpenseHasChangedState, new IMessageValueEnricher[] { travelExpenseEntity, customerEntity });
 
-                // Assert
-                Assert.That(actual, Is.EqualTo(1));
-            }
+            // Assert
+            Assert.That(actual, Is.EqualTo(1));
         }
     }
 }

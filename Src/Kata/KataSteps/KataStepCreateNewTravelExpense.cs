@@ -38,7 +38,7 @@ namespace Kata.KataSteps
                 {
                     Description = "From kata",
                     CustomerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
-                        .First(x => x.UserCustomerStatus != (int) UserStatus.Initial).CustomerId,
+                        .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId,
                     DailyAllowanceAmount = new DailyAllowanceAmountDto
                     {
                         DaysLessThan4hours = 2,

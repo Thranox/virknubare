@@ -55,13 +55,27 @@ namespace Domain.Entities
         {
         }
 
-        public void Update(string description)
+        public void Update(string description, 
+            DateTime arrivalDateTime, DateTime departureDateTime, int committeeId, string purpose,
+            bool isEducationalPurpose, double expenses, bool isAbsenceAllowance, Place destinationPlace,
+            TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount, FoodAllowances foodAllowances)
         {
             //BR: Can't be updated if reported done:
             if (Stage.Value != TravelExpenseStage.Initial)
                 throw new BusinessRuleViolationException(Id, "Rejseafregning kan ikke ændres når den er færdigmeldt.");
 
             Description = description;
+            ArrivalDateTime = arrivalDateTime;
+            DepartureDateTime = departureDateTime;
+            CommitteeId = committeeId;
+            Purpose = purpose;
+            IsEducationalPurpose = isEducationalPurpose;
+            Expenses = expenses;
+            IsAbsenceAllowance = isAbsenceAllowance;
+            DestinationPlace = destinationPlace;
+            TransportSpecification = transportSpecification;
+            DailyAllowanceAmount = dailyAllowanceAmount;
+            FoodAllowances = foodAllowances;
 
             Events.Add(new TravelExpenseUpdatedDomainEvent());
         }
