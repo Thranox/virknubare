@@ -55,9 +55,9 @@ namespace Infrastructure.Data
             var customer1 = GetOrCreateTestCustomer(TestData.DummyCustomerName1);
             var customer2 = GetOrCreateTestCustomer(TestData.DummyCustomerName2);
 
-            GetOrCreateLossOfEarningSpec(300, "Formiddagstimer",customer1);
-            GetOrCreateLossOfEarningSpec(400, "Frokoststimer", customer1);
-            GetOrCreateLossOfEarningSpec(500, "Eftermiddagstimer", customer1);
+            var lossOfEarningSpec300= GetOrCreateLossOfEarningSpec(300, "Formiddagstimer",customer1);
+            var lossOfEarningSpec400 = GetOrCreateLossOfEarningSpec(400, "Frokoststimer", customer1);
+            var lossOfEarningSpec500 = GetOrCreateLossOfEarningSpec(500, "Eftermiddagstimer", customer1);
 
             // -----------------------------------
             // Dummy Users
@@ -105,7 +105,13 @@ namespace Infrastructure.Data
                         42, "Test-purpose", true, 3.14, true, 
                         new Place{Street = "Jegstrupvænget", StreetNumber = "269", ZipCode = "8310"},
                         new TransportSpecification{KilometersCalculated = 50, KilometersCustom = 55,KilometersOverTaxLimit = 8,KilometersTax = 16, Method = "Metode",NumberPlate = "AX78269"}, new DailyAllowanceAmount
-                            {DaysLessThan4hours = 2,DaysMoreThan4hours = 4}, new FoodAllowances{Morning = 3,Lunch = 3,Dinner = 3}))
+                            {DaysLessThan4hours = 2,DaysMoreThan4hours = 4}, new FoodAllowances{Morning = 3,Lunch = 3,Dinner = 3}, 
+                        new []
+                        {
+                            new LossOfEarningEntity{Date =new  DateTime(2020,10,23), NumberOfHours = 3, LossOfEarningSpec=lossOfEarningSpec300},
+                            new LossOfEarningEntity{Date =new  DateTime(2020,10,23), NumberOfHours = 1, LossOfEarningSpec=lossOfEarningSpec400},
+                            new LossOfEarningEntity{Date =new  DateTime(2020,10,23), NumberOfHours = 0,LossOfEarningSpec=lossOfEarningSpec500},
+                        }))
                     .ToArray();
                 foreach (var travelExpenseEntity in newTravelExpenses) _unitOfWork.Repository.Add(travelExpenseEntity);
 
@@ -118,7 +124,7 @@ namespace Infrastructure.Data
             await _unitOfWork.CommitAsync();
         }
 
-        private void GetOrCreateLossOfEarningSpec(int rate, string description, CustomerEntity customer)
+        private LossOfEarningSpecEntity GetOrCreateLossOfEarningSpec(int rate, string description, CustomerEntity customer)
         {
             var lossOfEarningSpecEntity = _unitOfWork
                 .Repository
@@ -134,6 +140,8 @@ namespace Infrastructure.Data
                 };
                 _unitOfWork.Repository.Add(lossOfEarningSpecEntity);
             }
+
+            return lossOfEarningSpecEntity;
         }
 
         public async Task RemoveTestDataAsync()

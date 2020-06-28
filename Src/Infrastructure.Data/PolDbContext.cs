@@ -110,6 +110,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<InvitationEntity>().ToTable("Invitations");
             modelBuilder.Entity<SubmissionEntity>().ToTable("Submissions");
             modelBuilder.Entity<EmailEntity>().ToTable("Emails");
+            modelBuilder.Entity<LossOfEarningEntity>().ToTable("LossOfEarnings");
         }
     }
 }

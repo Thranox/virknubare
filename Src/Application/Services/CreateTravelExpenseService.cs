@@ -61,7 +61,8 @@ namespace Application.Services
                     Morning = travelExpenseCreateDto.FoodAllowances.Morning,
                     Lunch= travelExpenseCreateDto.FoodAllowances.Lunch,
                     Dinner= travelExpenseCreateDto.FoodAllowances.Dinner
-                });
+                },
+                new LossOfEarningEntity[]{});
 
             _unitOfWork
                 .Repository

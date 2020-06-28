@@ -17,7 +17,8 @@ namespace Domain.Entities
         public TravelExpenseEntity(string description, UserEntity user, CustomerEntity customer, StageEntity stage,
             DateTime arrivalDateTime, DateTime departureDateTime, int committeeId, string purpose,
             bool isEducationalPurpose, double expenses, bool isAbsenceAllowance, Place destinationPlace,
-            TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount, FoodAllowances foodAllowances) : this()
+            TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount,
+            FoodAllowances foodAllowances, LossOfEarningEntity[] lossOfEarningEntities) : this()
         {
             Description = description ?? throw new ArgumentNullException(nameof(description));
             Stage = stage ?? throw new ArgumentNullException(nameof(stage));
@@ -34,7 +35,10 @@ namespace Domain.Entities
             FoodAllowances = foodAllowances ?? throw new ArgumentNullException(nameof(foodAllowances));
             OwnedByUser = user ?? throw new ArgumentNullException(nameof(user));
             Customer = customer ?? throw new ArgumentNullException(nameof(customer));
+            LossOfEarningEntities = lossOfEarningEntities;
         }
+
+        public ICollection< LossOfEarningEntity> LossOfEarningEntities { get; set; }
 
         public StageEntity Stage { get; private set; }
         public UserEntity OwnedByUser { get; set; }

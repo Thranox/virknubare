@@ -19,7 +19,7 @@ namespace Application.Dtos
         public TransportSpecificationDto TransportSpecification { get; set; }
         public DailyAllowanceAmountDto DailyAllowanceAmount { get; set; }
         public FoodAllowancesDto FoodAllowances { get; set; }
-
+        public LossOfEarningDto[] LossOfEarnings { get; set; }
         public override IEnumerable<object> GetEqualityComponents()
         {
             yield return Description;
@@ -35,6 +35,7 @@ namespace Application.Dtos
             yield return TransportSpecification;
             yield return DailyAllowanceAmount;
             yield return FoodAllowances;
+            yield return LossOfEarnings;
         }
 }
 }

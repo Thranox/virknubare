@@ -16,6 +16,8 @@
     <Compile Remove="Migrations\20200526181355_aaaa.Designer.cs" />
     <Compile Remove="Migrations\20200527205321_added-submission.cs" />
     <Compile Remove="Migrations\20200527205321_added-submission.Designer.cs" />
+    <Compile Remove="Migrations\20200628195300_addedLossOfEarningsToTravelExpense.cs" />
+    <Compile Remove="Migrations\20200628195300_addedLossOfEarningsToTravelExpense.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
