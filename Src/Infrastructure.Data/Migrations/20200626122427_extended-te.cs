@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once UnusedMember.Global
+    // ReSharper disable once IdentifierTypo
     public partial class extendedte : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

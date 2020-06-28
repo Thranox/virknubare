@@ -37,29 +37,29 @@ namespace Kata.KataSteps
                     Description = "From kata",
                     DailyAllowanceAmount = new DailyAllowanceAmountDto
                     {
-                        DaysLessThan4hours = 2,
-                        DaysMoreThan4hours = 3
+                        DaysLessThan4hours = 1,
+                        DaysMoreThan4hours = 4
                     },
                     DestinationPlace = new PlaceDto
                     {
                         Street = "Jegstrupvænget",
-                        StreetNumber = "269",
+                        StreetNumber = "270",
                         ZipCode = "8310"
                     },
                     FoodAllowances = new FoodAllowancesDto
                     {
-                        Morning = 1,
-                        Lunch = 1,
-                        Dinner = 1
+                        Morning = 2,
+                        Lunch = 2,
+                        Dinner = 2
                     },
                     TransportSpecification = new TransportSpecificationDto
                     {
-                        KilometersCustom = 42,
-                        KilometersCalculated = 43,
-                        KilometersOverTaxLimit = 5,
-                        KilometersTax = 7,
-                        Method = "Method",
-                        NumberPlate = "AX68276"
+                        KilometersCustom = 420,
+                        KilometersCalculated = 430,
+                        KilometersOverTaxLimit = 50,
+                        KilometersTax = 70,
+                        Method = "Methods",
+                        NumberPlate = "ZULU68276"
                     },
                     Purpose = "Purpose"
                 });

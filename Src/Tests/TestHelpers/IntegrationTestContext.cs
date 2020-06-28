@@ -68,20 +68,18 @@ namespace Tests.TestHelpers
             var dbSeeder = ServiceProvider.GetService<IDbSeeder>();
             await dbSeeder.SeedAsync();
 
-            using (var unitOfWork = ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>())
-            {
-                var customer = unitOfWork
-                    .Repository
-                    .List(new CustomerByName(TestData.DummyCustomerName1))
-                    .SingleOrDefault();
+            using var unitOfWork = ServiceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var customer = unitOfWork
+                .Repository
+                .List(new CustomerByName(TestData.DummyCustomerName1))
+                .SingleOrDefault();
 
-                var travelExpenseEntities = customer.TravelExpenses.ToList();
-                TravelExpenseEntity1 = travelExpenseEntities[0];
-                TravelExpenseEntity2 = travelExpenseEntities[1];
-                TravelExpenseEntity3 = travelExpenseEntities[2];
+            var travelExpenseEntities = customer.TravelExpenses.ToList();
+            TravelExpenseEntity1 = travelExpenseEntities[0];
+            TravelExpenseEntity2 = travelExpenseEntities[1];
+            TravelExpenseEntity3 = travelExpenseEntities[2];
 
-                await unitOfWork.CommitAsync();
-            }
+            await unitOfWork.CommitAsync();
         }
 
         public IUnitOfWork GetUnitOfWork()

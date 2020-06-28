@@ -27,22 +27,18 @@ namespace Tests.API.Controllers
         public async Task GetCustomerUsers_ExistingCustomer_ReturnsUsersWithStatus()
         {
             // Arrange
-            //_subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
-            //    .Returns(TestData.DummyPolSubAlice);
-            using (var testContext = new IntegrationTestContext())
-            {
-                var sut = GetSut(testContext);
+            using var testContext = new IntegrationTestContext();
+            var sut = GetSut(testContext);
 
-                // Act
-                var actual = await sut.GetCustomerUsers(testContext.GetDummyCustomer1Id());
+            // Act
+            var actual = await sut.GetCustomerUsers(testContext.GetDummyCustomer1Id());
 
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
-                var okObjectResult = actual.Result as OkObjectResult;
-                Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as CustomerUserGetResponse;
-                Assert.That(value.Users.Length, Is.EqualTo(5));
-            }
+            // Assert
+            Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+            var okObjectResult = actual.Result as OkObjectResult;
+            Assert.That(okObjectResult, Is.Not.Null);
+            var value = okObjectResult.Value as CustomerUserGetResponse;
+            Assert.That(value.Users.Length, Is.EqualTo(5));
         }
 
         [Test]
@@ -50,22 +46,20 @@ namespace Tests.API.Controllers
         {
             // Arrange
             var customerInvitationsPostDto = new CustomerInvitationsPostDto { Emails = new[] { "user1@domain.com", "user2@domain.com" } };
-            using (var testContext = new IntegrationTestContext())
-            {
-                _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
-                    .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
-                var sut = GetSut(testContext);
+            using var testContext = new IntegrationTestContext();
+            _subManagementService.Setup(x => x.GetPolApiContext(It.IsAny<HttpContext>()))
+                .ReturnsAsync(testContext.GetPolApiContext(TestData.DummyPolSubAlice));
+            var sut = GetSut(testContext);
 
-                // Act
-                var actual = await sut.PostInvitations(testContext.GetDummyCustomer1Id(), customerInvitationsPostDto);
+            // Act
+            var actual = await sut.PostInvitations(testContext.GetDummyCustomer1Id(), customerInvitationsPostDto);
 
-                // Assert
-                Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
-                var okObjectResult = actual.Result as OkObjectResult;
-                Assert.That(okObjectResult, Is.Not.Null);
-                var value = okObjectResult.Value as CustomerInvitationsPostResponse;
-                Assert.That(value, Is.Not.Null);
-            }
+            // Assert
+            Assert.That(actual.Result, Is.InstanceOf(typeof(OkObjectResult)));
+            var okObjectResult = actual.Result as OkObjectResult;
+            Assert.That(okObjectResult, Is.Not.Null);
+            var value = okObjectResult.Value as CustomerInvitationsPostResponse;
+            Assert.That(value, Is.Not.Null);
         }
 
         private static CustomerController GetSut(IntegrationTestContext testContext)

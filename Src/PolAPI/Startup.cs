@@ -3,7 +3,6 @@ using API.Shared;
 using API.Shared.ActionFilters;
 using API.Shared.Controllers;
 using Domain.Interfaces;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,8 +53,7 @@ namespace PolAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger,
-            PolDbContext polDbContext, IDbSeeder dbSeeder, IPolicyService policyService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger, IDbSeeder dbSeeder, IPolicyService policyService)
         {
             logger.Information("Starting Politikerafregning API...");
 
