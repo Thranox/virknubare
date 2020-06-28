@@ -6,16 +6,15 @@ using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class CustomerById : ISpecification<CustomerEntity>
+    public class LossOfEarningSpecByAmount : ISpecification<LossOfEarningSpecEntity>
     {
-        public CustomerById(Guid customerId)
+        public LossOfEarningSpecByAmount(int rate)
         {
-            Criteria = e => e.Id == customerId;
+            Criteria = e => e.Rate == rate;
         }
 
-        public Expression<Func<CustomerEntity, bool>> Criteria { get; }
+        public Expression<Func<LossOfEarningSpecEntity, bool>> Criteria { get; }
     }
-
     public class AllFlowStepsByUserId : ISpecification<FlowStepEntity>
     {
         public AllFlowStepsByUserId(Guid userId)

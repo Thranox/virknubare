@@ -47,6 +47,11 @@ namespace Infrastructure.Data
             // Stages(Not Dummy!)
             foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
                 GetOrCreateStage(travelExpenseStage);
+
+            GetOrCreateLossOfEarningSpec(300, "Formiddagstimer");
+            GetOrCreateLossOfEarningSpec(400, "Frokoststimer");
+            GetOrCreateLossOfEarningSpec(500, "Eftermiddagstimer");
+
             await _unitOfWork.CommitAsync();
 
             // -----------------------------------
@@ -111,6 +116,14 @@ namespace Infrastructure.Data
             }
 
             await _unitOfWork.CommitAsync();
+        }
+
+        private void GetOrCreateLossOfEarningSpec(int amount, string formiddagstimer)
+        {
+            _unitOfWork
+                .Repository
+                .List(new LossOfEarningSpecByAmount(amount))
+                .SingleOrDefault();
         }
 
         public async Task RemoveTestDataAsync()
