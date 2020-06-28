@@ -4,6 +4,7 @@ using Application.Dtos;
 using AutoMapper;
 using Domain;
 using Domain.Entities;
+using Domain.ValueObjects;
 
 namespace Application.MapperProfiles
 {
@@ -26,6 +27,14 @@ namespace Application.MapperProfiles
             CreateMap<CustomerUserPermissionEntity, UserPermissionDto>()
                 .ForMember(x => x.UserId, xx => xx.MapFrom(xxx => xxx.UserId))
                 .ForMember(x => x.UserStatus, xx => xx.MapFrom(xxx => (int)xxx.UserStatus))
+                ;
+            CreateMap<Place, PlaceDto>()
+                ;
+            CreateMap<TransportSpecification, TransportSpecificationDto>()
+                ;
+            CreateMap<DailyAllowanceAmount, DailyAllowanceAmountDto>()
+                ;
+            CreateMap<FoodAllowances, FoodAllowancesDto>()
                 ;
         }
     }
