@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(PolDbContext))]
-    partial class PolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200628124509_addedLossOfEarnings")]
+    partial class addedLossOfEarnings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,40 +158,10 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Invitations");
                 });
 
-            modelBuilder.Entity("Domain.Entities.LossOfEarningEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("LossOfEarningSpecId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("NumberOfHours")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("TravelExpenseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LossOfEarningSpecId");
-
-                    b.HasIndex("TravelExpenseId");
-
-                    b.ToTable("LossOfEarnings");
-                });
-
             modelBuilder.Entity("Domain.Entities.LossOfEarningSpecEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -199,8 +171,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("LossOfEarningSpecs");
                 });
@@ -372,26 +342,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("Domain.Entities.CustomerEntity", "Customer")
                         .WithMany("Invitations")
                         .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("Domain.Entities.LossOfEarningEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.LossOfEarningSpecEntity", "LossOfEarningSpec")
-                        .WithMany()
-                        .HasForeignKey("LossOfEarningSpecId");
-
-                    b.HasOne("Domain.Entities.TravelExpenseEntity", "TravelExpense")
-                        .WithMany("LossOfEarningEntities")
-                        .HasForeignKey("TravelExpenseId");
-                });
-
-            modelBuilder.Entity("Domain.Entities.LossOfEarningSpecEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.CustomerEntity", "Customer")
-                        .WithMany("LossOfEarningSpecs")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.SubmissionEntity", b =>

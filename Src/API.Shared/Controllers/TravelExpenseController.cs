@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Shared.Controllers
 {
     [ApiController]
-    [Route("travelexpenses")]
-    public class TravelExpenseController : ControllerBase
-    {
+        [Route("travelexpenses")]
+        public class TravelExpenseController : ControllerBase
+        {
         private readonly ICreateTravelExpenseService _createTravelExpenseService;
         private readonly IFlowStepTravelExpenseService _flowStepTravelExpenseService;
         private readonly IGetTravelExpenseService _getTravelExpenseService;

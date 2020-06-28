@@ -13,7 +13,7 @@ namespace Tests.Domain.Services
             return new TravelExpenseEntity("Description", userEntity ?? new UserEntity("", ""),
                 customerEntity ?? new CustomerEntity(""), stageEntity,
                 DateTime.Now, DateTime.Now, 42, "Purpose", true, 3.14, true, new Place(), new TransportSpecification(),
-                new DailyAllowanceAmount(), new FoodAllowances());
+                new DailyAllowanceAmount(), new FoodAllowances(), new LossOfEarningEntity[]{});
         }
 
         public static TravelExpenseCreateDto GetValidTravelExpenseCreateDto(string newDescription, Guid customerId)

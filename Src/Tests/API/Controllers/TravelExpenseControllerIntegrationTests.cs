@@ -59,7 +59,7 @@ namespace Tests.API.Controllers
             var flowSteps = testContext.GetUnitOfWork().Repository.List<FlowStepEntity>().ToArray();
             var flowStepId = flowSteps.Single(x=>x.From.Value==TravelExpenseStage.Initial).Id;
 
-            Assert.That(v[0],Is.EqualTo(new TravelExpenseDto
+            Assert.That(v[0],Is.EqualTo(new TravelExpenseInListDto
             {
                 Description = testContext.TravelExpenseEntity1.Description,
                 Id = testContext.TravelExpenseEntity1.Id,
@@ -68,7 +68,7 @@ namespace Tests.API.Controllers
                 AllowedFlows = new[] {new AllowedFlowDto {Description = "Færdigmeld", FlowStepId = flowStepId} }
             }));
             Assert.That(v,
-                Has.One.EqualTo(new TravelExpenseDto
+                Has.One.EqualTo(new TravelExpenseInListDto
                 {
                     Description = testContext.TravelExpenseEntity2.Description,
                     Id = testContext.TravelExpenseEntity2.Id,
@@ -77,7 +77,7 @@ namespace Tests.API.Controllers
                     AllowedFlows = new[] { new AllowedFlowDto { Description = "Færdigmeld", FlowStepId = flowStepId } }
                 }));
             Assert.That(v,
-                Has.One.EqualTo(new TravelExpenseDto
+                Has.One.EqualTo(new TravelExpenseInListDto
                 {
                     Description = testContext.TravelExpenseEntity3.Description,
                     Id = testContext.TravelExpenseEntity3.Id,

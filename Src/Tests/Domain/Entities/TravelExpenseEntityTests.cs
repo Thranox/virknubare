@@ -1,12 +1,23 @@
-﻿using AutoFixture;
-using Domain;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.ValueObjects;
 using NUnit.Framework;
-using Tests.TestHelpers;
+using Tests.Domain.Services;
 
-namespace Tests.Domain
+namespace Tests.Domain.Entities
 {
     public class TravelExpenseEntityTests
     {
+        [Test]
+        public void CalculatePayoutTable_ValidTe_ReturnsTable()
+        {
+            // Arrange
+            var sut=TestDataHelper.GetValidTravelExpense(new StageEntity(TravelExpenseStage.Initial));
+
+            // Act
+            var calculatePayoutTable = sut.CalculatePayoutTable();
+
+            // Assert
+            Assert.That(calculatePayoutTable, Is.Not.Null);
+        }
     }
 }

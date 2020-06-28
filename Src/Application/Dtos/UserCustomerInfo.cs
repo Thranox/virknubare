@@ -1,4 +1,5 @@
 ﻿using System;
+using API.Shared.Controllers;
 
 namespace Application.Dtos
 {
@@ -8,5 +9,6 @@ namespace Application.Dtos
         public string CustomerName;
         public string UserCustomerStatusText;
         public int UserCustomerStatus { get; set; }
+        public LossOfEarningSpecDto[] LossOfEarningSpecs { get; set; }
     }
 }

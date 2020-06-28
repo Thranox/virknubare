@@ -10,6 +10,6 @@ namespace Domain.Interfaces
             DateTime arrivalDateTime, DateTime departureDateTime, int committeeId, string purpose,
             bool isEducationalPurpose, double expenses, bool isAbsenceAllowance, Place destinationPlace,
             TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount,
-            FoodAllowances foodAllowances);
+            FoodAllowances foodAllowances, LossOfEarningEntity[] lossOfEarnings);
     }
 }

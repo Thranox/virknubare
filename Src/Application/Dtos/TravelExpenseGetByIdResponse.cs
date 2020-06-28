@@ -2,6 +2,6 @@
 {
     public class TravelExpenseGetByIdResponse
     {
-        public TravelExpenseDto Result { get; set; }
+        public TravelExpenseSingleDto Result { get; set; }
     }
 }

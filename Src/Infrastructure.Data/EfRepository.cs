@@ -51,7 +51,8 @@ namespace Infrastructure.Data
                     .Include(g => g.FlowSteps).ThenInclude(gg => gg.FlowStepUserPermissions)
                     .Include(g => g.TravelExpenses).ThenInclude(gg => gg.Stage)
                     .Include(g => g.CustomerUserPermissions).ThenInclude(gg => gg.User)
-                    .Include(g => g.Invitations);
+                    .Include(g => g.Invitations)
+                    .Include(g=>g.LossOfEarningSpecs);
 
                 if (spec != null)
                 {
@@ -87,8 +88,9 @@ namespace Infrastructure.Data
                         .ThenInclude(ggg => ggg.From)
                         .Include(g => g.CustomerUserPermissions)
                         .ThenInclude(gg => gg.Customer)
+                        .ThenInclude(ggg=>ggg.LossOfEarningSpecs)
                         .Include(g => g.TravelExpenses)
-                        .ThenInclude(gg => gg.Stage)
+                        .ThenInclude(gg => gg.Stage )
                     ;
                 if (spec != null)
                 {

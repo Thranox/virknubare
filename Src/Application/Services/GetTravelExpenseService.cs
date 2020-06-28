@@ -44,14 +44,14 @@ namespace Application.Services
             // Get all TravelExpenses
             var all = _unitOfWork.Repository.List(new TravelExpensesByCustomerIdList(customersVisibleByUser));
 
-            //// The user may see the travel expense if
-            //// 1) owned by the user or if
-            //// 2) user may manipulate travel expense stage
+            // The user may see the travel expense if
+            // 1) owned by the user or if
+            // 2) user may manipulate travel expense stage
 
             var travelExpenseDtos = all
                 .Select(x =>
                 {
-                    var travelExpenseDto = _mapper.Map<TravelExpenseDto>(x);
+                    var travelExpenseDto = _mapper.Map<TravelExpenseInListDto>(x);
                     travelExpenseDto.AllowedFlows = GetAllowedFlows(x, polApiContext.CallingUser).ToArray();
                     return travelExpenseDto;
                 })
@@ -82,13 +82,13 @@ namespace Application.Services
             if (!allowedFlowDtos.Any() && travelExpenseEntity.OwnedByUser.Id != polApiContext.CallingUser.Id)
                 throw new ItemNotAllowedException(id.ToString(), nameof(TravelExpenseEntity));
 
-            var travelExpenseDto = _mapper.Map<TravelExpenseDto>(travelExpenseEntity);
-            travelExpenseDto.AllowedFlows = allowedFlowDtos;
-
+            var travelExpenseSingleDto = _mapper.Map<TravelExpenseSingleDto>(travelExpenseEntity);
+            travelExpenseSingleDto.AllowedFlows = allowedFlowDtos;
+            travelExpenseSingleDto.PayoutTable = _mapper.Map<PayoutTableDto>(travelExpenseEntity.CalculatePayoutTable());
             return await Task.FromResult(
                 new TravelExpenseGetByIdResponse
                 {
-                    Result = travelExpenseDto
+                    Result = travelExpenseSingleDto
                 });
         }
 

@@ -28,7 +28,7 @@ namespace Infrastructure.Data
         public DbSet<StageEntity> Stages { get; set; }
         public DbSet<SubmissionEntity> Submissions { get; set; }
         public DbSet<EmailEntity> Emails { get; set; }
-
+        public DbSet<LossOfEarningSpecEntity> LossOfEarningSpecs { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             var result = await base.SaveChangesAsync(cancellationToken);
@@ -110,6 +110,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<InvitationEntity>().ToTable("Invitations");
             modelBuilder.Entity<SubmissionEntity>().ToTable("Submissions");
             modelBuilder.Entity<EmailEntity>().ToTable("Emails");
+            modelBuilder.Entity<LossOfEarningEntity>().ToTable("LossOfEarnings");
         }
     }
 }
