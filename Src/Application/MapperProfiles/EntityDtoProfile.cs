@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using API.Shared.Controllers;
+using Application.Dtos;
 using AutoMapper;
 using Domain;
 using Domain.Entities;
@@ -39,6 +40,8 @@ namespace Application.MapperProfiles
             CreateMap<FoodAllowances, FoodAllowancesDto>()
                 ;
             CreateMap<PayoutTable, PayoutTableDto>()
+                ;
+            CreateMap<LossOfEarningSpecEntity, LossOfEarningSpecDto>()
                 ;
         }
     }

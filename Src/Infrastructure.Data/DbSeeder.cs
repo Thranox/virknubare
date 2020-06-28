@@ -48,16 +48,16 @@ namespace Infrastructure.Data
             foreach (TravelExpenseStage travelExpenseStage in Enum.GetValues(typeof(TravelExpenseStage)))
                 GetOrCreateStage(travelExpenseStage);
 
-            GetOrCreateLossOfEarningSpec(300, "Formiddagstimer");
-            GetOrCreateLossOfEarningSpec(400, "Frokoststimer");
-            GetOrCreateLossOfEarningSpec(500, "Eftermiddagstimer");
-
             await _unitOfWork.CommitAsync();
 
             // -----------------------------------
             // Dummy customer
             var customer1 = GetOrCreateTestCustomer(TestData.DummyCustomerName1);
             var customer2 = GetOrCreateTestCustomer(TestData.DummyCustomerName2);
+
+            GetOrCreateLossOfEarningSpec(300, "Formiddagstimer",customer1);
+            GetOrCreateLossOfEarningSpec(400, "Frokoststimer", customer1);
+            GetOrCreateLossOfEarningSpec(500, "Eftermiddagstimer", customer1);
 
             // -----------------------------------
             // Dummy Users
@@ -118,12 +118,22 @@ namespace Infrastructure.Data
             await _unitOfWork.CommitAsync();
         }
 
-        private void GetOrCreateLossOfEarningSpec(int amount, string formiddagstimer)
+        private void GetOrCreateLossOfEarningSpec(int rate, string description, CustomerEntity customer)
         {
-            _unitOfWork
+            var lossOfEarningSpecEntity = _unitOfWork
                 .Repository
-                .List(new LossOfEarningSpecByAmount(amount))
+                .List(new LossOfEarningSpecByAmountAndCustomer(rate, customer.Id))
                 .SingleOrDefault();
+            if (lossOfEarningSpecEntity == null)
+            {
+                lossOfEarningSpecEntity = new LossOfEarningSpecEntity
+                {
+                    Rate = rate,
+                    Description = description,
+                    Customer = customer
+                };
+                _unitOfWork.Repository.Add(lossOfEarningSpecEntity);
+            }
         }
 
         public async Task RemoveTestDataAsync()
@@ -196,6 +206,9 @@ namespace Infrastructure.Data
 
                 _logger.Debug("Ensuring test customer FlowSteps is deleted: " + testCustomer.Name);
                 foreach (var flowStepEntity in customerEntity.FlowSteps) _unitOfWork.Repository.Delete(flowStepEntity);
+
+                _logger.Debug("Ensuring test customer LossOfEarningSpecs is deleted: " + testCustomer.Name);
+                foreach (var lossOfEarningSpecEntity in customerEntity.LossOfEarningSpecs) _unitOfWork.Repository.Delete(lossOfEarningSpecEntity);
 
                 _logger.Debug("Ensuring test customer itself is deleted: " + testCustomer.Name);
                 _unitOfWork.Repository.Delete(customerEntity);

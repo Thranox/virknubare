@@ -27,6 +27,8 @@ namespace Domain.Entities
         public ICollection<TravelExpenseEntity> TravelExpenses { get; }
         public ICollection<FlowStepEntity> FlowSteps { get; }
         public ICollection<CustomerUserPermissionEntity> CustomerUserPermissions { get; }
+        public ICollection<LossOfEarningSpecEntity> LossOfEarningSpecs { get; }
+        
         public string Name { get; set; }
 
         public ICollection<InvitationEntity> Invitations { get; }

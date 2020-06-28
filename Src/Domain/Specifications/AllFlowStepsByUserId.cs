@@ -6,11 +6,11 @@ using Domain.Interfaces;
 
 namespace Domain.Specifications
 {
-    public class LossOfEarningSpecByAmount : ISpecification<LossOfEarningSpecEntity>
+    public class LossOfEarningSpecByAmountAndCustomer : ISpecification<LossOfEarningSpecEntity>
     {
-        public LossOfEarningSpecByAmount(int rate)
+        public LossOfEarningSpecByAmountAndCustomer(int rate, Guid customerId)
         {
-            Criteria = e => e.Rate == rate;
+            Criteria = e => e.Rate == rate && e.CustomerId==customerId;
         }
 
         public Expression<Func<LossOfEarningSpecEntity, bool>> Criteria { get; }
