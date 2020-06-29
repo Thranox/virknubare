@@ -101,6 +101,16 @@ namespace Infrastructure.Data
                     xx => JsonConvert.SerializeObject(xx),
                     xxx => JsonConvert.DeserializeObject<Place>(xxx));
             modelBuilder.Entity<TravelExpenseEntity>()
+                .Property(x => x.ArrivalPlace)
+                .HasConversion(
+                    xx => JsonConvert.SerializeObject(xx),
+                    xxx => JsonConvert.DeserializeObject<Place>(xxx));
+            modelBuilder.Entity<TravelExpenseEntity>()
+                .Property(x => x.DeparturePlace)
+                .HasConversion(
+                    xx => JsonConvert.SerializeObject(xx),
+                    xxx => JsonConvert.DeserializeObject<Place>(xxx));
+            modelBuilder.Entity<TravelExpenseEntity>()
                 .Property(x => x.TransportSpecification)
                 .HasConversion(
                     xx => JsonConvert.SerializeObject(xx),

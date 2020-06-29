@@ -26,6 +26,10 @@ namespace Application.Services
                 throw new ArgumentNullException(nameof(travelExpenseCreateDto.DailyAllowanceAmount));
             if (travelExpenseCreateDto.DestinationPlace == null)
                 throw new ArgumentNullException(nameof(travelExpenseCreateDto.DestinationPlace));
+            if (travelExpenseCreateDto.ArrivalPlace == null)
+                throw new ArgumentNullException(nameof(travelExpenseCreateDto.ArrivalPlace));
+            if (travelExpenseCreateDto.DeparturePlace== null)
+                throw new ArgumentNullException(nameof(travelExpenseCreateDto.DeparturePlace));
             if (travelExpenseCreateDto.FoodAllowances == null)
                 throw new ArgumentNullException(nameof(travelExpenseCreateDto.FoodAllowances));
             if (travelExpenseCreateDto.TransportSpecification == null)
@@ -62,7 +66,20 @@ namespace Application.Services
                     Lunch= travelExpenseCreateDto.FoodAllowances.Lunch,
                     Dinner= travelExpenseCreateDto.FoodAllowances.Dinner
                 },
-                new LossOfEarningEntity[]{});
+                new LossOfEarningEntity[]{},
+                new Place
+                {
+                    Street = travelExpenseCreateDto.ArrivalPlace.Street,
+                    StreetNumber = travelExpenseCreateDto.ArrivalPlace.StreetNumber,
+                    ZipCode = travelExpenseCreateDto.ArrivalPlace.ZipCode
+                },
+                new Place
+                {
+                    Street = travelExpenseCreateDto.DeparturePlace.Street,
+                    StreetNumber = travelExpenseCreateDto.DeparturePlace.StreetNumber,
+                    ZipCode = travelExpenseCreateDto.DeparturePlace.ZipCode
+                }
+                );
 
             _unitOfWork
                 .Repository

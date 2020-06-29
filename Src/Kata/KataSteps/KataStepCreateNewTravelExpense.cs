@@ -33,7 +33,7 @@ namespace Kata.KataSteps
             var restClient = _restClientProvider.GetRestClient(nameOfLoggedInUser);
             var customerId = ClientContext.UserInfoGetResponse.UserCustomerInfo
                 .First(x => x.UserCustomerStatus != (int)UserStatus.Initial).CustomerId;
-            var lossOfEarningSpecDtos = ClientContext.UserInfoGetResponse.UserCustomerInfo.Single(x=>x.CustomerId==customerId).LossOfEarningSpecs;
+            var lossOfEarningSpecDtos = ClientContext.UserInfoGetResponse.UserCustomerInfo.Single(x => x.CustomerId == customerId).LossOfEarningSpecs;
             var restRequest = new RestRequest(
                     new Uri("/travelexpenses", UriKind.Relative)
                 )
@@ -74,11 +74,23 @@ namespace Kata.KataSteps
                     IsEducationalPurpose = true,
                     Expenses = 42.42,
                     CommitteeId = 42,
-                    LossOfEarnings =new []
+                    LossOfEarnings = new[]
                     {
                         new LossOfEarningDto{NumberOfHours = 3, Date = DateTime.Today, LossOfEarningSpecId = lossOfEarningSpecDtos[0].Id},
                         new LossOfEarningDto{NumberOfHours = 1, Date = DateTime.Today, LossOfEarningSpecId = lossOfEarningSpecDtos[1].Id},
                         new LossOfEarningDto{NumberOfHours = 0, Date = DateTime.Today, LossOfEarningSpecId = lossOfEarningSpecDtos[2].Id}
+                    },
+                    DeparturePlace = new PlaceDto
+                    {
+                        Street = "Frisenholt",
+                        StreetNumber = "56",
+                        ZipCode = "8310"
+                    },
+                    ArrivalPlace = new PlaceDto
+                    {
+                        Street = "Kåsvænget",
+                        StreetNumber = "42",
+                        ZipCode = "5500"
                     }
                 });
             var travelExpenseCreateResponse = await restClient.PostAsync<TravelExpenseCreateResponse>(restRequest);

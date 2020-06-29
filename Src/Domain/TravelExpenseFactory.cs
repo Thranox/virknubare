@@ -21,14 +21,14 @@ namespace Domain
             DateTime arrivalDateTime, DateTime departureDateTime, int committeeId, string purpose,
             bool isEducationalPurpose, double expenses, bool isAbsenceAllowance, Place destinationPlace,
             TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount,
-            FoodAllowances foodAllowances, LossOfEarningEntity[] lossOfEarningEntities)
+            FoodAllowances foodAllowances, LossOfEarningEntity[] lossOfEarningEntities, Place arrivalPlace, Place departurePlace)
         {
             if (_stages == null) _stages = _unitOfWork.Repository.List<StageEntity>();
 
             var stageEntity = _stages.Single(x => x.Value == TravelExpenseStage.Initial);
             return new TravelExpenseEntity(description, userEntityPol, customer, stageEntity, arrivalDateTime,
                 departureDateTime, committeeId, purpose, isEducationalPurpose, expenses, isAbsenceAllowance,
-                destinationPlace, transportSpecification, dailyAllowanceAmount,foodAllowances,lossOfEarningEntities);
+                destinationPlace, transportSpecification, dailyAllowanceAmount,foodAllowances,lossOfEarningEntities, arrivalPlace, departurePlace);
         }
     }
 }

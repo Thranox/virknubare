@@ -72,6 +72,7 @@ namespace Kata
                     new KataStepDescriptor("GetUserInfo").AsUser("alice").WithVerification(c=>c.UserInfoGetResponse!=null),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==TestData.GetNumberOfTestDataTravelExpenses()),
                     new KataStepDescriptor("CreateNewTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseCreateResponse!=null && c.TravelExpenseCreateResponse.Id!=Guid.Empty),
+                    new KataStepDescriptor("GetSingleTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseGetByIdResponse!=null && c.TravelExpenseGetByIdResponse.Result.Id==c.TravelExpenseCreateResponse.Id && c.TravelExpenseGetByIdResponse.Result.ArrivalPlace!=null && c.TravelExpenseGetByIdResponse.Result.DeparturePlace!=null),
                     new KataStepDescriptor("UpdateTravelExpense").AsUser("alice").WithVerification(c=>c.TravelExpenseUpdateResponse!=null),
                     new KataStepDescriptor("GetAllTravelExpenses").AsUser("alice").WithVerification(c=>c.TravelExpenseGetResponse?.Result!=null && c.TravelExpenseGetResponse.Result.Count()==TestData.GetNumberOfTestDataTravelExpenses()+1),
                     new KataStepDescriptor("GetFlowSteps").AsUser("alice").WithVerification(c=>c.FlowStepGetResponse .Result.Any()),

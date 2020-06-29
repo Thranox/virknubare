@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using API.Shared;
 using API.Shared.ActionFilters;
@@ -66,8 +67,16 @@ namespace PolAPI
 
                 if (_configuration.GetValue<bool>("RemoveAndReseedOnStartup"))
                 {
-                    logger.Information("Removing test data...");
-                    await dbSeeder.RemoveTestDataAsync();
+                    try
+                    {
+                        logger.Information("Removing test data...");
+                        await dbSeeder.RemoveTestDataAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error(e, "During RemoveTestDataAsync");
+                        throw;
+                    }
                 }
 
                 await dbSeeder.SeedAsync();
