@@ -27,6 +27,8 @@ namespace Application.Dtos
         public TransportSpecificationDto TransportSpecification { get; set; }
         public DailyAllowanceAmountDto DailyAllowanceAmount { get; set; }
         public FoodAllowancesDto FoodAllowances { get; set; }
+        public PlaceDto DeparturePlace { get; set; }
+        public PlaceDto ArrivalPlace { get; set; }
 
         public LossOfEarningsTableDto LossOfEarningsTable { get; set; }
         public PayoutTableDto PayoutTable { get; set; }

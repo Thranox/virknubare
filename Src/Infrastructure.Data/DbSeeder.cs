@@ -111,6 +111,16 @@ namespace Infrastructure.Data
                             new LossOfEarningEntity{Date =new  DateTime(2020,10,23), NumberOfHours = 3, LossOfEarningSpec=lossOfEarningSpec300},
                             new LossOfEarningEntity{Date =new  DateTime(2020,10,23), NumberOfHours = 1, LossOfEarningSpec=lossOfEarningSpec400},
                             new LossOfEarningEntity{Date =new  DateTime(2020,10,23), NumberOfHours = 0,LossOfEarningSpec=lossOfEarningSpec500},
+                        }, new Place
+                        {
+                            Street = "Kåsvænget",
+                            StreetNumber = "42",
+                            ZipCode = "5500"
+                        }, new Place
+                        {
+                            Street = "Frisenholt",
+                            StreetNumber = "56",
+                            ZipCode = "8310"
                         }))
                     .ToArray();
                 foreach (var travelExpenseEntity in newTravelExpenses) _unitOfWork.Repository.Add(travelExpenseEntity);
@@ -175,7 +185,13 @@ namespace Infrastructure.Data
 
                 _logger.Debug("Ensuring test user TravelExpenses is deleted: " + polTestUser.UserName);
                 foreach (var travelExpenseEntity in userEntity.TravelExpenses)
+                {
+                    foreach (var lossOfEarningEntity in travelExpenseEntity.LossOfEarningEntities)
+                    {
+                        _unitOfWork.Repository.Delete(lossOfEarningEntity);
+                    }
                     _unitOfWork.Repository.Delete(travelExpenseEntity);
+                }
 
                 _logger.Debug("Ensuring test user itself is deleted: " + polTestUser.UserName);
                 _unitOfWork.Repository.Delete(userEntity);
@@ -195,7 +211,6 @@ namespace Infrastructure.Data
                     throw new InvalidOperationException("Was not able to delete test user: " + polTestUser.UserName);
             }
 
-
             _logger.Information("Removing testdata from database. Users gone, deleting customers");
 
             var testCustomers = TestData.GetTestCustomers();
@@ -208,11 +223,11 @@ namespace Infrastructure.Data
                 if (customerEntity == null)
                     continue;
 
-                _logger.Debug("Ensuring test customer Invitations is deleted: " + testCustomer.Name);
+                _logger.Debug("Ensuring test customer Invitations are deleted: " + testCustomer.Name);
                 foreach (var invitationEntity in customerEntity.Invitations)
                     _unitOfWork.Repository.Delete(invitationEntity);
 
-                _logger.Debug("Ensuring test customer FlowSteps is deleted: " + testCustomer.Name);
+                _logger.Debug("Ensuring test customer FlowSteps are deleted: " + testCustomer.Name);
                 foreach (var flowStepEntity in customerEntity.FlowSteps) _unitOfWork.Repository.Delete(flowStepEntity);
 
                 _logger.Debug("Ensuring test customer LossOfEarningSpecs is deleted: " + testCustomer.Name);

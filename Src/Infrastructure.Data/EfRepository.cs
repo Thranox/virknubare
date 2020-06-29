@@ -91,6 +91,8 @@ namespace Infrastructure.Data
                         .ThenInclude(ggg=>ggg.LossOfEarningSpecs)
                         .Include(g => g.TravelExpenses)
                         .ThenInclude(gg => gg.Stage )
+                        .Include(g=>g.TravelExpenses)
+                        .ThenInclude(gg=>gg.LossOfEarningEntities)
                     ;
                 if (spec != null)
                 {

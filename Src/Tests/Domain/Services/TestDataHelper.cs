@@ -13,7 +13,7 @@ namespace Tests.Domain.Services
             return new TravelExpenseEntity("Description", userEntity ?? new UserEntity("", ""),
                 customerEntity ?? new CustomerEntity(""), stageEntity,
                 DateTime.Now, DateTime.Now, 42, "Purpose", true, 3.14, true, new Place(), new TransportSpecification(),
-                new DailyAllowanceAmount(), new FoodAllowances(), new LossOfEarningEntity[]{});
+                new DailyAllowanceAmount(), new FoodAllowances(), new LossOfEarningEntity[]{}, new Place(), new Place());
         }
 
         public static TravelExpenseCreateDto GetValidTravelExpenseCreateDto(string newDescription, Guid customerId)
@@ -47,7 +47,19 @@ namespace Tests.Domain.Services
                     Method = "Method",
                     NumberPlate = "AX68276"
                 },
-                Purpose = "Purpose"
+                Purpose = "Purpose",
+                DeparturePlace = new PlaceDto
+                {
+                    Street = "Frisenholt",
+                    StreetNumber = "56",
+                    ZipCode = "8310"
+                },
+                ArrivalPlace = new PlaceDto
+                {
+                    Street = "Kåsvænget",
+                    StreetNumber = "42",
+                    ZipCode = "5500"
+                }
             };
         }
 

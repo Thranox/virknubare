@@ -12,13 +12,15 @@ namespace Domain.Entities
     {
         private TravelExpenseEntity()
         {
+            LossOfEarningEntities=new List<LossOfEarningEntity>();
         }
 
         public TravelExpenseEntity(string description, UserEntity user, CustomerEntity customer, StageEntity stage,
             DateTime arrivalDateTime, DateTime departureDateTime, int committeeId, string purpose,
             bool isEducationalPurpose, double expenses, bool isAbsenceAllowance, Place destinationPlace,
             TransportSpecification transportSpecification, DailyAllowanceAmount dailyAllowanceAmount,
-            FoodAllowances foodAllowances, LossOfEarningEntity[] lossOfEarningEntities) : this()
+            FoodAllowances foodAllowances, LossOfEarningEntity[] lossOfEarningEntities, Place arrivalPlace,
+            Place departurePlace) : this()
         {
             Description = description ?? throw new ArgumentNullException(nameof(description));
             Stage = stage ?? throw new ArgumentNullException(nameof(stage));
@@ -36,6 +38,8 @@ namespace Domain.Entities
             OwnedByUser = user ?? throw new ArgumentNullException(nameof(user));
             Customer = customer ?? throw new ArgumentNullException(nameof(customer));
             LossOfEarningEntities = lossOfEarningEntities;
+            ArrivalPlace = arrivalPlace;
+            DeparturePlace = departurePlace;
         }
 
         public ICollection< LossOfEarningEntity> LossOfEarningEntities { get; set; }
@@ -55,6 +59,9 @@ namespace Domain.Entities
         public bool IsAbsenceAllowance { get; set; }
         public DailyAllowanceAmount DailyAllowanceAmount { get; set; }
         public FoodAllowances FoodAllowances { get; set; }
+        public Place DeparturePlace { get; set; }
+        public Place ArrivalPlace { get; set; }
+        
         public void Enrich(Dictionary<string, string> messageValues)
         {
         }
