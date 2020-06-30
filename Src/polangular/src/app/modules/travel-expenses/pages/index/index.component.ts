@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {TravelExpense} from '../../../../shared/model/travel-expense.model';
 import {from, Observable} from 'rxjs';
 import {MockTravelExpenseService} from '../../../../shared/mocks/mock-travel-expense.service';
-import {TravelExpenseService} from "../../../../shared/services/travel-expense.service";
-import {ColumnMode} from "@swimlane/ngx-datatable";
+import {TravelExpenseService} from '../../../../shared/services/travel-expense.service';
+import {ColumnMode} from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-index',

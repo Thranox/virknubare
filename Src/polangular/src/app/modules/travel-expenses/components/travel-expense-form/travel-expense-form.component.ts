@@ -135,13 +135,13 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
             expenses: [0, Validators.required],
             description: [null, Validators.required],
             dailyAllowanceAmount: this.fb.group({
-                daysLessThan4hours: [0],
-                daysMoreThan4hours: [0],
+                daysLessThan4hours: [0, this.validatorMustBeBetween0AndNumOfDays()],
+                daysMoreThan4hours: [0, this.validatorMustBeBetween0AndNumOfDays()],
             }),
             foodAllowances: this.fb.group({
-                morning: [0],
-                lunch: [0],
-                dinner: [0]
+                morning: [0, this.validatorMustBeBetween0AndNumOfDays()],
+                lunch: [0, this.validatorMustBeBetween0AndNumOfDays()],
+                dinner: [0, this.validatorMustBeBetween0AndNumOfDays()]
             }),
             lossOfEarnings: this.fb.array([])
         });
@@ -154,6 +154,19 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
         });
     }
 
+    private validatorMustBeBetween0AndNumOfDays() {
+        return (c: FormControl) => {
+            const value = c.value;
+            const isPassing = 0 <= value && value <= this.dayBetweenStartAndEnd;
+            console.log(this.dayBetweenStartAndEnd, 0 <= value, value <= this.dayBetweenStartAndEnd);
+            return isPassing ? null : {
+                validateMustBeBetween0AndNumOfDays: {
+                    valid: false
+                }
+            };
+        };
+    }
+
     private trackDateRangeChanges() {
         merge(
             this.travelExpenseFormGroup.controls.startDate.valueChanges,
@@ -164,7 +177,7 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
             const startDate = this.travelExpenseFormGroup.get('startDate').value as Dayjs;
             const endDate = this.travelExpenseFormGroup.get('endDate').value as Dayjs;
             this.updateLossOfEarnings();
-            this.dayBetweenStartAndEnd = (endDate).diff(startDate, 'day');
+            this.dayBetweenStartAndEnd = endDate.diff(startDate, 'day');
         });
     }
 
