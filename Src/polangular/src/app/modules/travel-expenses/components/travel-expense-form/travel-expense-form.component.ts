@@ -159,7 +159,7 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
             this.travelExpenseFormGroup.controls.startDate.valueChanges,
             this.travelExpenseFormGroup.controls.endDate.valueChanges,
         ).subscribe(date => {
-            console.log('Date range changed', date);
+            //console.log('Date range changed', date);
 
             const startDate = this.travelExpenseFormGroup.get('startDate').value as Dayjs;
             const endDate = this.travelExpenseFormGroup.get('endDate').value as Dayjs;

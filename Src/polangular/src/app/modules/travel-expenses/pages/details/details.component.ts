@@ -36,7 +36,6 @@ export class DetailsComponent implements OnInit {
             map((param) => param.get('id')),
             switchMap((id: string) => this.travelExpenseService.getTravelExpenseById(id)),
             tap((travelExpense) => {
-                console.log('t', travelExpense);
                 this.travelExpense = travelExpense;
                 this.travelExpenseForm.get('travelExpense').patchValue(travelExpense);
             }),
@@ -77,7 +76,7 @@ export class DetailsComponent implements OnInit {
             this.travelExpenseChange.emit(this.modifiedTravelExpense);*/
             // this.prefillFormFromTravelExpense(this.modifiedTravelExpense);
 
-            console.log('fresh model TravelExpense', fetchedTravelExpense);
+            //console.log('fresh model TravelExpense', fetchedTravelExpense);
         }, (error) => {
             console.error('App Error', error);
         });
