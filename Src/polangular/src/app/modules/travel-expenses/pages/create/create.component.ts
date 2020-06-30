@@ -4,8 +4,10 @@ import {from, Observable} from 'rxjs';
 import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {TravelExpenseService} from "../../../../shared/services/travel-expense.service";
-import {switchMap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {TravelExpenseFormComponent} from "../../components/travel-expense-form/travel-expense-form.component";
+import {UserInfoService} from "../../../../shared/services/user-info.service";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-index',
@@ -13,7 +15,6 @@ import {TravelExpenseFormComponent} from "../../components/travel-expense-form/t
     styleUrls: ['./create.component.scss']
 })
 export class CreateComponent implements OnInit {
-    travelExpense$: Observable<TravelExpense> = from([]);
     travelExpense: TravelExpense;
     @ViewChild('travelExpenseFormComponent') travelExpenseFormComponent: TravelExpenseFormComponent;
     form: FormGroup = this.formBuilder.group({
@@ -21,8 +22,10 @@ export class CreateComponent implements OnInit {
     });
 
     constructor(
-        private travelExpenseService: TravelExpenseService,
-        private formBuilder: FormBuilder
+        private travelExpenseService: MockTravelExpenseService,
+        private userInfoService: UserInfoService,
+        private formBuilder: FormBuilder,
+        private router: Router
     ) {
     }
 
@@ -30,10 +33,28 @@ export class CreateComponent implements OnInit {
 
         this.travelExpense = new TravelExpense();
 
-        /*this.travelExpense$ = this.activatedRoute.paramMap.pipe(
-            map((param) => param.get('id')),
-            switchMap((id: string) => this.travelExpenseService.getTravelExpenseById(id))
-        );*/
+        this.form.patchValue({
+            travelExpense: {
+                purpose: 'General forsamling',
+                isEducationalPurpose: true,
+                description: 'Test \n 234',
+                transportSpecification: {
+                    method: 'car',
+                    numberPlate: 'AJ12345',
+                },
+                committeeId: 12345,
+                arrivalPlace: {
+                    street: 'Aarhusvej',
+                    streetNumber: '34',
+                    zipCode: '8000',
+                },
+                departurePlace: {
+                    street: 'Vibyvej',
+                    streetNumber: '99',
+                    zipCode: '8260',
+                },
+            }
+        });
     }
 
     save() {
@@ -47,18 +68,15 @@ export class CreateComponent implements OnInit {
         const formValues = this.form.getRawValue();
 
         const travelExpense = formValues.travelExpense as TravelExpense;
-
-        this.travelExpenseService.createTravelExpense(travelExpense).pipe(
+        this.userInfoService.getUserInfo().pipe(
+            map((userInfo) =>  userInfo.UserCustomerInfo[0].CustomerId),
+            switchMap((customerId) => this.travelExpenseService.createTravelExpense(travelExpense)),
             switchMap(result => this.travelExpenseService.getTravelExpenseById(travelExpense.id)),
         ).subscribe((fetchedTravelExpense) => {
-
-            // this.prefillFormFromTravelExpense(this.travelExpense);
-
-            console.log('fresh model TravelExpense', fetchedTravelExpense);
+            this.router.navigate([`travel-expenses/${fetchedTravelExpense.id}`]).then();
         }, (error) => {
             console.error('App Error', error);
         });
-
 
     }
 

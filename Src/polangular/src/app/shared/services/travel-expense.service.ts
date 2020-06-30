@@ -9,8 +9,8 @@ import {FlowStep} from "../model/flow-step.model";
 @Injectable()
 export class TravelExpenseService {
 
-    constructor(private _httpClient: HttpClient,
-                private _travelExpenseResource: TravelExpenseResource,
+    constructor(
+        private _travelExpenseResource: TravelExpenseResource,
     ) {
     }
 

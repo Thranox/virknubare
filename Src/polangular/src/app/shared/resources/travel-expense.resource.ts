@@ -3,7 +3,6 @@ import {PolAPIResponse} from "../model/api-response.model";
 import {TravelExpense} from "../model/travel-expense.model";
 import {map} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
-import {AuthService} from "../../core/services/auth.service";
 import {environment} from "../../../environments/environment";
 import {Observable, of} from "rxjs";
 import {FlowStep} from "../model/flow-step.model";

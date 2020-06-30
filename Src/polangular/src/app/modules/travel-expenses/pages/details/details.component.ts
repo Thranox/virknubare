@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {FormBuilder, FormGroup, ValidationErrors} from '@angular/forms';
 import {TravelExpenseFormComponent} from '../../components/travel-expense-form/travel-expense-form.component';
+import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
 
 
 @Component({
@@ -23,7 +24,7 @@ export class DetailsComponent implements OnInit {
     @ViewChild('travelExpenseFormComponent') form: TravelExpenseFormComponent;
 
     constructor(
-        private travelExpenseService: TravelExpenseService,
+        private travelExpenseService: MockTravelExpenseService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder
