@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {FormBuilder, FormGroup, ValidationErrors} from '@angular/forms';
 import {TravelExpenseFormComponent} from '../../components/travel-expense-form/travel-expense-form.component';
+import {MockTravelExpenseService} from "../../../../shared/mocks/mock-travel-expense.service";
 
 
 @Component({
@@ -35,7 +36,6 @@ export class DetailsComponent implements OnInit {
             map((param) => param.get('id')),
             switchMap((id: string) => this.travelExpenseService.getTravelExpenseById(id)),
             tap((travelExpense) => {
-                console.log('t', travelExpense);
                 this.travelExpense = travelExpense;
                 this.travelExpenseForm.get('travelExpense').patchValue(travelExpense);
             }),
@@ -76,7 +76,7 @@ export class DetailsComponent implements OnInit {
             this.travelExpenseChange.emit(this.modifiedTravelExpense);*/
             // this.prefillFormFromTravelExpense(this.modifiedTravelExpense);
 
-            console.log('fresh model TravelExpense', fetchedTravelExpense);
+            //console.log('fresh model TravelExpense', fetchedTravelExpense);
         }, (error) => {
             console.error('App Error', error);
         });

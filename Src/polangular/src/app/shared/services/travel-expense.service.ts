@@ -1,20 +1,25 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Observable} from "rxjs";
-import {TravelExpense} from "../model/travel-expense.model";
-import {TravelExpenseResource} from "../resources/travel-expense.resource";
-import {FlowStep} from "../model/flow-step.model";
+import {Observable} from 'rxjs';
+import {TravelExpense} from '../model/travel-expense.model';
+import {TravelExpenseResource} from '../resources/travel-expense.resource';
+import {FlowStep} from '../model/flow-step.model';
 
 
 @Injectable()
 export class TravelExpenseService {
 
-    constructor(private _httpClient: HttpClient,
-                private _travelExpenseResource: TravelExpenseResource,
+    constructor(
+        private _travelExpenseResource: TravelExpenseResource,
     ) {
     }
 
-    createTravelExpense(newTravelExpense: TravelExpense) {
+    createTravelExpense(newTravelExpense: TravelExpense, customerId: string) {
+        const data = newTravelExpense as any;
+        data.customerId = customerId;
+        data.customer = customerId;
+        data.arrivalDateTime = '2020-07-01T19:44:15.747Z';
+        data.departureDateTime = '2020-07-01T19:44:15.747Z';
         return this._travelExpenseResource.createTravelExpense(newTravelExpense);
     }
 

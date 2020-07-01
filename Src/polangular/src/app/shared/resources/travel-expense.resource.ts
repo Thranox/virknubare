@@ -3,7 +3,6 @@ import {PolAPIResponse} from "../model/api-response.model";
 import {TravelExpense} from "../model/travel-expense.model";
 import {map} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
-import {AuthService} from "../../core/services/auth.service";
 import {environment} from "../../../environments/environment";
 import {Observable, of} from "rxjs";
 import {FlowStep} from "../model/flow-step.model";
@@ -26,10 +25,9 @@ export class TravelExpenseResource {
         );
     }
 
-    createTravelExpense(newTravelExpense: TravelExpense) {
+    createTravelExpense(newTravelExpense: any) {
         const baseUrl = environment.apiUrl;
         const postBody = newTravelExpense as any;
-        postBody.customerId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 
         return this.httpClient.post<void>(baseUrl + 'travelexpenses', postBody);
     }

@@ -73,7 +73,7 @@ export class FetchDataComponent {
   createTravelExpense() {
     const newTravelExpense = new TravelExpense();
     newTravelExpense.description = 'New travel expense 1';
-    this._travelExpenseService.createTravelExpense(newTravelExpense).subscribe(response => {
+    this._travelExpenseService.createTravelExpense(newTravelExpense, 'customerId').subscribe(response => {
       this.getAllTravelExpenses();
     });
   }
