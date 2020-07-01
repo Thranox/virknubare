@@ -16,15 +16,6 @@ export class UserInfoResource {
     }
 
     getUserInfo(): Observable<UserInfo> {
-        return of({
-            "UserCustomerInfo": [{
-                "CustomerId": "c3ce6581-6e6b-4c86-91fd-781fd62a0145",
-                "CustomerName": "Dummy Customer",
-                "UserCustomerStatusText": "Registreret og godkendt",
-                "UserCustomerStatus": 1
-            }]
-        } as UserInfo);
-
         return this.httpClient.get<UserInfo>(this.baseUrl + 'userinfo').pipe(
             map(response => {
                 return response;

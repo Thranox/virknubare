@@ -25,11 +25,11 @@ export class TravelExpenseResource {
         );
     }
 
-    createTravelExpense(newTravelExpense: any) {
+    createTravelExpense(newTravelExpense: any): Observable<{id: string}> {
         const baseUrl = environment.apiUrl;
         const postBody = newTravelExpense as any;
 
-        return this.httpClient.post<void>(baseUrl + 'travelexpenses', postBody);
+        return this.httpClient.post<{id: string}>(baseUrl + 'travelexpenses', postBody);
     }
 
     getTravelExpenseById(id: string): Observable<TravelExpense> {
