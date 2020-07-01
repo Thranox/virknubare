@@ -64,9 +64,9 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
         {id: 1243234, name: 'Klima- og miljøudvalget'}];
 
     lossOfEarningRates = [
-        {id:  '12', amount: 300}, // ex. sats 300
-        {id:  '13', amount: 400}, // ex. sats 400
-        {id:  '15', amount: 500}  // ex. sats 500
+        {id:  '3fa85f64-5717-4562-b3fc-2c963f66afa6', amount: 300}, // ex. sats 300
+        {id:  '3fa85f64-5717-4562-b3fc-2c963f66afa6', amount: 400}, // ex. sats 400
+        {id:  '3fa85f64-5717-4562-b3fc-2c963f66afa6', amount: 500}  // ex. sats 500
     ];
     private dayBetweenStartAndEnd = 0;
 
@@ -125,9 +125,9 @@ export class TravelExpenseFormComponent implements OnInit, ControlValueAccessor 
                 zipCode: ['', Validators.required],
             }),
             transportSpecification: this.fb.group({
-                method: [null],
+                method: ['car'],
                 kilometersCalculated: [0, Validators.required],
-                kilometersCustom: [null],
+                kilometersCustom: [0],
                 kilometersTax: [0,  Validators.required],
                 kilometersOverTaxLimit: [0,  Validators.required],
                 numberPlate: [''],

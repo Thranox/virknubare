@@ -22,7 +22,7 @@ export class CreateComponent implements OnInit {
     });
 
     constructor(
-        private travelExpenseService: MockTravelExpenseService,
+        private travelExpenseService: TravelExpenseService,
         private userInfoService: UserInfoService,
         private formBuilder: FormBuilder,
         private router: Router
@@ -70,7 +70,7 @@ export class CreateComponent implements OnInit {
         const travelExpense = formValues.travelExpense as TravelExpense;
         this.userInfoService.getUserInfo().pipe(
             map((userInfo) =>  userInfo.UserCustomerInfo[0].CustomerId),
-            switchMap((customerId) => this.travelExpenseService.createTravelExpense(travelExpense)),
+            switchMap((customerId) => this.travelExpenseService.createTravelExpense(travelExpense, customerId)),
             switchMap(result => this.travelExpenseService.getTravelExpenseById(travelExpense.id)),
         ).subscribe((fetchedTravelExpense) => {
             this.router.navigate([`travel-expenses/${fetchedTravelExpense.id}`]).then();

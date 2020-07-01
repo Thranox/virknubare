@@ -17,7 +17,7 @@ export class IndexComponent implements OnInit {
     travelExpenses: TravelExpense[] = [];
     travelExpensesRows: TravelExpense[] = [];
 
-  constructor(private travelExpenseService: MockTravelExpenseService) {}
+  constructor(private travelExpenseService: TravelExpenseService) {}
 
   ngOnInit(): void {
       this.travelExpenses$ = this.travelExpenseService.getTravelExpenses();

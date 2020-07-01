@@ -24,7 +24,7 @@ export class DetailsComponent implements OnInit {
     @ViewChild('travelExpenseFormComponent') form: TravelExpenseFormComponent;
 
     constructor(
-        private travelExpenseService: MockTravelExpenseService,
+        private travelExpenseService: TravelExpenseService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder
