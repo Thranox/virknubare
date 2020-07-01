@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Application;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Specifications;
 using Microsoft.AspNetCore.Http;
@@ -35,9 +36,17 @@ namespace API.Shared.Services
         public async Task<PolApiContext> GetPolApiContext(HttpContext httpContext)
         {
             var fullUrl = UriHelper.GetDisplayUrl(httpContext.Request);
+            if (string.IsNullOrEmpty(fullUrl))
+                throw new ItemNotAllowedException("none", "httpContext.Request");
 
             var system = Systems.FirstOrDefault(x => fullUrl.Contains(x.ApiUrl));
+            if(system==null)
+                throw new ItemNotAllowedException(fullUrl, "No matching system.");
+
             _logger.Debug("System: {@system}" , system);
+
+            if(string.IsNullOrEmpty( httpContext.User?.Identity?.Name))
+                throw new ItemNotAllowedException("none","httpContext.User?.Identity?.Name");
             _logger.Debug("HttpContextUser: {httpContextUser}", JsonConvert.SerializeObject( httpContext.User?.Identity?.Name) );
             
             var userIdentity =httpContext.User.Identity;
@@ -48,6 +57,7 @@ namespace API.Shared.Services
             if (improventoSubClaim == null)
             {
                 _logger.Error("User has no improvento sub claim");
+                throw new ItemNotAllowedException("none", "ImproventoSubClaimName");
             }
 
             var sub = improventoSubClaim.Value;
@@ -55,6 +65,7 @@ namespace API.Shared.Services
             var userEntity = _unitOfWork.Repository.List(new UserBySub(sub)).SingleOrDefault();
             if (userEntity == null)
             {
+                _logger.Information("User was not found in db but known in IDP. We create in db and continue.");
                 userEntity = new UserEntity(claims.Single(x => x.Type == "name").Value, sub);
                 _unitOfWork.Repository.Add(userEntity);
             }

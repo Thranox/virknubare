@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using System;
+using Domain.Entities;
 
 namespace Application
 {
@@ -6,9 +7,9 @@ namespace Application
     {
         public PolApiContext(UserEntity callingUser, string requestedUrl, PolSystem system)
         {
-            CallingUser = callingUser;
-            RequestedUrl = requestedUrl;
-            System = system;
+            CallingUser = callingUser??throw new ArgumentNullException(nameof(callingUser));
+            RequestedUrl = requestedUrl ?? throw new ArgumentNullException(nameof(requestedUrl));
+            System = system ?? throw new ArgumentNullException(nameof(system));
         }
 
         public UserEntity CallingUser { get; }
