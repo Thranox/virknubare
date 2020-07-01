@@ -1,6 +1,6 @@
 export class UserInfo {
-    UserCustomerInfo: {
-        CustomerId: string,
+    userCustomerInfo: {
+        customerId: string,
         CustomerName: string,
         UserCustomerStatusText: string,
         UserCustomerStatus: number

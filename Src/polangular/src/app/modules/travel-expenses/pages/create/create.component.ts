@@ -69,9 +69,11 @@ export class CreateComponent implements OnInit {
 
         const travelExpense = formValues.travelExpense as TravelExpense;
         this.userInfoService.getUserInfo().pipe(
-            map((userInfo) =>  userInfo.UserCustomerInfo[0].CustomerId),
+            map((userInfo) =>  userInfo.userCustomerInfo[0].customerId),
             switchMap((customerId) => this.travelExpenseService.createTravelExpense(travelExpense, customerId)),
-            switchMap(result => this.travelExpenseService.getTravelExpenseById(travelExpense.id)),
+            switchMap(id => {
+                return this.travelExpenseService.getTravelExpenseById(id);
+            }),
         ).subscribe((fetchedTravelExpense) => {
             this.router.navigate([`travel-expenses/${fetchedTravelExpense.id}`]).then();
         }, (error) => {
