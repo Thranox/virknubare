@@ -45,9 +45,9 @@ namespace API.Shared.Services
 
             _logger.Debug("System: {@system}" , system);
 
-            if(string.IsNullOrEmpty( httpContext.User?.Identity?.Name))
-                throw new ItemNotAllowedException("none","httpContext.User?.Identity?.Name");
-            _logger.Debug("HttpContextUser: {httpContextUser}", JsonConvert.SerializeObject( httpContext.User?.Identity?.Name) );
+            //if(string.IsNullOrEmpty( httpContext.User?.Identity?.Name))
+            //    throw new ItemNotAllowedException("none","httpContext.User?.Identity?.Name");
+            //_logger.Debug("HttpContextUser: {httpContextUser}", JsonConvert.SerializeObject( httpContext.User?.Identity?.Name) );
             
             var userIdentity =httpContext.User.Identity;
             var claims = (userIdentity as ClaimsIdentity).Claims.ToArray();
