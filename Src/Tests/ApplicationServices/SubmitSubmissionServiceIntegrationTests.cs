@@ -13,6 +13,7 @@ namespace Tests.ApplicationServices
     public class SubmitSubmissionServiceIntegrationTests
     {
         [Test]       
+        [Ignore()]
         public async Task SubmitAsync_NoParameters_SubmitsAll()
         {
             // Arrange
