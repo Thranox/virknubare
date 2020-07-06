@@ -13,7 +13,7 @@ namespace Tests.ApplicationServices
     public class SubmitSubmissionServiceIntegrationTests
     {
         [Test]       
-        [Ignore()]
+        [Ignore("Unstable ftp causes false negatives")]
         public async Task SubmitAsync_NoParameters_SubmitsAll()
         {
             // Arrange
