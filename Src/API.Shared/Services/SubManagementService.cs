@@ -47,8 +47,9 @@ namespace API.Shared.Services
             var system = Systems.FirstOrDefault(x => fullUrl.Contains(x.ApiUrl));
             if (system == null)
             {
-                _logger.Warning("System not found.");
-                throw new ItemNotAllowedException(fullUrl, "No matching system.");
+                _logger.Warning("System not found. Defaulting to Dev");
+                system = Systems.First();
+                //throw new ItemNotAllowedException(fullUrl, "No matching system.");
             }
 
             _logger.Debug("System: {@system}" , system);
