@@ -36,12 +36,20 @@ namespace API.Shared.Services
         public async Task<PolApiContext> GetPolApiContext(HttpContext httpContext)
         {
             var fullUrl = UriHelper.GetDisplayUrl(httpContext.Request);
+            _logger.Verbose("Fullurl: {fullUrl}"  ,fullUrl);
+
             if (string.IsNullOrEmpty(fullUrl))
+            {
+                _logger.Warning("FullUrl is null or empty");
                 throw new ItemNotAllowedException("none", "httpContext.Request");
+            }
 
             var system = Systems.FirstOrDefault(x => fullUrl.Contains(x.ApiUrl));
-            if(system==null)
+            if (system == null)
+            {
+                _logger.Warning("System not found.");
                 throw new ItemNotAllowedException(fullUrl, "No matching system.");
+            }
 
             _logger.Debug("System: {@system}" , system);
 

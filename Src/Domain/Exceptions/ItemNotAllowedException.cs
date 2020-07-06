@@ -4,7 +4,7 @@ namespace Domain.Exceptions
 {
     public class ItemNotAllowedException : Exception
     {
-        public ItemNotAllowedException(string id, string item)
+        public ItemNotAllowedException(string id, string item):base(id+";"+item)
         {
             Item = item;
             Id = id;
