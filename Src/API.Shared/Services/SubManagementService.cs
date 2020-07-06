@@ -36,7 +36,7 @@ namespace API.Shared.Services
         public async Task<PolApiContext> GetPolApiContext(HttpContext httpContext)
         {
             var fullUrl = UriHelper.GetDisplayUrl(httpContext.Request);
-            _logger.Verbose("Fullurl: {fullUrl}"  ,fullUrl);
+            _logger.Information("Fullurl: {fullUrl}"  ,fullUrl);
 
             if (string.IsNullOrEmpty(fullUrl))
             {
@@ -79,6 +79,8 @@ namespace API.Shared.Services
             }
 
             userEntity.UpdateWithClaims(claims);
+
+            _logger.Information("Continuing with calling user={user}", userEntity.Name);
 
             await _unitOfWork.CommitAsync();
 
