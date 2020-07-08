@@ -44,7 +44,7 @@ namespace API.Shared.Services
                 throw new ItemNotAllowedException("none", "httpContext.Request");
             }
 
-            var system = Systems.FirstOrDefault(x => fullUrl.Contains(x.ApiUrl));
+            var system = Systems.FirstOrDefault(x => fullUrl.ToLower().Contains(x.ApiUrl));
             if (system == null)
             {
                 _logger.Warning("System not found. Defaulting to Dev");
