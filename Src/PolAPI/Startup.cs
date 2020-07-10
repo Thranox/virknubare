@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 using Serilog;
 using SharedWouldBeNugets;
 
@@ -104,10 +105,15 @@ namespace PolAPI
                 });
 
             app.UseRouting();
+            app.UseHttpMetrics();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapMetrics();
+            });
 
             logger.Information("TravelExpense API started. Version=" + _configuration.GetValue<string>("Version")+"\n"+string.Join("\n", _configuration.AsEnumerable(true).Select(x=>x.Key +"="+x.Value)));
         }
