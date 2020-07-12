@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 using Serilog;
 using SharedWouldBeNugets;
 using TestHelpers;
@@ -145,13 +146,15 @@ namespace IDP
             app.UseCookiePolicy();
 
             app.UseRouting();
-            
+            app.UseHttpMetrics();
+
             app.UseIdentityServer();
             app.UseCors("CorsPolicy");
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapMetrics();
             });
         }
     }
