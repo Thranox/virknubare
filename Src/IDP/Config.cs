@@ -63,6 +63,9 @@ namespace IDP
                         "http://localhost:4200/signin-redirect-callback",
                         "http://localhost:50627/signin-redirect-callback",
                         "https://localhost:44324/#/signin-redirect-callback",
+                        "http://localhost:4200/#/signin-redirect-callback",
+                        "http://localhost:8100/#/signin-redirect-callback",
+
                         "https://andersathome.dk/#/signin-redirect-callback",
 
                         "https://andersathome.dk/signin-redirect-callback",
