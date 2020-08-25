@@ -67,6 +67,7 @@ namespace IDP
                         "http://localhost:8100/#/signin-redirect-callback",
                         
                         "capacitor://localhost",
+                        "capacitor://localhost/modules-travel-expenses-travel-expenses-module-es2015.js",
 
                         "https://andersathome.dk/#/signin-redirect-callback",
 
