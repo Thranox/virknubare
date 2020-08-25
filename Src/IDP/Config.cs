@@ -65,6 +65,7 @@ namespace IDP
                         "https://localhost:44324/#/signin-redirect-callback",
                         "http://localhost:4200/#/signin-redirect-callback",
                         "http://localhost:8100/#/signin-redirect-callback",
+                        "capacitor://localhost",
 
                         "https://andersathome.dk/#/signin-redirect-callback",
 
