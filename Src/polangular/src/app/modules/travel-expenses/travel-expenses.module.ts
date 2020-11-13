@@ -8,7 +8,8 @@ import {TravelExpenseFormComponent} from './components/travel-expense-form/trave
 import {ReactiveFormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CreateComponent} from "./pages/create/create.component";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
         ReactiveFormsModule,
         TravelExpensesRoutingModule,
         NgxDatatableModule,
-        NgbModule
+        NgbModule,
+        IonicModule
     ]
 })
 export class TravelExpensesModule { }

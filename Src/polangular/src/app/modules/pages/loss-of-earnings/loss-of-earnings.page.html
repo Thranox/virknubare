@@ -1,0 +1,28 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissModal()"><ion-icon name="close-outline"></ion-icon>Luk</ion-button>
+        </ion-buttons>
+        <ion-title>Angiv tabt arbejdsfortjeneste</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card>
+        <ion-card-content>
+            <ion-item-group>
+                <ion-item lines="none">
+                    <ion-card-title color="primary">Sats 200</ion-card-title>
+                </ion-item>
+                <ion-item lines="inset" *ngFor="let date of dateData.allDatesFromStartDateToEndDate; index as id">
+
+                    <ion-label position="stacked">{{date}}</ion-label>
+                    <ion-input id="{{id}}" type="number" placeholder="0"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-button (click)="calculateWorkHoursLost()" expand="block">press me</ion-button>
+                </ion-item>
+            </ion-item-group>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

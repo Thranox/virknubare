@@ -1,0 +1,9 @@
+<ion-tabs>
+    <ion-tab-bar>
+        <ion-tab-button *ngFor="let option of toolbarOptions" tab="{{option.route}}">
+            <ion-icon name="{{option.icon}}"></ion-icon>
+            <ion-label>{{option.tab}}</ion-label>
+        </ion-tab-button>
+    </ion-tab-bar>
+</ion-tabs>
+

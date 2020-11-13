@@ -1,0 +1,267 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissModal()"><ion-icon name="close-outline"></ion-icon>Luk</ion-button>
+        </ion-buttons>
+        <ion-title>Opret rejseafgift</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <form [formGroup]="travelExpense" ngNoForm (ngSubmit)="createTravelExpense()">
+
+        <ion-card>
+            <ion-card-content>
+                <ion-item-group>
+                    <ion-item lines="none">
+                        <ion-card-title color="primary">Rejseoplysninger</ion-card-title>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Udrejsedato og tidspunkt</ion-label>
+                        <ion-datetime (ionChange)="tripUnder24Hours()"
+                                      pickerFormat="DD-MMM-YYYYHH:mm"
+                                      displayFormat="DD-MMM, YYYY HH:mm"
+                                      formControlName="startDateTime"
+                                      placeholder="Start dato og tid">
+                        </ion-datetime>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Hjemrejsedato og tidspunkt</ion-label>
+                        <ion-datetime (ionChange)="tripUnder24Hours()"
+                                      pickerFormat="DD-MMM-YYYYHH:mm"
+                                      displayFormat="DD-MMM, YYYY HH:mm"
+                                      formControlName="endDateTime"
+                                      placeholder="Slut dato og tid">
+                        </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-button (click)="openLossOfEarningsPage()">Angiv tabt arbejdsfortjeneste</ion-button>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Udrejsested</ion-label>
+                        <ion-select interface="popover"
+                                    placeholder="Vælg udrejsested"
+                                    (ionChange)="toggleInputField($event, 'placeOfDeparture')">
+                            <ion-select-option>Hjem</ion-select-option>
+                            <ion-select-option>Arbejde</ion-select-option>
+                            <ion-select-option>Andet</ion-select-option>
+                        </ion-select>
+                        <ion-input id="placeOfDeparture"
+                                   disabled="true"
+                                   placeholder="Andet udrejsested"
+                                   formControlName="placeOfDeparture">
+                        </ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Hjemrejsested</ion-label>
+                        <ion-select interface="popover" placeholder="Vælg hjemrejsested" (ionChange)="toggleInputField($event, 'placeOfHomecoming')">
+                            <ion-select-option>Hjem</ion-select-option>
+                            <ion-select-option>Arbejde</ion-select-option>
+                            <ion-select-option>Andet</ion-select-option>
+                        </ion-select>
+                        <ion-input id="placeOfHomecoming"
+                                   disabled="true"
+                                   placeholder="Andet hjemrejsested"
+                                   formControlName="placeOfHomecoming">
+                        </ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Mødested</ion-label>
+                        <ion-select interface="popover"
+                                    placeholder="Vælg mødested"
+                                    (ionChange)="toggleInputField($event, 'meetingPlace')">
+                            <ion-select-option>Et sted</ion-select-option>
+                            <ion-select-option>Et andet sted</ion-select-option>
+                            <ion-select-option>Andet</ion-select-option>
+                        </ion-select>
+                        <ion-input
+                                   id="meetingPlace"
+                                   disabled="true"
+                                   placeholder="Andet mødested"
+                                   formControlName="meetingPlace">
+                        </ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Mødest formål</ion-label>
+                        <ion-select interface="popover"
+                                    placeholder="Vælg et formål"
+                                    (ionChange)="toggleInputField($event, 'purposeOfMeeting')">
+                            <ion-select-option>Generalforsamling</ion-select-option>
+                            <ion-select-option>Bum</ion-select-option>
+                            <ion-select-option>Andet</ion-select-option>
+                        </ion-select>
+                        <ion-input id="purposeOfMeeting"
+                                   disabled="true"
+                                   placeholder="Andet formål"
+                                   formControlName="purposeOfMeeting"></ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Udvalg</ion-label>
+                        <ion-select interface="popover" placeholder="Vælg udvalg" formControlName="committee">
+                            <ion-select-option>Miljø-og grønvækst MGV</ion-select-option>
+                            <ion-select-option>Bum</ion-select-option>
+                            <ion-select-option>Andet</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                </ion-item-group>
+            </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+            <ion-card-content>
+                <ion-item-group>
+                    <ion-item lines="none">
+                        <ion-card-title color="primary">Afregningsoplysninger</ion-card-title>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Kursus/seminar</ion-label>
+                        <ion-toggle formControlName="isCourse"></ion-toggle>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Kørsel i egen bil</ion-label>
+                        <ion-toggle id="ownCarToggle"
+                                    (ionChange)="toggleTransportationByCar()"
+                                    formControlName="isOwnCar">
+                        </ion-toggle>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Kørsel på egen cykel</ion-label>
+                        <ion-toggle id="ownBikeToggle"
+                                    (ionChange)="toggleTransportationByBike()"
+                                    formControlName="isOwnBike">
+                        </ion-toggle>
+                    </ion-item>
+
+                    <ion-item *ngIf="isRidingOwnBike">
+                        <ion-label position="stacked">Antal km (beregnet)</ion-label>
+                        <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometers"></ion-input>
+                    </ion-item>
+
+                    <div *ngIf="isDrivingOwnCar">
+                        <ion-item lines="inset">
+                            <ion-label position="stacked">Nummerplade</ion-label>
+                            <ion-input placeholder="Indtast nummerplade" formControlName="numberPlate"></ion-input>
+                        </ion-item>
+
+                        <ion-item lines="inset">
+                            <ion-label position="stacked">Antal km (beregnet)</ion-label>
+                            <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometers"></ion-input>
+                        </ion-item>
+
+                        <ion-item lines="inset">
+                            <ion-label position="stacked">Antal km (skattepligtigt)</ion-label>
+                            <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometersTaxable"></ion-input>
+                        </ion-item>
+
+                        <ion-item lines="inset">
+                            <ion-label position="stacked">Antal km (over 20000)</ion-label>
+                            <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometersOver20000"></ion-input>
+                        </ion-item>
+
+                        <ion-item lines="inset">
+                            <ion-label position="stacked">Udgifter (bilag vedhæftes)</ion-label>
+                            <ion-input placeholder="Hvad har det kostet dig ?"></ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div *ngIf="isTripUnder24Hours; else isTripOver24Hours">
+                        <ion-item>
+                            <ion-label position="stacked">Diæter</ion-label>
+                            <ion-select interface="popover" placeholder="Vælg diæt" formControlName="selectedDietOnTripUnder24Hours">
+                                <ion-select-option>Ingen</ion-select-option>
+                                <ion-select-option>Under 4 timer</ion-select-option>
+                                <ion-select-option>Over 4 timer</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                    </div>
+
+                    <ng-template #isTripOver24Hours>
+                        <ion-item lines="inset">
+                            <ion-label position="stacked">Udlandsrejse</ion-label>
+                            <ion-toggle formControlName="isTravelAbroad"></ion-toggle>
+                        </ion-item>
+
+                        <ion-item lines="none">
+                            <ion-label position="stacked">Gange fradag i timedagpenge for</ion-label>
+                        </ion-item>
+
+                        <ion-list>
+                            <ion-item>
+                                <ion-label position="stacked">Morgenmad</ion-label>
+                                <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfBreakfastsConsumed"></ion-input>
+                            </ion-item>
+                            <ion-item>
+                                <ion-label position="stacked">Middagsmad</ion-label>
+                                <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfDinnersConsumed"></ion-input>
+                            </ion-item>
+                            <ion-item>
+                                <ion-label position="stacked">Aftensmad</ion-label>
+                                <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfSuppersConsumed"></ion-input>
+                            </ion-item>
+                        </ion-list>
+
+                        <ion-item lines="none">
+                            <ion-label position="stacked">Antal diæter</ion-label>
+                        </ion-item>
+                        <ion-list>
+                            <ion-item>
+                                <ion-label position="stacked">Under 4 timer</ion-label>
+                                <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfDietsUnder4Hours"></ion-input>
+                            </ion-item>
+                            <ion-item>
+                                <ion-label position="stacked">Over 4 timer</ion-label>
+                                <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfDietsOver4Hours"></ion-input>
+                            </ion-item>
+                        </ion-list>
+                    </ng-template>
+                </ion-item-group>
+
+
+            </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+            <ion-card-content>
+                <ion-item-group>
+                    <ion-item lines="none">
+                        <ion-card-title color="primary">Tabt arbejdsfortjeneste</ion-card-title>
+                    </ion-item>
+
+                    <ion-item lines="none">
+                        <ion-label position="stacked">Antal timer</ion-label>
+                        <ion-input id="totalWorkHoursLostInput" readonly value="0" formControlName="totalWorkHoursLost"></ion-input>
+                    </ion-item>
+
+                </ion-item-group>
+            </ion-card-content>
+        </ion-card>
+
+
+        <ion-card>
+            <ion-card-content>
+                <ion-item-group>
+                    <ion-item lines="none">
+                        <ion-card-title color="primary">Bemærkninger</ion-card-title>
+                    </ion-item>
+                    <ion-item lines="none">
+                        <ion-textarea autoGrow="true" placeholder="Indtast bemærkning her" formControlName="remarks"></ion-textarea>
+                    </ion-item>
+                </ion-item-group>
+            </ion-card-content>
+        </ion-card>
+
+        <ion-button type="submit"> Submit</ion-button>
+    </form>
+</ion-content>

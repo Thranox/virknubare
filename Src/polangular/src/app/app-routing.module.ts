@@ -10,19 +10,39 @@ import {SignInComponent} from "./modules/authentication/sign-in/sign-in.componen
 
 
 const routes: Routes = [
-    {path: '', redirectTo: 'travel-expenses', pathMatch: 'full'},
+    {path: '', redirectTo: 'home', pathMatch: 'full'},
     {path: 'fetch-data', component: FetchDataComponent},
     {path: 'sign-in', component: SignInComponent},
     {path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent},
     {path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent},
     {path: 'unauthorized', component: UnauthorizedComponent},
     {
-        path: 'travel-expenses',
-        loadChildren: () => import('./modules/travel-expenses/travel-expenses.module').then(m => m.TravelExpensesModule),
+        path: 'home',
+        loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
         canActivate: [UserSignedInGuard]
     },
     {path: '404', component: PageNotFoundComponent},
     {path: '**', redirectTo: '/404'},
+  {
+    path: 'create-travel-expense',
+    loadChildren: () => import('./modules/pages/create-travel-expense/create-travel-expense.module').then( m => m.CreateTravelExpensePageModule)
+  },
+  {
+    path: 'loss-of-earnings',
+    loadChildren: () => import('./modules/pages/loss-of-earnings/loss-of-earnings.module').then( m => m.LossOfEarningsPageModule)
+  },
+  {
+    path: 'reports',
+    loadChildren: () => import('./modules/pages/reports/reports.module').then( m => m.ReportsPageModule)
+  },
+  {
+    path: 'archives',
+    loadChildren: () => import('./modules/pages/archives/archives.module').then( m => m.ArchivesPageModule)
+  },
+  {
+    path: 'help',
+    loadChildren: () => import('./modules/pages/help/help.module').then( m => m.HelpPageModule)
+  },
 ];
 
 @NgModule({

@@ -9,6 +9,9 @@ const routes: Routes = [
   {path: '', component: IndexComponent},
   {path: 'create', component: CreateComponent},
   {path: ':id', component: DetailsComponent},
+
+ 
+
 ];
 
 @NgModule({

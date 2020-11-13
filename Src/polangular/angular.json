@@ -25,14 +25,50 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              }
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/@swimlane/ngx-datatable/index.scss",
               "node_modules/@swimlane/ngx-datatable/themes/bootstrap.scss",
               "node_modules/@swimlane/ngx-datatable/themes/material.scss",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              {
+                "input": "node_modules/@ionic/angular/css/normalize.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/structure.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/typography.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/core.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/padding.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/float-elements.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-alignment.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-transformation.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/flex-utils.css"
+              },
+              {
+                "input": "src/theme/variables.css"
+              }
             ],
             "scripts": []
           },
@@ -97,6 +133,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -126,12 +163,44 @@
               "devServerTarget": "polangular:serve:production"
             }
           }
+        },
+        "ionic-cordova-serve": {
+          "builder": "@ionic/angular-toolkit:cordova-serve",
+          "options": {
+            "cordovaBuildTarget": "polangular:ionic-cordova-build",
+            "devServerTarget": "polangular:serve"
+          },
+          "configurations": {
+            "production": {
+              "cordovaBuildTarget": "polangular:ionic-cordova-build:production",
+              "devServerTarget": "polangular:serve:production"
+            }
+          }
+        },
+        "ionic-cordova-build": {
+          "builder": "@ionic/angular-toolkit:cordova-build",
+          "options": {
+            "browserTarget": "polangular:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "polangular:build:production"
+            }
+          }
         }
       }
     }
   },
-  "defaultProject": "polangular",
   "cli": {
-    "analytics": "d797d61f-2162-4084-ad06-489fe2b761ff"
-  }
+    "defaultCollection": "@ionic/angular-toolkit"
+  },
+  "schematics": {
+    "@ionic/schematics-angular:component": {
+      "styleext": "scss"
+    },
+    "@ionic/schematics-angular:page": {
+      "styleext": "scss"
+    }
+  },
+  "defaultProject": "polangular"
 }

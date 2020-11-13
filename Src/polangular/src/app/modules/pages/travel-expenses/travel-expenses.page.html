@@ -1,0 +1,52 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Rejseafgifter</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-item>
+            <ion-button (click)="openCreateTravelExpensePage()">Opret ny rejseafgift</ion-button>
+            <ion-button>Meld rejseafgift færdig</ion-button>
+    </ion-item>
+    <ion-item>
+        <ion-select interface="popover" placeholder="Vælg år">
+            <ion-select-option>2020</ion-select-option>
+            <ion-select-option>2019</ion-select-option>
+            <ion-select-option>2018</ion-select-option>
+        </ion-select>
+        <ion-select interface="popover" placeholder="Status">
+            <ion-select-option>Oprettet</ion-select-option>
+            <ion-select-option>Færdigmeldt</ion-select-option>
+            <ion-select-option>Attesteret</ion-select-option>
+            <ion-select-option>Indberettet</ion-select-option>
+        </ion-select>
+        <ion-button>Filtrér</ion-button>
+        <ion-button>Ryd filter</ion-button>
+    </ion-item>
+
+    <ion-list *ngIf="travelExpensesList.length != 0">
+
+        <ion-item *ngFor="let travelExpense of travelExpensesList" (click)="showSelectedTravelExpense(travelExpense)">
+            <ion-grid>
+                <ion-row>
+                    <ion-col>
+                        {{travelExpense["value"].startDateTime}}
+                    </ion-col>
+                    <ion-col>
+
+                        {{travelExpense["value"].endDateTime}}
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        {{travelExpense["value"].purposeOfMeeting}}
+                    </ion-col>
+                    <ion-col>
+                        {{travelExpense["value"].status}}
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-list>
+</ion-content>

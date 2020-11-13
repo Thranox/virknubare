@@ -4,11 +4,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import 'dayjs/locale/da'; // import locale
+
 import * as dayjs from 'dayjs';
-import {NavMenuComponent} from './components/nav-menu/nav-menu.component';
+
 import {CoreModule} from './core/core.module';
 import {HttpClientModule} from '@angular/common/http';
-import { FooterComponent } from './components/footer/footer.component';
+
 import {FetchDataComponent} from './modules/fetch-data/fetch-data.component';
 import {FormsModule} from '@angular/forms';
 import {SharedModule} from './shared/shared.module';
@@ -17,32 +18,39 @@ import localeExtraDa from '@angular/common/locales/extra/da';
 import {HashLocationStrategy, LocationStrategy, registerLocaleData} from '@angular/common';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { SignInComponent } from './modules/authentication/sign-in/sign-in.component';
+import { IonicModule } from '@ionic/angular';
+import { NoopAnimationsModule, BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './shared/material/material.module';
+
 registerLocaleData(localeDa, 'da', localeExtraDa);
 
 dayjs.locale('da');
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    FooterComponent,
-    FetchDataComponent,
-    PageNotFoundComponent,
-    SignInComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule,
-    CoreModule.forRoot(),
-    HttpClientModule,
-    FormsModule,
-    SharedModule.forRoot(),
-  ],
-  providers: [
-    { provide: LOCALE_ID, useValue: 'da-DK' }, // For angular date-pipe
-    {provide: LocationStrategy, useClass: HashLocationStrategy}
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        FetchDataComponent,
+        PageNotFoundComponent,
+        SignInComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        NgbModule,
+        CoreModule.forRoot(),
+        HttpClientModule,
+        FormsModule,
+        
+        BrowserAnimationsModule,
+
+        SharedModule.forRoot(),
+        IonicModule.forRoot(),
+        NoopAnimationsModule,
+    ],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'da-DK' }, // For angular date-pipe
+        {provide: LocationStrategy, useClass: HashLocationStrategy}
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

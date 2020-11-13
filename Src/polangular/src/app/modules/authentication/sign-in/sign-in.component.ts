@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignInComponent implements OnInit {
 
-  constructor() { }
+    isLoggedIn = false;
+    isExpanded = false;
 
-  ngOnInit(): void {
-  }
+    constructor(private authService: AuthService) { }
 
+    ngOnInit() {
+        this.authService.loginChanged.subscribe(loggedIn => {
+            this.isLoggedIn = loggedIn;
+        });
+    }
+
+    login($event: Event) {
+        $event.preventDefault();
+        this.authService.login();
+    }
 }

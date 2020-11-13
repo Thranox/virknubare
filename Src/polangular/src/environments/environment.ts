@@ -7,12 +7,12 @@ import {EnvironmentInterface} from './environment-interface';
 export const environment: EnvironmentInterface = {
     production: false,
 
-    // stsAuthorityUrl: 'https://dev.politikerafregning.dk/IDP/',
-    // apiUrl: 'https://dev.politikerafregning.dk/PolAPI/',
-    // apiUrl: 'https://dev.politikerafregning.dk/APIOpen/',
+    stsAuthorityUrl: 'https://dev.politikerafregning.dk/IDP/',
+    apiUrl: 'https://dev.politikerafregning.dk/PolAPI/',
+    //apiUrl: 'https://dev.politikerafregning.dk/APIOpen/',
 
-    stsAuthorityUrl: 'https://andersathome.dk/IDP/',
-    apiUrl: 'https://andersathome.dk/PolAPI/',
+    //stsAuthorityUrl: 'https://andersathome.dk/IDP/',
+    //apiUrl: 'https://andersathome.dk/PolAPI/',
     // apiUrl: 'https://cors-anywhere.herokuapp.com/https://andersathome.dk/PolAPI/',
     stsClientId: 'polangularclient'
 };

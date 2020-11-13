@@ -1,0 +1,7 @@
+{
+  "name": "polangular",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

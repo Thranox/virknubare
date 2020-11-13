@@ -1,4 +1,5 @@
 <div class="card">
+
     <div class="card-body">
         <form [formGroup]="travelExpenseFormGroup" class="needs-validation" novalidate>
             <div class="row">
@@ -46,6 +47,10 @@
                         <option *ngFor="let commitee of commitees" [ngValue]="commitee.id">{{commitee.name}}</option>
                     </select>
                     <label>Formål</label>
+                    <select class="form-control" formControlName="committeeId">
+                        <option [ngValue]="null">Vælg</option>
+                        <option></option>
+                    </select>
                     <input type="text" class="form-control" formControlName="purpose">
                 </div>
             </div>
@@ -74,36 +79,27 @@
                 </div>
                 <div class="col-md-6" formGroupName="departurePlace">
                     <label>Udrejsested</label>
-                    <!--<select class="form-control">
-                        <option [value]="1">Hjem</option>
-                        <option [value]="2">Arbejde</option>
-                        <option [value]="3">Andet</option>
-                    </select>-->
+
                     <div class="form-row small">
                         <div class="col-8">
                             Vej
-                                <input class="form-control" type="text" formControlName="street" placeholder="Vejnavn">
+                            <input class="form-control" type="text" formControlName="street" placeholder="Vejnavn">
                         </div>
                         <div class="col-2">
                             Husnummer
-                                <input class="form-control" type="text" formControlName="streetNumber"
-                                       placeholder="Husnummer">
+                            <input class="form-control" type="text" formControlName="streetNumber"
+                                   placeholder="Husnummer">
                         </div>
                         <div class="col-2">
                             Postnummer
-                                <input class="form-control" type="text" formControlName="zipCode"
-                                       placeholder="Postnummer">
+                            <input class="form-control" type="text" formControlName="zipCode"
+                                   placeholder="Postnummer">
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6"></div>
-                <div class="col-md-6"  formGroupName="arrivalPlace">
+                <div class="col-md-6" formGroupName="arrivalPlace">
                     <label>Hjemkomststed</label>
-                    <!--<select class="form-control">
-                        <option [value]="1">Hjem</option>
-                        <option [value]="2">Arbejde</option>
-                        <option [value]="3">Andet</option>
-                    </select>-->
                     <div class="form-row small">
                         <div class="col-8">
                             Vej
@@ -133,35 +129,35 @@
 
             <div class="form-row">
                 <div class="col-md-6">
-                        <div class="form-row" formGroupName="transportSpecification">
-                            <div class="col-12">
-                                <label>Kørsels godtgørelse</label>
-                                <select class="form-control" formControlName="method">
-                                    <option [ngValue]="null">Ingen</option>
-                                    <option [ngValue]="'car'">Kørsel i egen bil</option>
-                                    <option [ngValue]="'bike'">Kørsel på cykel</option>
-                                </select>
-                                <label>Nummerplade</label>
-                                <input class="form-control" type="text" placeholder="Nummerplade"
-                                       formControlName="numberPlate">
-                            </div>
-                            <div class="col-12">
-                                <label>Antal KM (beregnet)</label>
-                                <input class="form-control" type="number" formControlName="kilometersCalculated">
-                            </div>
-                            <div class="col-12">
-                                <label>Antal KM</label>
-                                <input class="form-control" type="number" formControlName="kilometersCustom">
-                            </div>
-                            <div class="col-12">
-                                <label>Antal km (skattepligtige)</label>
-                                <input class="form-control" type="number" formControlName="kilometersTax">
-                            </div>
-                            <div class="col-12">
-                                <label>Antal km (over 20.000)</label>
-                                <input class="form-control" type="number" formControlName="kilometersOverTaxLimit">
-                            </div>
+                    <div class="form-row" formGroupName="transportSpecification">
+                        <div class="col-12">
+                            <label>Kørsels godtgørelse</label>
+                            <select class="form-control" formControlName="method">
+                                <option [ngValue]="null">Ingen</option>
+                                <option [ngValue]="'car'">Kørsel i egen bil</option>
+                                <option [ngValue]="'bike'">Kørsel på cykel</option>
+                            </select>
+                            <label>Nummerplade</label>
+                            <input class="form-control" type="text" placeholder="Nummerplade"
+                                   formControlName="numberPlate">
                         </div>
+                        <div class="col-12">
+                            <label>Antal KM (beregnet)</label>
+                            <input class="form-control" type="number" formControlName="kilometersCalculated">
+                        </div>
+                        <div class="col-12">
+                            <label>Antal KM</label>
+                            <input class="form-control" type="number" formControlName="kilometersCustom">
+                        </div>
+                        <div class="col-12">
+                            <label>Antal km (skattepligtige)</label>
+                            <input class="form-control" type="number" formControlName="kilometersTax">
+                        </div>
+                        <div class="col-12">
+                            <label>Antal km (over 20.000)</label>
+                            <input class="form-control" type="number" formControlName="kilometersOverTaxLimit">
+                        </div>
+                    </div>
 
 
 
@@ -179,7 +175,7 @@
                             <label>Udgifter (bilag vedhæftes)</label>
                             <input class="form-control" type="number" formControlName="expenses">
                         </div>
-                        <div class="col-md-12"  formGroupName="foodAllowances">
+                        <div class="col-md-12" formGroupName="foodAllowances">
                             <label>Gange fradrag i timedagpenge for</label>
                             <div class="form-row small">
                                 <div class="col-4">
@@ -196,7 +192,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12"  formGroupName="dailyAllowanceAmount">
+                        <div class="col-md-12" formGroupName="dailyAllowanceAmount">
                             <label>Antal Diæter</label>
                             <div class="form-row small">
                                 <div class="col-6">
@@ -285,7 +281,8 @@
                 </div>
             </div>
 
-            Gyldig: {{ travelExpenseFormGroup.valid
+            Gyldig: {{
+ travelExpenseFormGroup.valid
             }}
 
             <!--<div class="row pt-3">
@@ -293,11 +290,11 @@
                     <button class="btn btn-primary" type="button" (click)="save()">Gem afregning</button>
                 </div>
             </div>-->
-
             <!--<pre>Form data:
-{{ travelExpenseFormGroup.getRawValue() | json }}</pre>-->
+            {{ travelExpenseFormGroup.getRawValue() | json }}</pre>-->
         </form>
     </div>
+
 </div>
 
 
