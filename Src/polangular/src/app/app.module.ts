@@ -10,9 +10,9 @@ import * as dayjs from 'dayjs';
 import {CoreModule} from './core/core.module';
 import {HttpClientModule} from '@angular/common/http';
 
-import {FetchDataComponent} from './modules/fetch-data/fetch-data.component';
+
 import {FormsModule} from '@angular/forms';
-import {SharedModule} from './shared/shared.module';
+//import {SharedModule} from './shared/shared.module';
 import localeDa from '@angular/common/locales/da';
 import localeExtraDa from '@angular/common/locales/extra/da';
 import {HashLocationStrategy, LocationStrategy, registerLocaleData} from '@angular/common';
@@ -21,6 +21,7 @@ import { SignInComponent } from './modules/authentication/sign-in/sign-in.compon
 import { IonicModule } from '@ionic/angular';
 import { NoopAnimationsModule, BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material/material.module';
+import { SharedModule } from './shared/shared.module';
 
 registerLocaleData(localeDa, 'da', localeExtraDa);
 
@@ -29,7 +30,6 @@ dayjs.locale('da');
 @NgModule({
     declarations: [
         AppComponent,
-        FetchDataComponent,
         PageNotFoundComponent,
         SignInComponent,
     ],

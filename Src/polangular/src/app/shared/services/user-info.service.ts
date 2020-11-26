@@ -1,18 +1,25 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {UserInfo} from '../model/user-info.model';
-import {UserInfoResource} from '../resources/user-info.resource';
 
 
 @Injectable()
 export class UserInfoService {
 
+    homeAdress: string
+    workAdress: string
+
+
+
     constructor(
-        private userInfoResource: UserInfoResource,
+        
     ) {
+        this.homeAdress = 'skanderborgvej 159'
+        this.workAdress = 'work adress 4'
     }
 
-    getUserInfo(): Observable<UserInfo> {
-        return this.userInfoResource.getUserInfo();
+    getHomeAdress() {
+        return this.homeAdress
+    }
+    getWorkAdress() {
+        return this.workAdress
     }
 }

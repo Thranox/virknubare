@@ -1,52 +1,91 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-title>Rejseafgifter</ion-title>
+    <ion-toolbar color="primary">
+        <img class="displayNone displayOnLg" src="././././assets/simple-ra-logo.png" />
+        <ion-title class="displayNone displayOnSmall">Rejseafgifter</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-item>
-            <ion-button (click)="openCreateTravelExpensePage()">Opret ny rejseafgift</ion-button>
-            <ion-button>Meld rejseafgift færdig</ion-button>
-    </ion-item>
-    <ion-item>
-        <ion-select interface="popover" placeholder="Vælg år">
-            <ion-select-option>2020</ion-select-option>
-            <ion-select-option>2019</ion-select-option>
-            <ion-select-option>2018</ion-select-option>
-        </ion-select>
-        <ion-select interface="popover" placeholder="Status">
-            <ion-select-option>Oprettet</ion-select-option>
-            <ion-select-option>Færdigmeldt</ion-select-option>
-            <ion-select-option>Attesteret</ion-select-option>
-            <ion-select-option>Indberettet</ion-select-option>
-        </ion-select>
-        <ion-button>Filtrér</ion-button>
-        <ion-button>Ryd filter</ion-button>
-    </ion-item>
+
+    <ion-grid>
+        <ion-row>
+            <ion-col size-lg="2">
+                <ion-button (click)="openCreateTravelExpensePage()">Opret ny rejseafgift</ion-button>
+            </ion-col>
+            <ion-col size-lg="2">
+                <ion-button>Meld rejseafgift færdig</ion-button>
+            </ion-col>
+        </ion-row>
+       
+        <ion-row>
+            <ion-col>
+                <ion-select id="filterByYear" interface="popover" placeholder="Filtrer efter år" (ionChange)="filterByYear($event)">
+                    <ion-select-option>2021</ion-select-option>
+                    <ion-select-option>2020</ion-select-option>
+                    <ion-select-option>2019</ion-select-option>
+                    <ion-select-option>2018</ion-select-option>
+                </ion-select>
+            </ion-col>
+            <ion-col>
+                <ion-select id="filterByStatus" interface="popover" placeholder="Filtrer efter status" (ionChange)="filterByStatus($event)">
+                    <ion-select-option>Oprettet</ion-select-option>
+                    <ion-select-option>Færdigmeldt</ion-select-option>
+                    <ion-select-option>Attesteret</ion-select-option>
+                    <ion-select-option>Indberettet</ion-select-option>
+                </ion-select>
+            </ion-col>
+            <ion-col>
+                <ion-button (click)="applyFilter()">Filtrér</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button (click)="clearFilter()">Ryd filter</ion-button>
+            </ion-col>
+        </ion-row>
+
+        <ion-row>
+
+        </ion-row>
+    </ion-grid>
+    <ion-row class="header-row">
+        <ion-col (click)="sortBy('startDateTime')">
+            Start dato
+        </ion-col>
+        <ion-col (click)="sortBy('endDateTime')">
+            Slut dato
+        </ion-col>
+        <ion-col (click)="sortBy('purposeOfMeeting')">
+            Formål
+        </ion-col>
+        <ion-col (click)="sortBy('status')">
+            Status
+        </ion-col>
+    </ion-row>
 
     <ion-list *ngIf="travelExpensesList.length != 0">
-
-        <ion-item *ngFor="let travelExpense of travelExpensesList" (click)="showSelectedTravelExpense(travelExpense)">
             <ion-grid>
-                <ion-row>
-                    <ion-col>
-                        {{travelExpense["value"].startDateTime}}
-                    </ion-col>
-                    <ion-col>
+                <ng-container *ngFor="let travelExpense of travelExpensesList; index as i" >
+                    <ion-row  class="data-row" (click)="showSelectedTravelExpense(travelExpense)" 
+                              *ngIf="travelExpense.value.status == filter[1] && moment(travelExpense.value.startDateTime).format('YYYY') == filter[0] ||
+                                     filter.length == 0 ||
+                                     filter[0] == null && filter[1] == travelExpense.value.status || filter[1] == null && filter[0] == moment(travelExpense.value.startDateTime).format('YYYY')">
+                        <ion-col size="3">
+                            {{moment(travelExpense.value.startDateTime).format('DD-MMM, YYYY')}}
+                        </ion-col>
+                        <ion-col size="3">
+                            {{moment(travelExpense.value.endDateTime).format('DD-MMM, YYYY')}}
+                        </ion-col>
 
-                        {{travelExpense["value"].endDateTime}}
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col>
-                        {{travelExpense["value"].purposeOfMeeting}}
-                    </ion-col>
-                    <ion-col>
-                        {{travelExpense["value"].status}}
-                    </ion-col>
-                </ion-row>
+                        <ion-col size="3">
+                            {{travelExpense.value.purposeOfMeeting}}
+                        </ion-col>
+                        <ion-col size="2" size-xs="3">
+                            {{travelExpense.value.status}}
+                        </ion-col>
+                        <ion-col>
+                            <ion-icon name="trash-outline" (click)="deleteTravelExpense(i)"></ion-icon>
+                        </ion-col>
+                    </ion-row>
+                </ng-container>
             </ion-grid>
-        </ion-item>
     </ion-list>
 </ion-content>

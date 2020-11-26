@@ -1,0 +1,193 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissModal()"><ion-icon name="close-outline"></ion-icon>Luk</ion-button>
+        </ion-buttons>
+        <ion-title>Vis rejseafgift</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card>
+        <ion-card-content>
+            <ion-item-group>
+                <ion-item lines="none">
+                    <ion-card-title color="primary">Rejseoplysninger</ion-card-title>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Udrejsedato og tidspunkt</ion-label>
+                    <ion-datetime value="{{travelExpense.value.startDateTime}}"
+                                  disabled="true"
+                                  displayFormat="DD-MMM, YYYY HH:mm">
+                    </ion-datetime>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Hjemrejsedato og tidspunkt</ion-label>
+                    <ion-datetime value="{{travelExpense.value.endDateTime}}"
+                                  disabled="true"
+                                  displayFormat="DD-MMM, YYYY HH:mm">
+                    </ion-datetime>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Udrejsested</ion-label>
+
+
+                    <ion-input value="{{travelExpense.value.placeOfDeparture}}"
+                               id="placeOfDeparture"
+                               disabled="true">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Hjemrejsested</ion-label>
+
+                    <ion-input value="{{travelExpense.value.placeOfHomecoming}}"
+                               id="placeOfHomecoming"
+                               disabled="true">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Mødested</ion-label>
+
+                    <ion-input value="{{travelExpense.value.meetingPlace}}"
+                               id="meetingPlace"
+                               disabled="true">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Mødest formål</ion-label>
+
+                    <ion-input value="{{travelExpense.value.purposeOfMeeting}}"
+                               id="purposeOfMeeting"
+                               disabled="true">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Udvalg</ion-label>
+                    <ion-input value="{{travelExpense.value.committee}}"
+                               id="committee"
+                               disabled="true">
+                    </ion-input>
+                </ion-item>
+            </ion-item-group>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+        <ion-card-content>
+            <ion-item-group>
+                <ion-item lines="none">
+                    <ion-card-title color="primary">Afregningsoplysninger</ion-card-title>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Kursus/seminar</ion-label>
+                    <ion-toggle checked="{{travelExpense.value.isCourse}}"
+                                disabled="true"></ion-toggle>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Kørsel i egen bil</ion-label>
+                    <ion-toggle checked="{{travelExpense.value.isOwnCar}}"
+                                id="ownCarToggle"
+                                disabled="true">
+                    </ion-toggle>
+                </ion-item>
+
+                <ion-item lines="inset">
+                    <ion-label position="stacked">Kørsel på egen cykel</ion-label>
+                    <ion-toggle checked="{{travelExpense.value.isOwnBike}}"
+                                id="ownBikeToggle"
+                                disabled="true">
+                    </ion-toggle>
+                </ion-item>
+
+                <ion-item *ngIf="travelExpense.value.isOwnBike">
+                    <ion-label position="stacked">Antal km (beregnet)</ion-label>
+                    <ion-input disabled="true" value="{{travelExpense.value.numberOfKilometers}}"></ion-input>
+                </ion-item>
+
+                <div *ngIf="travelExpense.value.isOwnCar">
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Nummerplade</ion-label>
+                        <ion-input disabled="true" value="{{travelExpense.value.numberPlate}}"></ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Antal km (beregnet)</ion-label>
+                        <ion-input disabled="true" value="{{travelExpense.value.numberOfKilometers}}"></ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Antal km (skattepligtigt)</ion-label>
+                        <ion-input disabled="true" value="{{travelExpense.value.numberOfKilometersTaxable}}"></ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Antal km (over 20000)</ion-label>
+                        <ion-input disabled="true" value="{{travelExpense.value.numberOfKilometersOver20000}}"></ion-input>
+                    </ion-item>
+
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Udgifter (bilag vedhæftes)</ion-label>
+                        <ion-input placeholder="Hvad har det kostet dig ?"></ion-input>
+                    </ion-item>
+                </div>
+
+                <div *ngIf="travelExpense.value.selectedDietOnTripUnder24Hours != '' ; else isTripOver24Hours">
+                    <ion-item>
+                        <ion-label position="stacked">Diæter</ion-label>
+                        <ion-input disabled="true" value="{{travelExpense.value.selectedDietOnTripUnder24Hours}}"></ion-input>
+                    </ion-item>
+                </div>
+
+                <ng-template #isTripOver24Hours>
+                    <ion-item lines="inset">
+                        <ion-label position="stacked">Udlandsrejse</ion-label>
+                        <ion-toggle checked="{{travelExpense.value.isTravelAbroad}}"
+                                    disabled="true"></ion-toggle>
+                    </ion-item>
+
+                    <ion-item lines="none">
+                        <ion-label position="stacked">Gange fradag i timedagpenge for</ion-label>
+                    </ion-item>
+
+                    <ion-list>
+                        <ion-item>
+                            <ion-label position="stacked">Morgenmad</ion-label>
+                            <ion-input disabled="true" value="{{travelExpense.value.numberOfBreakfastsConsumed}}"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="stacked">Middagsmad</ion-label>
+                            <ion-input disabled="true" value="{{travelExpense.value.numberOfDinnersConsumed}}"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="stacked">Aftensmad</ion-label>
+                            <ion-input disabled="true" value="{{travelExpense.value.numberOfSuppersConsumed}}"></ion-input>
+                        </ion-item>
+                    </ion-list>
+
+                    <ion-item lines="none">
+                        <ion-label position="stacked">Antal diæter</ion-label>
+                    </ion-item>
+                    <ion-list>
+                        <ion-item>
+                            <ion-label position="stacked">Under 4 timer</ion-label>
+                            <ion-input disabled="true" value="{{travelExpense.value.numberOfDietsUnder4Hours}}"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="stacked">Over 4 timer</ion-label>
+                            <ion-input disabled="true" value="{{travelExpense.value.numberOfDietsOver4Hours}}"></ion-input>
+                        </ion-item>
+                    </ion-list>
+                </ng-template>
+            </ion-item-group>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

@@ -3,7 +3,6 @@ import {Routes, RouterModule, UrlSegment} from '@angular/router';
 import {SigninRedirectCallbackComponent} from './modules/authentication/signin-redirect-callback.component';
 import {SignoutRedirectCallbackComponent} from './modules/authentication/signout-redirect-callback.component';
 import {UnauthorizedComponent} from './modules/authentication/unauthorized.component';
-import {FetchDataComponent} from './modules/fetch-data/fetch-data.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {UserSignedInGuard} from "./core/guards/user-signed-in.guard";
 import {SignInComponent} from "./modules/authentication/sign-in/sign-in.component";
@@ -11,7 +10,6 @@ import {SignInComponent} from "./modules/authentication/sign-in/sign-in.componen
 
 const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
-    {path: 'fetch-data', component: FetchDataComponent},
     {path: 'sign-in', component: SignInComponent},
     {path: 'signin-redirect-callback', component: SigninRedirectCallbackComponent},
     {path: 'signout-redirect-callback', component: SignoutRedirectCallbackComponent},
@@ -43,6 +41,11 @@ const routes: Routes = [
     path: 'help',
     loadChildren: () => import('./modules/pages/help/help.module').then( m => m.HelpPageModule)
   },
+  {
+    path: 'show-travel-expense',
+    loadChildren: () => import('./modules/pages/show-travel-expense/show-travel-expense.module').then( m => m.ShowTravelExpensePageModule)
+  },
+
 ];
 
 @NgModule({

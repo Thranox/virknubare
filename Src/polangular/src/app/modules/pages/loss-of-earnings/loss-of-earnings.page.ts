@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-
+import * as moment from 'moment';
 import { DateTimeManagerService } from '../../../shared/services/datetime-manager.service';
 import { AccessHTMLElementService } from '../../../shared/services/access-html-element.service';
 
@@ -12,7 +12,7 @@ import { AccessHTMLElementService } from '../../../shared/services/access-html-e
 export class LossOfEarningsPage implements OnInit {
     dateData: any
     sumOfWorkHoursLost: number = 0
-
+    moment = moment
     constructor(
         private modalController: ModalController,
         private dateManagerService: DateTimeManagerService,

@@ -1,14 +1,14 @@
 <ion-header>
     <ion-toolbar>
         <ion-buttons slot="end">
-            <ion-button (click)="dismissModal()"><ion-icon name="close-outline"></ion-icon>Luk</ion-button>
+            <ion-button (click)="dismissModalWithoutSavingExpense()"><ion-icon name="close-outline"></ion-icon>Luk</ion-button>
         </ion-buttons>
         <ion-title>Opret rejseafgift</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <form [formGroup]="travelExpense" ngNoForm (ngSubmit)="createTravelExpense()">
+    <form [formGroup]="travelExpense" #formDir="ngForm" (ngSubmit)="createTravelExpense()">
 
         <ion-card>
             <ion-card-content>
@@ -45,7 +45,7 @@
                         <ion-label position="stacked">Udrejsested</ion-label>
                         <ion-select interface="popover"
                                     placeholder="Vælg udrejsested"
-                                    (ionChange)="toggleInputField($event, 'placeOfDeparture')">
+                                    (ionChange)="toggleInputField($event, 'placeOfDeparture'); selectedHomeOrWorkAsDestination($event, 'placeOfDeparture')">
                             <ion-select-option>Hjem</ion-select-option>
                             <ion-select-option>Arbejde</ion-select-option>
                             <ion-select-option>Andet</ion-select-option>
@@ -56,10 +56,15 @@
                                    formControlName="placeOfDeparture">
                         </ion-input>
                     </ion-item>
+                    <ion-item *ngIf="f.placeOfDeparture.errors && f.placeOfDeparture.touched || formDir.submitted && f.placeOfDeparture.errors">
+                        <div class="error-info" *ngIf="f.placeOfDeparture.errors.required">Adressen for udrejsested er nødvendig</div>
+                    </ion-item>
 
                     <ion-item lines="inset">
                         <ion-label position="stacked">Hjemrejsested</ion-label>
-                        <ion-select interface="popover" placeholder="Vælg hjemrejsested" (ionChange)="toggleInputField($event, 'placeOfHomecoming')">
+                        <ion-select interface="popover"
+                                    placeholder="Vælg hjemrejsested"
+                                    (ionChange)="toggleInputField($event, 'placeOfHomecoming'); selectedHomeOrWorkAsDestination($event, 'placeOfHomecoming')">
                             <ion-select-option>Hjem</ion-select-option>
                             <ion-select-option>Arbejde</ion-select-option>
                             <ion-select-option>Andet</ion-select-option>
@@ -69,6 +74,9 @@
                                    placeholder="Andet hjemrejsested"
                                    formControlName="placeOfHomecoming">
                         </ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="f.placeOfHomecoming.errors && f.placeOfHomecoming.touched || formDir.submitted && f.placeOfHomecoming.errors">
+                        <div class="error-info" *ngIf="f.placeOfHomecoming.errors.required">Adressen for hjemrejsested er nødvendig</div>
                     </ion-item>
 
                     <ion-item lines="inset">
@@ -80,13 +88,16 @@
                             <ion-select-option>Et andet sted</ion-select-option>
                             <ion-select-option>Andet</ion-select-option>
                         </ion-select>
-                        <ion-input
-                                   id="meetingPlace"
+                        <ion-input id="meetingPlace"
                                    disabled="true"
                                    placeholder="Andet mødested"
                                    formControlName="meetingPlace">
                         </ion-input>
                     </ion-item>
+                    <ion-item *ngIf="f.meetingPlace.errors && f.meetingPlace.touched || formDir.submitted && f.meetingPlace.errors">
+                        <div class="error-info" *ngIf="f.meetingPlace.errors.required">Adressen for mødestedet er nødvendig</div>
+                    </ion-item>
+
 
                     <ion-item lines="inset">
                         <ion-label position="stacked">Mødest formål</ion-label>
@@ -102,6 +113,12 @@
                                    placeholder="Andet formål"
                                    formControlName="purposeOfMeeting"></ion-input>
                     </ion-item>
+                    <ion-item *ngIf="f.purposeOfMeeting.errors && f.purposeOfMeeting.touched || formDir.submitted && f.purposeOfMeeting.errors">
+                        <div class="error-info" *ngIf="f.purposeOfMeeting.errors.required">Mødets formål er nødvendigt</div>
+                    </ion-item>
+
+
+
 
                     <ion-item lines="inset">
                         <ion-label position="stacked">Udvalg</ion-label>
@@ -110,6 +127,9 @@
                             <ion-select-option>Bum</ion-select-option>
                             <ion-select-option>Andet</ion-select-option>
                         </ion-select>
+                    </ion-item>
+                    <ion-item *ngIf="f.committee.errors && f.committee.touched || formDir.submitted && f.committee.errors">
+                        <div class="error-info" *ngIf="f.committee.errors.required">Udvalget er nødvendigt</div>
                     </ion-item>
 
                 </ion-item-group>
@@ -144,6 +164,10 @@
                         </ion-toggle>
                     </ion-item>
 
+                    <ion-item *ngIf="!isDrivingOwnCar && !isRidingOwnBike && formDir.submitted">
+                        <div class="error-info">Valg af transportmiddel er nødvendigt</div>
+                    </ion-item>
+
                     <ion-item *ngIf="isRidingOwnBike">
                         <ion-label position="stacked">Antal km (beregnet)</ion-label>
                         <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometers"></ion-input>
@@ -154,20 +178,32 @@
                             <ion-label position="stacked">Nummerplade</ion-label>
                             <ion-input placeholder="Indtast nummerplade" formControlName="numberPlate"></ion-input>
                         </ion-item>
+                        <ion-item *ngIf="f.numberPlate.errors && f.numberPlate.touched || formDir.submitted && f.numberPlate.errors">
+                            <div class="error-info" *ngIf="f.numberPlate.errors.required">Nummerplade er nødvendigt</div>
+                        </ion-item>
 
                         <ion-item lines="inset">
                             <ion-label position="stacked">Antal km (beregnet)</ion-label>
                             <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometers"></ion-input>
+                        </ion-item>
+                        <ion-item *ngIf="f.numberOfKilometers.errors && f.numberOfKilometers.touched || formDir.submitted && f.numberOfKilometers.errors">
+                            <div class="error-info" *ngIf="f.numberOfKilometers.errors.required">Antal kilometer er nødvendigt</div>
                         </ion-item>
 
                         <ion-item lines="inset">
                             <ion-label position="stacked">Antal km (skattepligtigt)</ion-label>
                             <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometersTaxable"></ion-input>
                         </ion-item>
+                        <ion-item *ngIf="f.numberOfKilometersTaxable.errors && f.numberOfKilometersTaxable.touched || formDir.submitted && f.numberOfKilometersTaxable.errors">
+                            <div class="error-info" *ngIf="f.numberOfKilometersTaxable.errors.required">Antal skattepligtige kilometer er nødvendigt</div>
+                        </ion-item>
 
                         <ion-item lines="inset">
                             <ion-label position="stacked">Antal km (over 20000)</ion-label>
                             <ion-input placeholder="Indtast antal km" formControlName="numberOfKilometersOver20000"></ion-input>
+                        </ion-item>
+                        <ion-item *ngIf="f.numberOfKilometersOver20000.errors && f.numberOfKilometersOver20000.touched || formDir.submitted && f.numberOfKilometersOver20000.errors">
+                            <div class="error-info" *ngIf="f.numberOfKilometersOver20000.errors.required">Antal kilometer over 20000 er nødvendigt</div>
                         </ion-item>
 
                         <ion-item lines="inset">
@@ -184,6 +220,9 @@
                                 <ion-select-option>Under 4 timer</ion-select-option>
                                 <ion-select-option>Over 4 timer</ion-select-option>
                             </ion-select>
+                        </ion-item>
+                        <ion-item *ngIf="f.selectedDietOnTripUnder24Hours.errors && f.selectedDietOnTripUnder24Hours.touched || formDir.submitted && f.selectedDietOnTripUnder24Hours.errors">
+                            <div class="error-info" *ngIf="f.selectedDietOnTripUnder24Hours.errors.required">Antallet af morgenmad spist er nødvendigt</div>
                         </ion-item>
                     </div>
 
@@ -202,13 +241,24 @@
                                 <ion-label position="stacked">Morgenmad</ion-label>
                                 <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfBreakfastsConsumed"></ion-input>
                             </ion-item>
+                            <ion-item *ngIf="f.numberOfBreakfastsConsumed.errors && f.numberOfBreakfastsConsumed.touched || formDir.submitted && f.numberOfBreakfastsConsumed.errors">
+                                <div class="error-info" *ngIf="f.numberOfBreakfastsConsumed.errors.required">Antallet af morgenmad spist er nødvendigt</div>
+                            </ion-item>
+
                             <ion-item>
                                 <ion-label position="stacked">Middagsmad</ion-label>
                                 <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfDinnersConsumed"></ion-input>
                             </ion-item>
+                            <ion-item *ngIf="f.numberOfDinnersConsumed.errors && f.numberOfDinnersConsumed.touched || formDir.submitted && f.numberOfDinnersConsumed.errors">
+                                <div class="error-info" *ngIf="f.numberOfDinnersConsumed.errors.required">Antallet af middagsmad spist er nødvendigt</div>
+                            </ion-item>
+
                             <ion-item>
                                 <ion-label position="stacked">Aftensmad</ion-label>
                                 <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfSuppersConsumed"></ion-input>
+                            </ion-item>
+                            <ion-item *ngIf="f.numberOfSuppersConsumed.errors && f.numberOfSuppersConsumed.touched || formDir.submitted && f.numberOfSuppersConsumed.errors">
+                                <div class="error-info" *ngIf="f.numberOfSuppersConsumed.errors.required">Antallet af aftensmad spist er nødvendigt</div>
                             </ion-item>
                         </ion-list>
 
@@ -220,9 +270,16 @@
                                 <ion-label position="stacked">Under 4 timer</ion-label>
                                 <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfDietsUnder4Hours"></ion-input>
                             </ion-item>
+                            <ion-item *ngIf="f.numberOfDietsUnder4Hours.errors && f.numberOfDietsUnder4Hours.touched || formDir.submitted && f.numberOfDietsUnder4Hours.errors">
+                                <div class="error-info" *ngIf="f.numberOfDietsUnder4Hours.errors.required">Antallet af diæter under 4 timer er nødvendigt</div>
+                            </ion-item>
+
                             <ion-item>
                                 <ion-label position="stacked">Over 4 timer</ion-label>
                                 <ion-input type="number" placeholder="Vælg antal" formControlName="numberOfDietsOver4Hours"></ion-input>
+                            </ion-item>
+                            <ion-item *ngIf="f.numberOfDietsOver4Hours.errors && f.numberOfDietsOver4Hours.touched || formDir.submitted && f.numberOfDietsOver4Hours.errors">
+                                <div class="error-info" *ngIf="f.numberOfDietsOver4Hours.errors.required">Antallet af diæter over 4 timer er nødvendigt</div>
                             </ion-item>
                         </ion-list>
                     </ng-template>
